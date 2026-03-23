@@ -225,7 +225,6 @@
 let timers = [];
 let nextId = 1;
 
-// Create audio context for alarm sound
 function playAlarm() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -241,20 +240,12 @@ function playAlarm() {
       osc.start(ctx.currentTime + start);
       osc.stop(ctx.currentTime + start + dur);
     }
-    // Three ascending beeps
-    beep(800, 0, 0.2);
-    beep(1000, 0.25, 0.2);
-    beep(1200, 0.5, 0.3);
-    // Repeat
-    beep(800, 1, 0.2);
-    beep(1000, 1.25, 0.2);
-    beep(1200, 1.5, 0.3);
+    beep(800, 0, 0.2); beep(1000, 0.25, 0.2); beep(1200, 0.5, 0.3);
+    beep(800, 1, 0.2); beep(1000, 1.25, 0.2); beep(1200, 1.5, 0.3);
   } catch(e) {}
 }
 
-function addPreset(name, minutes) {
-  addTimer(name, minutes * 60);
-}
+function addPreset(name, minutes) { addTimer(name, minutes * 60); }
 
 function addCustom() {
   const nameEl = document.getElementById('custom-name');
@@ -267,6 +258,83 @@ function addCustom() {
   minEl.value = '';
 }
 
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+function createTimerCard(t) {
+  const card = document.createElement('div');
+  card.className = 'timer-card ' + t.state;
+  card.id = 'timer-' + t.id;
+  card.style.animation = 'fadeIn 0.3s';
+
+  const circumference = 2 * Math.PI * 27;
+
+  card.innerHTML = `
+    <div class="timer-ring">
+      <svg viewBox="0 0 64 64">
+        <circle class="bg" cx="32" cy="32" r="27" fill="none" stroke-width="4"/>
+        <circle class="progress" cx="32" cy="32" r="27" fill="none" stroke="#F5A623" stroke-width="4"
+          stroke-dasharray="${circumference}" stroke-dashoffset="0" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="timer-info">
+      <div class="timer-name">${t.name}</div>
+      <div class="timer-status">пауза</div>
+    </div>
+    <div class="timer-display">${formatTime(t.remaining)}</div>
+    <div class="timer-controls"></div>
+  `;
+
+  return card;
+}
+
+function updateTimerCard(t) {
+  const card = document.getElementById('timer-' + t.id);
+  if (!card) return;
+
+  card.className = 'timer-card ' + t.state;
+
+  const circumference = 2 * Math.PI * 27;
+  const pct = t.total > 0 ? (t.remaining / t.total) : 0;
+  const offset = circumference * (1 - pct);
+  const ringColor = t.state === 'done' ? '#EF4444' : t.state === 'running' ? '#22C55E' : '#F5A623';
+
+  const progress = card.querySelector('.progress');
+  progress.setAttribute('stroke', ringColor);
+  progress.setAttribute('stroke-dashoffset', offset);
+
+  const statusEl = card.querySelector('.timer-status');
+  statusEl.textContent = t.state === 'done' ? 'ГОТОВО!' : t.state === 'running' ? 'идёт...' : 'пауза';
+
+  card.querySelector('.timer-display').textContent = formatTime(t.remaining);
+
+  const controls = card.querySelector('.timer-controls');
+  let html = '';
+  if (t.state === 'paused' && t.remaining > 0) {
+    html = `<button class="btn-ctrl btn-play" title="Старт">▶</button>`;
+  } else if (t.state === 'running') {
+    html = `<button class="btn-ctrl btn-pause" title="Пауза">⏸</button>`;
+  } else if (t.state === 'done') {
+    html = `<button class="btn-ctrl btn-reset" title="Заново">↻</button>`;
+  }
+  html += `<button class="btn-ctrl btn-delete" title="Удалить">✕</button>`;
+  controls.innerHTML = html;
+
+  // Attach events
+  const playBtn = controls.querySelector('.btn-play');
+  const pauseBtn = controls.querySelector('.btn-pause');
+  const resetBtn = controls.querySelector('.btn-reset');
+  const deleteBtn = controls.querySelector('.btn-delete');
+
+  if (playBtn) playBtn.addEventListener('click', () => startTimer(t.id));
+  if (pauseBtn) pauseBtn.addEventListener('click', () => pauseTimer(t.id));
+  if (resetBtn) resetBtn.addEventListener('click', () => resetTimer(t.id));
+  if (deleteBtn) deleteBtn.addEventListener('click', () => deleteTimer(t.id));
+}
+
 function addTimer(name, totalSeconds) {
   if (timers.length >= 8) return;
 
@@ -275,12 +343,18 @@ function addTimer(name, totalSeconds) {
     name: name,
     total: totalSeconds,
     remaining: totalSeconds,
-    state: 'paused', // paused, running, done
+    state: 'paused',
     interval: null,
   };
 
   timers.push(timer);
-  render();
+
+  const container = document.getElementById('timers');
+  document.getElementById('empty-msg').style.display = 'none';
+  const card = createTimerCard(timer);
+  container.appendChild(card);
+  updateTimerCard(timer);
+
   startTimer(timer.id);
 }
 
@@ -299,13 +373,12 @@ function startTimer(id) {
       clearInterval(t.interval);
       t.interval = null;
       playAlarm();
-      // Vibrate if available
       if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
     }
-    render();
+    updateTimerCard(t);
   }, 1000);
 
-  render();
+  updateTimerCard(t);
 }
 
 function pauseTimer(id) {
@@ -313,7 +386,7 @@ function pauseTimer(id) {
   if (!t) return;
   t.state = 'paused';
   if (t.interval) { clearInterval(t.interval); t.interval = null; }
-  render();
+  updateTimerCard(t);
 }
 
 function resetTimer(id) {
@@ -322,82 +395,28 @@ function resetTimer(id) {
   if (t.interval) { clearInterval(t.interval); t.interval = null; }
   t.remaining = t.total;
   t.state = 'paused';
-  render();
+  updateTimerCard(t);
 }
 
 function deleteTimer(id) {
   const t = timers.find(x => x.id === id);
   if (t && t.interval) clearInterval(t.interval);
   timers = timers.filter(x => x.id !== id);
-  render();
-}
 
-function formatTime(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-}
-
-function render() {
-  const container = document.getElementById('timers');
-  const emptyMsg = document.getElementById('empty-msg');
+  const card = document.getElementById('timer-' + id);
+  if (card) card.remove();
 
   if (timers.length === 0) {
-    emptyMsg.style.display = '';
-    container.innerHTML = '';
-    container.appendChild(emptyMsg);
-    return;
+    document.getElementById('empty-msg').style.display = '';
   }
-
-  emptyMsg.style.display = 'none';
-
-  container.innerHTML = timers.map(t => {
-    const pct = t.total > 0 ? (t.remaining / t.total) : 0;
-    const circumference = 2 * Math.PI * 27;
-    const offset = circumference * (1 - pct);
-
-    const ringColor = t.state === 'done' ? '#EF4444' : t.state === 'running' ? '#22C55E' : '#F5A623';
-    const statusText = t.state === 'done' ? 'ГОТОВО!' : t.state === 'running' ? 'идёт...' : 'пауза';
-
-    let controls = '';
-    if (t.state === 'paused' && t.remaining > 0) {
-      controls = `<button class="btn-ctrl btn-play" onclick="startTimer(${t.id})" title="Старт">▶</button>`;
-    } else if (t.state === 'running') {
-      controls = `<button class="btn-ctrl btn-pause" onclick="pauseTimer(${t.id})" title="Пауза">⏸</button>`;
-    } else if (t.state === 'done') {
-      controls = `<button class="btn-ctrl btn-reset" onclick="resetTimer(${t.id})" title="Заново">↻</button>`;
-    }
-    controls += `<button class="btn-ctrl btn-delete" onclick="deleteTimer(${t.id})" title="Удалить">✕</button>`;
-
-    return `
-      <div class="timer-card ${t.state}">
-        <div class="timer-ring">
-          <svg viewBox="0 0 64 64">
-            <circle class="bg" cx="32" cy="32" r="27" fill="none" stroke-width="4"/>
-            <circle class="progress" cx="32" cy="32" r="27" fill="none" stroke="${ringColor}" stroke-width="4"
-              stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="timer-info">
-          <div class="timer-name">${t.name}</div>
-          <div class="timer-status">${statusText}</div>
-        </div>
-        <div class="timer-display">${formatTime(t.remaining)}</div>
-        <div class="timer-controls">${controls}</div>
-      </div>
-    `;
-  }).join('');
 }
 
-// Handle Enter key in inputs
 document.getElementById('custom-name').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { document.getElementById('custom-min').focus(); }
+  if (e.key === 'Enter') document.getElementById('custom-min').focus();
 });
 document.getElementById('custom-min').addEventListener('keydown', e => {
   if (e.key === 'Enter') addCustom();
 });
-
-render();
 </script>
 
 </body>
