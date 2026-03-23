@@ -172,6 +172,41 @@
 
   .timer-card.done .timer-display { animation: pulse 1s ease-in-out infinite; }
 
+  .timer-card.done { animation: donePulse 1.5s ease-in-out infinite; }
+  @keyframes donePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    50% { box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.25); }
+  }
+
+  .timer-card.running { box-shadow: 0 0 12px 2px rgba(34, 197, 94, 0.1); }
+
+  .timer-emoji {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .timer-card.done .timer-emoji { animation: shake 0.5s ease-in-out infinite; }
+  @keyframes shake {
+    0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+    25% { transform: translate(-50%, -50%) rotate(-10deg); }
+    75% { transform: translate(-50%, -50%) rotate(10deg); }
+  }
+
+  .timer-ring { position: relative; }
+
+  .preset:active { transform: scale(0.95); }
+
+  .timer-card.running .timer-ring svg .progress {
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.5));
+  }
+
+  .timer-card.done .timer-ring svg .progress {
+    filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+  }
+
   /* Sound notification - hidden audio element */
   @media (max-width: 500px) {
     .timer-display { font-size: 22px; min-width: 70px; }
@@ -193,17 +228,17 @@
   </header>
 
   <div class="presets">
-    <button class="preset" onclick="addPreset('Котлеты на сковороде', 6)">Котлеты 6м</button>
-    <button class="preset" onclick="addPreset('Отбивные', 8)">Отбивные 8м</button>
-    <button class="preset" onclick="addPreset('Рис', 20)">Рис 20м</button>
-    <button class="preset" onclick="addPreset('Бульон', 90)">Бульон 90м</button>
-    <button class="preset" onclick="addPreset('Филе в духовке', 25)">Духовка 25м</button>
-    <button class="preset" onclick="addPreset('Рёбрышки в духовке', 40)">Рёбрышки 40м</button>
-    <button class="preset" onclick="addPreset('Соус тушить', 15)">Соус 15м</button>
-    <button class="preset" onclick="addPreset('Паста', 8)">Паста 8м</button>
-    <button class="preset" onclick="addPreset('Овощи на сковороде', 7)">Овощи 7м</button>
-    <button class="preset" onclick="addPreset('Картошка варить', 25)">Картошка 25м</button>
-    <button class="preset" onclick="addPreset('Яйца варить', 10)">Яйца 10м</button>
+    <button class="preset" onclick="addPreset('Котлеты на сковороде', 6, '🍳')">🍳 Котлеты 6м</button>
+    <button class="preset" onclick="addPreset('Отбивные', 8, '🥩')">🥩 Отбивные 8м</button>
+    <button class="preset" onclick="addPreset('Рис', 20, '🍚')">🍚 Рис 20м</button>
+    <button class="preset" onclick="addPreset('Бульон', 90, '🍲')">🍲 Бульон 90м</button>
+    <button class="preset" onclick="addPreset('Филе в духовке', 25, '🍗')">🍗 Духовка 25м</button>
+    <button class="preset" onclick="addPreset('Рёбрышки в духовке', 40, '🥓')">🥓 Рёбрышки 40м</button>
+    <button class="preset" onclick="addPreset('Соус тушить', 15, '🫕')">🫕 Соус 15м</button>
+    <button class="preset" onclick="addPreset('Паста', 8, '🍝')">🍝 Паста 8м</button>
+    <button class="preset" onclick="addPreset('Овощи на сковороде', 7, '🥗')">🥗 Овощи 7м</button>
+    <button class="preset" onclick="addPreset('Картошка варить', 25, '🥔')">🥔 Картошка 25м</button>
+    <button class="preset" onclick="addPreset('Яйца варить', 10, '🥚')">🥚 Яйца 10м</button>
   </div>
 
   <div class="add-area">
@@ -245,7 +280,7 @@ function playAlarm() {
   } catch(e) {}
 }
 
-function addPreset(name, minutes) { addTimer(name, minutes * 60); }
+function addPreset(name, minutes, emoji) { addTimer(name, minutes * 60, emoji || '⏱'); }
 
 function addCustom() {
   const nameEl = document.getElementById('custom-name');
@@ -253,7 +288,7 @@ function addCustom() {
   const name = nameEl.value.trim() || 'Таймер';
   const min = parseInt(minEl.value);
   if (!min || min < 1) return;
-  addTimer(name, min * 60);
+  addTimer(name, min * 60, '⏱');
   nameEl.value = '';
   minEl.value = '';
 }
@@ -279,6 +314,7 @@ function createTimerCard(t) {
         <circle class="progress" cx="32" cy="32" r="27" fill="none" stroke="#F5A623" stroke-width="4"
           stroke-dasharray="${circumference}" stroke-dashoffset="0" stroke-linecap="round"/>
       </svg>
+      <div class="timer-emoji">${t.emoji}</div>
     </div>
     <div class="timer-info">
       <div class="timer-name">${t.name}</div>
@@ -305,6 +341,9 @@ function updateTimerCard(t) {
   const progress = card.querySelector('.progress');
   progress.setAttribute('stroke', ringColor);
   progress.setAttribute('stroke-dashoffset', offset);
+
+  const emojiEl = card.querySelector('.timer-emoji');
+  if (emojiEl) emojiEl.textContent = t.state === 'done' ? '🔔' : t.emoji;
 
   const statusEl = card.querySelector('.timer-status');
   statusEl.textContent = t.state === 'done' ? 'ГОТОВО!' : t.state === 'running' ? 'идёт...' : 'пауза';
@@ -335,12 +374,13 @@ function updateTimerCard(t) {
   if (deleteBtn) deleteBtn.addEventListener('click', () => deleteTimer(t.id));
 }
 
-function addTimer(name, totalSeconds) {
+function addTimer(name, totalSeconds, emoji) {
   if (timers.length >= 8) return;
 
   const timer = {
     id: nextId++,
     name: name,
+    emoji: emoji || '⏱',
     total: totalSeconds,
     remaining: totalSeconds,
     state: 'paused',
