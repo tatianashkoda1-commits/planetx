@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Таблица комбинаций — Планета X</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #10101A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(59,130,246,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(96,165,250,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 75%, rgba(96,165,250,0.4) 0%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { text-align: center; padding: 20px 0 10px; }
+  .logo { font-size: 13px; font-weight: 800; color: #3B82F6; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 26px; font-weight: 800; margin: 6px 0; }
+  h1 span { color: #F5A623; }
+  .subtitle { color: #94A3B8; font-size: 13px; }
+
+  .steps {
+    display: flex; gap: 8px; justify-content: center; margin: 20px 0 10px;
+    flex-wrap: wrap;
+  }
+
+  .step-badge {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+    border: 2px solid #2A2A3A; color: #4A5568;
+    transition: all 0.3s;
+  }
+
+  .step-badge.active { border-color: currentColor; }
+  .step-badge .num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    background: #2A2A3A; color: #4A5568;
+  }
+  .step-badge.active .num { background: currentColor; color: #10101A; }
+
+  .step-badge.s1 { --c: #F5A623; }
+  .step-badge.s2 { --c: #22C55E; }
+  .step-badge.s3 { --c: #A855F7; }
+  .step-badge.s1.active { color: #F5A623; }
+  .step-badge.s2.active { color: #22C55E; }
+  .step-badge.s3.active { color: #A855F7; }
+
+  .section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; text-align: center; margin: 16px 0 12px;
+    color: #94A3B8;
+  }
+
+  .options {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .opt-btn {
+    padding: 10px 16px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer; border: 2px solid #2A2A3A;
+    background: rgba(20, 20, 32, 0.8); color: #94A3B8;
+    transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    backdrop-filter: blur(5px);
+  }
+
+  .opt-btn:hover { border-color: #4A5568; color: #E2E8F0; transform: translateY(-1px); }
+
+  .opt-btn.selected-protein { border-color: #F5A623; color: #F5A623; background: rgba(245,166,35,0.1); }
+  .opt-btn.selected-side { border-color: #22C55E; color: #22C55E; background: rgba(34,197,94,0.1); }
+  .opt-btn.selected-sauce { border-color: #A855F7; color: #A855F7; background: rgba(168,85,247,0.1); }
+  .opt-btn.disabled { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+
+  .opt-btn .em { font-size: 18px; }
+  .opt-btn .info { text-align: left; }
+  .opt-btn .name { display: block; font-size: 13px; }
+  .opt-btn .detail { display: block; font-size: 10px; color: #64748B; font-weight: 400; }
+  .opt-btn.selected-protein .detail, .opt-btn.selected-side .detail, .opt-btn.selected-sauce .detail { color: inherit; opacity: 0.7; }
+
+  /* Result */
+  .result-area {
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .formula {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+
+  .formula-item {
+    padding: 10px 16px; border-radius: 12px;
+    font-size: 14px; font-weight: 700;
+    min-width: 120px; text-align: center;
+  }
+
+  .formula-item.protein { background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3); color: #F5A623; }
+  .formula-item.side { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #22C55E; }
+  .formula-item.sauce { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3); color: #A855F7; }
+  .formula-item.empty { background: rgba(30,30,50,0.5); border: 1px dashed #2A2A3A; color: #4A5568; }
+  .formula-plus { font-size: 20px; font-weight: 800; color: #F5A623; }
+  .formula-eq { font-size: 20px; font-weight: 800; color: #22C55E; }
+
+  .result-card {
+    background: rgba(30, 30, 50, 0.7);
+    border: 1px solid rgba(245, 166, 35, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 16px auto;
+    max-width: 500px;
+    display: none;
+    animation: pop 0.4s;
+  }
+
+  .result-card.visible { display: block; }
+
+  .result-label { font-size: 11px; color: #F5A623; text-transform: uppercase; letter-spacing: 2px; }
+  .result-name { font-size: 22px; font-weight: 800; margin: 6px 0; }
+  .result-time { font-size: 14px; color: #22C55E; margin-bottom: 6px; }
+  .result-desc { font-size: 12px; color: #94A3B8; line-height: 1.5; }
+
+  .btn-reset {
+    margin: 12px auto; display: block;
+    padding: 10px 24px; border-radius: 10px;
+    background: transparent; border: 1px solid #2A2A3A;
+    color: #94A3B8; font-size: 12px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+  }
+  .btn-reset:hover { border-color: #EF4444; color: #EF4444; }
+
+  .counter-bar {
+    text-align: center; margin: 16px 0; font-size: 12px; color: #64748B;
+  }
+  .counter-bar span { color: #F5A623; font-weight: 700; }
+
+  .app-promo {
+    background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(59,130,246,0.12));
+    border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 12px; padding: 14px; margin: 20px 0;
+    text-align: center; font-size: 12px;
+  }
+  .app-promo strong { color: #A855F7; }
+
+  .footer { text-align: center; padding: 20px 0; color: #4A5568; font-size: 11px; }
+  .footer a { color: #3B82F6; text-decoration: none; }
+
+  @keyframes pop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  @media (max-width: 600px) {
+    .opt-btn { padding: 8px 12px; font-size: 12px; }
+    .formula-item { min-width: 90px; padding: 8px 10px; font-size: 12px; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">Планета X</div>
+    <h1>Таблица <span>комбинаций</span></h1>
+    <div class="subtitle">Выбери белок + гарнир + соус = ужин за 10 минут</div>
+  </header>
+
+  <div class="steps">
+    <div class="step-badge s1" id="step1"><div class="num">1</div> Белок</div>
+    <div class="step-badge s2" id="step2"><div class="num">2</div> Гарнир</div>
+    <div class="step-badge s3" id="step3"><div class="num">3</div> Соус</div>
+  </div>
+
+  <!-- Formula bar -->
+  <div class="formula">
+    <div class="formula-item empty protein" id="f-protein">Белок?</div>
+    <div class="formula-plus">+</div>
+    <div class="formula-item empty side" id="f-side">Гарнир?</div>
+    <div class="formula-plus">+</div>
+    <div class="formula-item empty sauce" id="f-sauce">Соус?</div>
+    <div class="formula-eq">=</div>
+    <div class="formula-item empty" id="f-result" style="border-color:rgba(245,166,35,0.3)">🍽 Ужин!</div>
+  </div>
+
+  <!-- Proteins -->
+  <div class="section-title" id="title-protein">Шаг 1: Выберите белок</div>
+  <div class="options" id="opt-proteins"></div>
+
+  <!-- Sides -->
+  <div class="section-title" id="title-side" style="display:none">Шаг 2: Выберите гарнир</div>
+  <div class="options" id="opt-sides" style="display:none"></div>
+
+  <!-- Sauces -->
+  <div class="section-title" id="title-sauce" style="display:none">Шаг 3: Выберите соус</div>
+  <div class="options" id="opt-sauces" style="display:none"></div>
+
+  <!-- Result -->
+  <div class="result-card" id="result">
+    <div class="result-label">Ваш ужин</div>
+    <div class="result-name" id="r-name"></div>
+    <div class="result-time" id="r-time"></div>
+    <div class="result-desc" id="r-desc"></div>
+  </div>
+
+  <button class="btn-reset" onclick="reset()">Собрать другой ужин</button>
+
+  <div class="counter-bar">Возможных комбинаций из марафона: <span>30+</span></div>
+
+  <div class="app-promo">
+    <strong>FoodCubed</strong> составляет комбинации автоматически из ваших запасов.<br>
+    Промокод <strong>PLANETX30</strong> — 30 дней бесплатно!
+  </div>
+
+  <div class="footer"><a href="index.html">Планета X</a></div>
+</div>
+
+<script>
+const proteins = [
+  { id:'chicken-cutlets', name:'Куриные котлеты', detail:'День 1 · с травами', em:'🍗', time: 12 },
+  { id:'chicken-fillet', name:'Куриное филе', detail:'День 1 · в маринаде', em:'🍗', time: 25 },
+  { id:'chicken-broth', name:'Куриный бульон', detail:'День 1 · для супа', em:'🍲', time: 10, broth:true },
+  { id:'meatballs', name:'Тефтели', detail:'День 2 · говяжьи', em:'🥩', time: 15 },
+  { id:'ground-beef', name:'Фарш говяжий', detail:'День 2 · плитки', em:'🥩', time: 15 },
+  { id:'beef-broth', name:'Говяжий бульон', detail:'День 2 · наваристый', em:'🍲', time: 10, broth:true },
+  { id:'schnitzel', name:'Отбивные', detail:'День 3 · в панировке', em:'🥓', time: 8 },
+  { id:'ribs', name:'Рёбрышки', detail:'День 3 · в маринаде', em:'🥓', time: 40 },
+  { id:'pork-stir', name:'Свиная поджарка', detail:'День 3 · с луком', em:'🥓', time: 5 },
+  { id:'fish-cutlets', name:'Рыбные котлеты', detail:'День 4 · из белой рыбы', em:'🐟', time: 8 },
+  { id:'salmon', name:'Филе лосося', detail:'День 4 · в фольге', em:'🐟', time: 20 },
+];
+
+const sides = [
+  { id:'mashed', name:'Картофельное пюре', detail:'День 5', em:'🥔', time: 3 },
+  { id:'rice', name:'Рис', detail:'День 5 · рассыпчатый', em:'🍚', time: 3 },
+  { id:'dumplings', name:'Клёцки / Штрули', detail:'День 5 · в бульон', em:'🥟', time: 10, forBroth:true },
+  { id:'veggies', name:'Овощная смесь', detail:'День 5 · обжарка 7 мин', em:'🥗', time: 7 },
+  { id:'pasta', name:'Паста', detail:'Варится 8 мин', em:'🍝', time: 8 },
+];
+
+const sauces = [
+  { id:'tomato', name:'Томатная поджарка', detail:'День 6', em:'🍅', time: 0 },
+  { id:'mushroom', name:'Грибной соус', detail:'День 6 · сливочный', em:'🍄', time: 0 },
+  { id:'borsch', name:'Заправка для борща', detail:'День 6 · свёкла+морковь', em:'🟣', time: 0, forBorsch:true },
+  { id:'pesto', name:'Песто', detail:'День 6 · базилик+пармезан', em:'🌿', time: 0 },
+  { id:'none', name:'Без соуса', detail:'Просто белок + гарнир', em:'➖', time: 0 },
+];
+
+// Compatibility rules
+const compat = {
+  // protein -> sides (null = all ok)
+  sides: {
+    'chicken-broth': ['dumplings'],
+    'beef-broth': ['dumplings','mashed','rice','pasta'],
+  },
+  // protein -> sauces
+  sauces: {
+    'chicken-broth': ['none'],
+    'beef-broth': ['borsch','none'],
+    'fish-cutlets': ['pesto','tomato','none'],
+    'salmon': ['pesto','none'],
+    'ground-beef': ['tomato','none'],
+    'ribs': ['tomato','none'],
+  },
+  // side -> sauces
+  sideSauces: {
+    'dumplings': ['none'],
+  }
+};
+
+let selected = { protein: null, side: null, sauce: null };
+let combosFound = 0;
+
+function getAllowedSides(proteinId) {
+  if (compat.sides[proteinId]) return compat.sides[proteinId];
+  return sides.map(s => s.id);
+}
+
+function getAllowedSauces(proteinId, sideId) {
+  let allowed = sauces.map(s => s.id);
+  if (compat.sauces[proteinId]) allowed = allowed.filter(s => compat.sauces[proteinId].includes(s));
+  if (sideId && compat.sideSauces[sideId]) allowed = allowed.filter(s => compat.sideSauces[sideId].includes(s));
+  return allowed;
+}
+
+function render() {
+  const s1 = document.getElementById('step1');
+  const s2 = document.getElementById('step2');
+  const s3 = document.getElementById('step3');
+  s1.classList.toggle('active', !!selected.protein);
+  s2.classList.toggle('active', !!selected.side);
+  s3.classList.toggle('active', !!selected.sauce);
+
+  // Formula bar
+  const fp = document.getElementById('f-protein');
+  const fs = document.getElementById('f-side');
+  const fsc = document.getElementById('f-sauce');
+  const fr = document.getElementById('f-result');
+
+  if (selected.protein) { fp.textContent = selected.protein.name; fp.classList.remove('empty'); }
+  else { fp.textContent = 'Белок?'; fp.classList.add('empty'); }
+
+  if (selected.side) { fs.textContent = selected.side.name; fs.classList.remove('empty'); }
+  else { fs.textContent = 'Гарнир?'; fs.classList.add('empty'); }
+
+  if (selected.sauce) { fsc.textContent = selected.sauce.name === 'Без соуса' ? '—' : selected.sauce.name; fsc.classList.remove('empty'); }
+  else { fsc.textContent = 'Соус?'; fsc.classList.add('empty'); }
+
+  // Proteins
+  const protEl = document.getElementById('opt-proteins');
+  protEl.innerHTML = proteins.map(p =>
+    `<button class="opt-btn ${selected.protein?.id === p.id ? 'selected-protein' : ''}" onclick="selectProtein('${p.id}')">
+      <span class="em">${p.em}</span>
+      <span class="info"><span class="name">${p.name}</span><span class="detail">${p.detail}</span></span>
+    </button>`
+  ).join('');
+
+  // Sides
+  const sideTitle = document.getElementById('title-side');
+  const sideEl = document.getElementById('opt-sides');
+  if (selected.protein) {
+    sideTitle.style.display = '';
+    sideEl.style.display = '';
+    const allowed = getAllowedSides(selected.protein.id);
+    sideEl.innerHTML = sides.map(s =>
+      `<button class="opt-btn ${selected.side?.id === s.id ? 'selected-side' : ''} ${!allowed.includes(s.id) ? 'disabled' : ''}" onclick="selectSide('${s.id}')">
+        <span class="em">${s.em}</span>
+        <span class="info"><span class="name">${s.name}</span><span class="detail">${s.detail}</span></span>
+      </button>`
+    ).join('');
+  } else {
+    sideTitle.style.display = 'none';
+    sideEl.style.display = 'none';
+  }
+
+  // Sauces
+  const sauceTitle = document.getElementById('title-sauce');
+  const sauceEl = document.getElementById('opt-sauces');
+  if (selected.protein && selected.side) {
+    sauceTitle.style.display = '';
+    sauceEl.style.display = '';
+    const allowed = getAllowedSauces(selected.protein.id, selected.side.id);
+    sauceEl.innerHTML = sauces.map(s =>
+      `<button class="opt-btn ${selected.sauce?.id === s.id ? 'selected-sauce' : ''} ${!allowed.includes(s.id) ? 'disabled' : ''}" onclick="selectSauce('${s.id}')">
+        <span class="em">${s.em}</span>
+        <span class="info"><span class="name">${s.name}</span><span class="detail">${s.detail}</span></span>
+      </button>`
+    ).join('');
+  } else {
+    sauceTitle.style.display = 'none';
+    sauceEl.style.display = 'none';
+  }
+
+  // Result
+  const result = document.getElementById('result');
+  if (selected.protein && selected.side && selected.sauce) {
+    result.classList.add('visible');
+
+    let name = '';
+    const p = selected.protein, s = selected.side, sc = selected.sauce;
+
+    // Special combos
+    if (p.broth && s.forBroth) {
+      name = p.name + ' с клёцками';
+    } else if (p.broth && sc.forBorsch) {
+      name = 'Борщ на ' + (p.id === 'beef-broth' ? 'говяжьем' : 'курином') + ' бульоне';
+    } else {
+      name = p.name;
+      if (s.id !== 'dumplings') name += ' + ' + s.name.toLowerCase();
+      if (sc.id !== 'none') name += ' + ' + sc.name.toLowerCase();
+    }
+
+    const totalTime = p.time + s.time + sc.time;
+
+    document.getElementById('r-name').textContent = name;
+    document.getElementById('r-time').textContent = '⏱ ' + totalTime + ' минут';
+
+    // Description
+    let desc = 'Достаньте ' + p.name.toLowerCase() + ' из морозилки. ';
+    if (p.time <= 10) desc += 'Разогрейте ' + p.time + ' мин. ';
+    else if (p.broth) desc += 'Разморозьте бульон, доведите до кипения. ';
+    else desc += 'Приготовьте: ' + p.time + ' мин. ';
+
+    if (s.forBroth) desc += 'Добавьте клёцки в кипящий бульон — 10 мин. ';
+    else if (s.id === 'pasta') desc += 'Отварите пасту — 8 мин. ';
+    else if (s.time > 0) desc += s.name + ' — разогрейте ' + s.time + ' мин. ';
+
+    if (sc.id !== 'none') {
+      if (sc.forBorsch) desc += 'Добавьте заправку, картофель и капусту — 15 мин. ';
+      else desc += 'Полейте ' + sc.name.toLowerCase() + '. ';
+    }
+
+    desc += 'Готово!';
+    document.getElementById('r-desc').textContent = desc;
+
+    fr.textContent = '🍽 ' + totalTime + ' мин!';
+    fr.classList.remove('empty');
+    fr.style.borderColor = 'rgba(245,166,35,0.5)';
+    fr.style.color = '#F5A623';
+
+    combosFound++;
+  } else {
+    result.classList.remove('visible');
+    fr.textContent = '🍽 Ужин!';
+    fr.classList.add('empty');
+    fr.style.borderColor = '';
+    fr.style.color = '';
+  }
+}
+
+function selectProtein(id) {
+  const p = proteins.find(x => x.id === id);
+  if (selected.protein?.id === id) { selected.protein = null; selected.side = null; selected.sauce = null; }
+  else { selected.protein = p; selected.side = null; selected.sauce = null; }
+  render();
+}
+
+function selectSide(id) {
+  const s = sides.find(x => x.id === id);
+  if (selected.side?.id === id) { selected.side = null; selected.sauce = null; }
+  else { selected.side = s; selected.sauce = null; }
+  render();
+}
+
+function selectSauce(id) {
+  const s = sauces.find(x => x.id === id);
+  if (selected.sauce?.id === id) selected.sauce = null;
+  else selected.sauce = s;
+  render();
+}
+
+function reset() {
+  selected = { protein: null, side: null, sauce: null };
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+render();
+</script>
+
+</body>
+</html>
