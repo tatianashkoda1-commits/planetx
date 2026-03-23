@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Таймер готовки — Планета X</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #10101A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(59,130,246,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(96,165,250,0.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 75%, rgba(96,165,250,0.35) 0%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 600px; width: 100%; margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { text-align: center; padding: 15px 0; }
+  .logo { font-size: 12px; font-weight: 800; color: #3B82F6; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 24px; font-weight: 800; margin: 4px 0; }
+  h1 span { color: #F5A623; }
+  .subtitle { color: #94A3B8; font-size: 12px; }
+
+  /* Preset buttons */
+  .presets {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    justify-content: center; margin: 16px 0;
+  }
+
+  .preset {
+    padding: 7px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; font-family: inherit;
+    cursor: pointer; border: 1px solid #2A2A3A;
+    background: #1A1A2A; color: #94A3B8; transition: all 0.2s;
+  }
+  .preset:hover { border-color: #F5A623; color: #F5A623; }
+
+  /* Add custom */
+  .add-area {
+    display: flex; gap: 6px; margin: 12px 0;
+    align-items: center; justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .add-area input {
+    padding: 8px 12px; border-radius: 10px;
+    background: #141420; border: 1px solid #2A2A3A;
+    color: #E2E8F0; font-size: 13px; font-family: inherit;
+    outline: none; text-align: center;
+  }
+  .add-area input:focus { border-color: #3B82F6; }
+  .add-area .name-input { width: 160px; text-align: left; }
+  .add-area .time-input { width: 60px; }
+
+  .btn-add {
+    padding: 8px 16px; border-radius: 10px;
+    background: #3B82F6; color: white; border: none;
+    font-size: 13px; font-weight: 700; font-family: inherit;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-add:hover { background: #2563EB; }
+
+  /* Timers list */
+  .timers { margin: 16px 0; }
+
+  .timer-card {
+    background: rgba(30, 30, 50, 0.7);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s;
+    animation: fadeIn 0.3s;
+  }
+
+  .timer-card.running { border-color: rgba(34, 197, 94, 0.4); }
+  .timer-card.paused { border-color: rgba(245, 166, 35, 0.4); }
+  .timer-card.done { border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.08); }
+  .timer-card.done .timer-display { color: #EF4444; }
+
+  .timer-ring {
+    width: 64px; height: 64px;
+    position: relative; flex-shrink: 0;
+  }
+
+  .timer-ring svg {
+    width: 64px; height: 64px;
+    transform: rotate(-90deg);
+  }
+
+  .timer-ring .bg { stroke: #2A2A3A; }
+  .timer-ring .progress { transition: stroke-dashoffset 1s linear; }
+
+  .timer-info { flex: 1; min-width: 0; }
+  .timer-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .timer-status { font-size: 11px; color: #94A3B8; }
+  .timer-card.running .timer-status { color: #22C55E; }
+  .timer-card.paused .timer-status { color: #F5A623; }
+  .timer-card.done .timer-status { color: #EF4444; font-weight: 700; }
+
+  .timer-display {
+    font-size: 28px; font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: #E2E8F0;
+    flex-shrink: 0;
+    min-width: 85px;
+    text-align: right;
+  }
+
+  .timer-controls {
+    display: flex; gap: 6px; flex-shrink: 0;
+  }
+
+  .btn-ctrl {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: none; cursor: pointer; font-size: 16px;
+    transition: all 0.2s;
+  }
+
+  .btn-play { background: #22C55E; color: #10101A; }
+  .btn-play:hover { background: #16A34A; }
+  .btn-pause { background: #F5A623; color: #10101A; }
+  .btn-pause:hover { background: #D97706; }
+  .btn-stop { background: #EF4444; color: white; }
+  .btn-stop:hover { background: #DC2626; }
+  .btn-reset { background: #3B82F6; color: white; }
+  .btn-reset:hover { background: #2563EB; }
+  .btn-delete { background: transparent; color: #4A5568; border: 1px solid #2A2A3A; }
+  .btn-delete:hover { color: #EF4444; border-color: #EF4444; }
+
+  .empty-msg {
+    text-align: center; color: #4A5568; font-size: 13px;
+    font-style: italic; padding: 40px 20px;
+  }
+
+  .tip {
+    text-align: center; margin: 16px 0;
+    font-size: 11px; color: #64748B;
+  }
+
+  .footer {
+    text-align: center; padding: 20px 0;
+    color: #4A5568; font-size: 11px;
+  }
+  .footer a { color: #3B82F6; text-decoration: none; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .timer-card.done .timer-display { animation: pulse 1s ease-in-out infinite; }
+
+  /* Sound notification - hidden audio element */
+  @media (max-width: 500px) {
+    .timer-display { font-size: 22px; min-width: 70px; }
+    .timer-ring { width: 50px; height: 50px; }
+    .timer-ring svg { width: 50px; height: 50px; }
+    .timer-card { padding: 10px 12px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">Планета X</div>
+    <h1>Таймер <span>готовки</span></h1>
+    <div class="subtitle">Несколько таймеров одновременно — для meal prep</div>
+  </header>
+
+  <div class="presets">
+    <button class="preset" onclick="addPreset('Котлеты на сковороде', 6)">Котлеты 6м</button>
+    <button class="preset" onclick="addPreset('Отбивные', 8)">Отбивные 8м</button>
+    <button class="preset" onclick="addPreset('Рис', 20)">Рис 20м</button>
+    <button class="preset" onclick="addPreset('Бульон', 90)">Бульон 90м</button>
+    <button class="preset" onclick="addPreset('Филе в духовке', 25)">Духовка 25м</button>
+    <button class="preset" onclick="addPreset('Рёбрышки в духовке', 40)">Рёбрышки 40м</button>
+    <button class="preset" onclick="addPreset('Соус тушить', 15)">Соус 15м</button>
+    <button class="preset" onclick="addPreset('Паста', 8)">Паста 8м</button>
+    <button class="preset" onclick="addPreset('Овощи на сковороде', 7)">Овощи 7м</button>
+    <button class="preset" onclick="addPreset('Картошка варить', 25)">Картошка 25м</button>
+    <button class="preset" onclick="addPreset('Яйца варить', 10)">Яйца 10м</button>
+  </div>
+
+  <div class="add-area">
+    <input type="text" class="name-input" id="custom-name" placeholder="Название..." maxlength="30">
+    <input type="number" class="time-input" id="custom-min" placeholder="мин" min="1" max="300">
+    <button class="btn-add" onclick="addCustom()">Добавить</button>
+  </div>
+
+  <div class="timers" id="timers">
+    <div class="empty-msg" id="empty-msg">Нажмите на кнопку сверху или добавьте свой таймер</div>
+  </div>
+
+  <div class="tip">До 8 таймеров одновременно · Звуковой сигнал при готовности</div>
+
+  <div class="footer"><a href="index.html">Планета X</a></div>
+</div>
+
+<script>
+let timers = [];
+let nextId = 1;
+
+// Create audio context for alarm sound
+function playAlarm() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq, start, dur) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + start);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + start + dur);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + dur);
+    }
+    // Three ascending beeps
+    beep(800, 0, 0.2);
+    beep(1000, 0.25, 0.2);
+    beep(1200, 0.5, 0.3);
+    // Repeat
+    beep(800, 1, 0.2);
+    beep(1000, 1.25, 0.2);
+    beep(1200, 1.5, 0.3);
+  } catch(e) {}
+}
+
+function addPreset(name, minutes) {
+  addTimer(name, minutes * 60);
+}
+
+function addCustom() {
+  const nameEl = document.getElementById('custom-name');
+  const minEl = document.getElementById('custom-min');
+  const name = nameEl.value.trim() || 'Таймер';
+  const min = parseInt(minEl.value);
+  if (!min || min < 1) return;
+  addTimer(name, min * 60);
+  nameEl.value = '';
+  minEl.value = '';
+}
+
+function addTimer(name, totalSeconds) {
+  if (timers.length >= 8) return;
+
+  const timer = {
+    id: nextId++,
+    name: name,
+    total: totalSeconds,
+    remaining: totalSeconds,
+    state: 'paused', // paused, running, done
+    interval: null,
+  };
+
+  timers.push(timer);
+  render();
+  startTimer(timer.id);
+}
+
+function startTimer(id) {
+  const t = timers.find(x => x.id === id);
+  if (!t || t.state === 'done') return;
+
+  t.state = 'running';
+
+  if (t.interval) clearInterval(t.interval);
+  t.interval = setInterval(() => {
+    t.remaining--;
+    if (t.remaining <= 0) {
+      t.remaining = 0;
+      t.state = 'done';
+      clearInterval(t.interval);
+      t.interval = null;
+      playAlarm();
+      // Vibrate if available
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+    }
+    render();
+  }, 1000);
+
+  render();
+}
+
+function pauseTimer(id) {
+  const t = timers.find(x => x.id === id);
+  if (!t) return;
+  t.state = 'paused';
+  if (t.interval) { clearInterval(t.interval); t.interval = null; }
+  render();
+}
+
+function resetTimer(id) {
+  const t = timers.find(x => x.id === id);
+  if (!t) return;
+  if (t.interval) { clearInterval(t.interval); t.interval = null; }
+  t.remaining = t.total;
+  t.state = 'paused';
+  render();
+}
+
+function deleteTimer(id) {
+  const t = timers.find(x => x.id === id);
+  if (t && t.interval) clearInterval(t.interval);
+  timers = timers.filter(x => x.id !== id);
+  render();
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+
+function render() {
+  const container = document.getElementById('timers');
+  const emptyMsg = document.getElementById('empty-msg');
+
+  if (timers.length === 0) {
+    emptyMsg.style.display = '';
+    container.innerHTML = '';
+    container.appendChild(emptyMsg);
+    return;
+  }
+
+  emptyMsg.style.display = 'none';
+
+  container.innerHTML = timers.map(t => {
+    const pct = t.total > 0 ? (t.remaining / t.total) : 0;
+    const circumference = 2 * Math.PI * 27;
+    const offset = circumference * (1 - pct);
+
+    const ringColor = t.state === 'done' ? '#EF4444' : t.state === 'running' ? '#22C55E' : '#F5A623';
+    const statusText = t.state === 'done' ? 'ГОТОВО!' : t.state === 'running' ? 'идёт...' : 'пауза';
+
+    let controls = '';
+    if (t.state === 'paused' && t.remaining > 0) {
+      controls = `<button class="btn-ctrl btn-play" onclick="startTimer(${t.id})" title="Старт">▶</button>`;
+    } else if (t.state === 'running') {
+      controls = `<button class="btn-ctrl btn-pause" onclick="pauseTimer(${t.id})" title="Пауза">⏸</button>`;
+    } else if (t.state === 'done') {
+      controls = `<button class="btn-ctrl btn-reset" onclick="resetTimer(${t.id})" title="Заново">↻</button>`;
+    }
+    controls += `<button class="btn-ctrl btn-delete" onclick="deleteTimer(${t.id})" title="Удалить">✕</button>`;
+
+    return `
+      <div class="timer-card ${t.state}">
+        <div class="timer-ring">
+          <svg viewBox="0 0 64 64">
+            <circle class="bg" cx="32" cy="32" r="27" fill="none" stroke-width="4"/>
+            <circle class="progress" cx="32" cy="32" r="27" fill="none" stroke="${ringColor}" stroke-width="4"
+              stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="timer-info">
+          <div class="timer-name">${t.name}</div>
+          <div class="timer-status">${statusText}</div>
+        </div>
+        <div class="timer-display">${formatTime(t.remaining)}</div>
+        <div class="timer-controls">${controls}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Handle Enter key in inputs
+document.getElementById('custom-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { document.getElementById('custom-min').focus(); }
+});
+document.getElementById('custom-min').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustom();
+});
+
+render();
+</script>
+
+</body>
+</html>
