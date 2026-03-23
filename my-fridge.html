@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой холодильник — Планета X</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #10101A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(59,130,246,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 10%, rgba(96,165,250,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 80%, rgba(96,165,250,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 75%, rgba(96,165,250,0.4) 0%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 900px; width: 100%; margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { text-align: center; padding: 20px 0; }
+  .logo { font-size: 13px; font-weight: 800; color: #3B82F6; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 26px; font-weight: 800; margin: 6px 0; }
+  h1 span { color: #F5A623; }
+  .subtitle { color: #94A3B8; font-size: 13px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+
+  .panel {
+    background: rgba(30, 30, 50, 0.7);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  .panel-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 12px; display: flex;
+    align-items: center; gap: 8px;
+  }
+
+  .panel-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Categories */
+  .categories { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .cat-btn {
+    padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    font-family: inherit; cursor: pointer; border: 1px solid #2A2A3A;
+    background: #1A1A2A; color: #94A3B8; transition: all 0.2s;
+  }
+  .cat-btn:hover { border-color: #3B82F6; color: #E2E8F0; }
+  .cat-btn.active { background: #3B82F6; color: white; border-color: #3B82F6; }
+
+  /* Product grid */
+  .products { display: flex; flex-wrap: wrap; gap: 6px; max-height: 400px; overflow-y: auto; padding-right: 4px; }
+  .products::-webkit-scrollbar { width: 4px; }
+  .products::-webkit-scrollbar-track { background: transparent; }
+  .products::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 4px; }
+
+  .prod-btn {
+    padding: 6px 10px; border-radius: 10px; font-size: 12px;
+    font-family: inherit; cursor: pointer; border: 1px solid #2A2A3A;
+    background: #141420; color: #CBD5E1; transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .prod-btn:hover { border-color: #3B82F6; background: #1A1A2E; }
+  .prod-btn.selected { background: #1A2A1A; border-color: #22C55E; color: #22C55E; }
+  .prod-btn .em { font-size: 14px; }
+
+  /* Custom input */
+  .custom-input {
+    display: flex; gap: 6px; margin-top: 10px;
+  }
+  .custom-input input {
+    flex: 1; padding: 8px 12px; border-radius: 10px;
+    background: #141420; border: 1px solid #2A2A3A; color: #E2E8F0;
+    font-size: 13px; font-family: inherit; outline: none;
+  }
+  .custom-input input:focus { border-color: #3B82F6; }
+  .custom-input button {
+    padding: 8px 14px; border-radius: 10px; background: #3B82F6;
+    color: white; border: none; font-size: 13px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+  }
+
+  /* Selected products */
+  .selected-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; min-height: 40px; }
+  .selected-tag {
+    padding: 5px 10px; border-radius: 8px; font-size: 12px;
+    background: #1A2A1A; border: 1px solid #22C55E; color: #22C55E;
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+  }
+  .selected-tag:hover { background: #2A1A1A; border-color: #EF4444; color: #EF4444; }
+  .selected-tag .x { font-weight: 800; }
+
+  .empty-msg { color: #4A5568; font-size: 12px; font-style: italic; padding: 10px; }
+
+  /* Generate button */
+  .btn-cook {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: linear-gradient(135deg, #F5A623, #E88D0C);
+    color: #10101A; border: none; font-size: 16px; font-weight: 700;
+    font-family: inherit; cursor: pointer; transition: all 0.2s;
+    margin-top: 10px;
+  }
+  .btn-cook:hover { transform: scale(1.02); box-shadow: 0 4px 20px rgba(245,166,35,0.4); }
+  .btn-cook:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Results */
+  .results { margin-top: 20px; grid-column: 1 / -1; }
+  .results-title { font-size: 14px; font-weight: 700; color: #F5A623; margin-bottom: 12px; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+
+  .meal-card {
+    background: rgba(30, 30, 50, 0.6);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.4s;
+  }
+
+  .meal-type { font-size: 10px; color: #F5A623; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .meal-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .meal-desc { font-size: 12px; color: #94A3B8; line-height: 1.5; }
+  .meal-products { font-size: 11px; color: #22C55E; margin-top: 6px; }
+  .meal-time { font-size: 11px; color: #3B82F6; margin-top: 4px; }
+
+  .no-meals { text-align: center; color: #4A5568; font-style: italic; padding: 30px; }
+
+  .app-promo {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(59, 130, 246, 0.15));
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px; padding: 14px; margin: 20px 0;
+    text-align: center; font-size: 12px; grid-column: 1 / -1;
+  }
+  .app-promo strong { color: #A855F7; }
+
+  .footer { text-align: center; padding: 20px 0; color: #4A5568; font-size: 11px; grid-column: 1 / -1; }
+  .footer a { color: #3B82F6; text-decoration: none; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; }
+    .results { grid-column: 1; }
+    .app-promo, .footer { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">Планета X</div>
+    <h1>Мой <span>холодильник</span></h1>
+    <div class="subtitle">Выбери что есть дома — получи идеи для ужина</div>
+  </header>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="panel-title"><div class="dot" style="background:#3B82F6"></div> Что у вас есть?</div>
+
+      <div class="categories" id="categories"></div>
+      <div class="products" id="products"></div>
+
+      <div class="custom-input">
+        <input type="text" id="custom" placeholder="Свой продукт..." onkeydown="if(event.key==='Enter')addCustom()">
+        <button onclick="addCustom()">+</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><div class="dot" style="background:#22C55E"></div> Выбрано продуктов: <span id="sel-count">0</span></div>
+
+      <div class="selected-list" id="selected">
+        <div class="empty-msg">Нажмите на продукты слева, чтобы добавить</div>
+      </div>
+
+      <button class="btn-cook" id="btn-cook" onclick="cook()" disabled>Что приготовить?</button>
+
+      <div id="meal-results"></div>
+    </div>
+
+    <div class="results" id="results-section" style="display:none">
+      <div class="results-title">Вот что можно приготовить</div>
+      <div id="meals-list"></div>
+    </div>
+
+    <div class="app-promo">
+      <strong>FoodCubed</strong> делает это автоматически — с КБЖУ, списком покупок и трекером запасов.<br>
+      Промокод <strong>PLANETX30</strong> — 30 дней бесплатно!
+    </div>
+
+    <div class="footer">
+      <a href="generator.html">Конструктор ужинов</a> · <a href="index.html">Планета X</a> · 2026
+    </div>
+  </div>
+</div>
+
+<script>
+const allProducts = {
+  'Мясо': [
+    {n:'Курица',e:'🍗'},{n:'Куриное филе',e:'🍗'},{n:'Куриный фарш',e:'🍗'},
+    {n:'Говядина',e:'🥩'},{n:'Говяжий фарш',e:'🥩'},{n:'Свинина',e:'🥓'},
+    {n:'Свиной фарш',e:'🥓'},{n:'Индейка',e:'🦃'},{n:'Колбаса/сосиски',e:'🌭'},
+    {n:'Бекон',e:'🥓'},{n:'Фрикадельки (морозилка)',e:'🧆'},{n:'Котлеты (морозилка)',e:'🧆'},
+    {n:'Тефтели (морозилка)',e:'🧆'},
+  ],
+  'Рыба': [
+    {n:'Рыба белая',e:'🐟'},{n:'Лосось/форель',e:'🐟'},{n:'Креветки',e:'🦐'},
+    {n:'Рыбные котлеты (морозилка)',e:'🐟'},{n:'Консервы рыбные',e:'🥫'},
+  ],
+  'Овощи': [
+    {n:'Картофель',e:'🥔'},{n:'Лук',e:'🧅'},{n:'Морковь',e:'🥕'},
+    {n:'Помидоры',e:'🍅'},{n:'Огурцы',e:'🥒'},{n:'Перец болгарский',e:'🫑'},
+    {n:'Кабачок',e:'🥒'},{n:'Капуста',e:'🥬'},{n:'Свёкла',e:'🟣'},
+    {n:'Грибы',e:'🍄'},{n:'Чеснок',e:'🧄'},{n:'Брокколи',e:'🥦'},
+    {n:'Зелень (укроп/петрушка)',e:'🌿'},{n:'Замороженные овощи',e:'🥦'},
+  ],
+  'Крупы/Паста': [
+    {n:'Рис',e:'🍚'},{n:'Гречка',e:'🫘'},{n:'Макароны/спагетти',e:'🍝'},
+    {n:'Овсянка',e:'🥣'},{n:'Булгур',e:'🌾'},{n:'Пшено',e:'🌾'},
+  ],
+  'Молочное': [
+    {n:'Яйца',e:'🥚'},{n:'Молоко',e:'🥛'},{n:'Сыр',e:'🧀'},
+    {n:'Сливки',e:'🥛'},{n:'Сметана',e:'🥄'},{n:'Творог',e:'🧈'},
+    {n:'Масло сливочное',e:'🧈'},
+  ],
+  'Прочее': [
+    {n:'Хлеб/лаваш',e:'🍞'},{n:'Томатная паста',e:'🥫'},{n:'Соевый соус',e:'🫙'},
+    {n:'Мука',e:'🌾'},{n:'Консервированная фасоль',e:'🥫'},{n:'Оливковое масло',e:'🫒'},
+    {n:'Лимон',e:'🍋'},{n:'Тесто (морозилка)',e:'🥟'},{n:'Бульон (морозилка)',e:'🍲'},
+  ],
+};
+
+const recipes = [
+  { type:'Ужин', name:'Паста с фаршем (болоньезе)', needs:['Макароны/спагетти',['Говяжий фарш','Свиной фарш','Куриный фарш']], optional:['Лук','Морковь','Помидоры','Томатная паста','Чеснок','Сыр'], time:'25 мин', desc:'Обжарить фарш с луком, добавить томаты/пасту, тушить 15 мин. Отварить пасту. Смешать. Посыпать сыром.' },
+  { type:'Ужин', name:'Куриное филе с рисом', needs:['Куриное филе','Рис'], optional:['Лук','Чеснок','Соевый соус','Зелень (укроп/петрушка)'], time:'30 мин', desc:'Филе нарезать, обжарить с чесноком и соевым соусом. Рис отварить. Подать вместе с зеленью.' },
+  { type:'Ужин', name:'Жареная картошка с мясом', needs:['Картофель',['Свинина','Говядина','Курица']], optional:['Лук','Чеснок','Зелень (укроп/петрушка)'], time:'35 мин', desc:'Картофель нарезать, обжарить до золотистости. Мясо нарезать, обжарить отдельно. Смешать, добавить лук и чеснок.' },
+  { type:'Ужин', name:'Омлет с овощами и сыром', needs:['Яйца','Сыр'], optional:['Помидоры','Перец болгарский','Грибы','Зелень (укроп/петрушка)','Молоко'], time:'10 мин', desc:'Взбить яйца с молоком, вылить на сковороду, добавить нарезанные овощи и сыр. Готовить под крышкой 5 мин.' },
+  { type:'Ужин', name:'Гречка с грибами и луком', needs:['Гречка','Грибы'], optional:['Лук','Морковь','Масло сливочное','Сметана'], time:'25 мин', desc:'Гречку отварить. Грибы с луком обжарить до золотистости. Смешать, добавить масло или сметану.' },
+  { type:'Ужин', name:'Рыба в фольге с овощами', needs:[['Рыба белая','Лосось/форель']], optional:['Лимон','Лук','Морковь','Перец болгарский','Оливковое масло','Зелень (укроп/петрушка)'], time:'30 мин', desc:'Рыбу посолить, полить лимоном. Выложить на фольгу с овощами. Запекать 200°C 20 мин.' },
+  { type:'Ужин', name:'Сырники из творога', needs:['Творог','Яйца','Мука'], optional:['Сметана','Масло сливочное'], time:'20 мин', desc:'Смешать творог, яйцо, 2 ст.л. муки, сахар. Сформировать сырники, обжарить по 3 мин с каждой стороны.' },
+  { type:'Ужин', name:'Суп куриный с лапшой', needs:[['Курица','Куриное филе','Бульон (морозилка)'],'Макароны/спагетти'], optional:['Морковь','Лук','Картофель','Зелень (укроп/петрушка)'], time:'40 мин', desc:'Сварить бульон (или разморозить). Добавить нарезанные овощи, варить 15 мин. Добавить лапшу, ещё 7 мин.' },
+  { type:'Ужин', name:'Тефтели в томатном соусе', needs:[['Тефтели (морозилка)','Говяжий фарш','Свиной фарш']], optional:['Рис','Томатная паста','Лук','Морковь','Сметана'], time:'25 мин', desc:'Тефтели (из морозилки или слепить) залить соусом: томатная паста + сметана + вода. Тушить 20 мин.' },
+  { type:'Ужин', name:'Плов', needs:['Рис',['Свинина','Говядина','Курица']], optional:['Морковь','Лук','Чеснок'], time:'50 мин', desc:'Мясо обжарить, добавить лук и морковь. Засыпать рис, залить водой 1:1.5. Тушить под крышкой 25 мин.' },
+  { type:'Ужин', name:'Запеканка картофельная с фаршем', needs:['Картофель',['Говяжий фарш','Свиной фарш','Куриный фарш']], optional:['Сыр','Яйца','Молоко','Лук'], time:'50 мин', desc:'Пюре из картофеля. Фарш обжарить с луком. Слоями в форму: пюре — фарш — пюре. Залить яйцом с молоком, посыпать сыром. Духовка 180°C 25 мин.' },
+  { type:'Быстрый ужин', name:'Яичница с колбасой', needs:['Яйца','Колбаса/сосиски'], optional:['Помидоры','Сыр','Хлеб/лаваш','Зелень (укроп/петрушка)'], time:'7 мин', desc:'Колбасу нарезать, обжарить. Залить яйцами. Готовить 3 мин. Посыпать зеленью.' },
+  { type:'Быстрый ужин', name:'Шаурма домашняя', needs:[['Курица','Куриное филе'],'Хлеб/лаваш'], optional:['Помидоры','Огурцы','Сыр','Сметана','Зелень (укроп/петрушка)'], time:'15 мин', desc:'Курицу нарезать, обжарить со специями. Завернуть в лаваш с овощами и соусом.' },
+  { type:'Быстрый ужин', name:'Бутерброды горячие', needs:['Хлеб/лаваш','Сыр'], optional:['Колбаса/сосиски','Помидоры','Грибы','Масло сливочное'], time:'10 мин', desc:'Хлеб + начинка + сыр. В духовку или на сковороду до расплавления сыра.' },
+  { type:'Ужин', name:'Борщ', needs:[['Говядина','Бульон (морозилка)'],'Свёкла','Капуста'], optional:['Картофель','Морковь','Лук','Томатная паста','Чеснок','Сметана'], time:'60 мин', desc:'Бульон + картофель 15 мин. Обжарить свёклу, морковь, лук с пастой. Добавить капусту. Варить ещё 15 мин.' },
+  { type:'Ужин', name:'Креветки с пастой', needs:['Креветки','Макароны/спагетти'], optional:['Чеснок','Сливки','Оливковое масло','Лимон','Зелень (укроп/петрушка)'], time:'15 мин', desc:'Пасту отварить. Креветки обжарить с чесноком на оливковом масле 3 мин. Добавить сливки, прогреть. Смешать с пастой.' },
+  { type:'Ужин', name:'Котлеты с пюре', needs:[['Котлеты (морозилка)','Говяжий фарш','Куриный фарш'],'Картофель'], optional:['Молоко','Масло сливочное','Зелень (укроп/петрушка)'], time:'30 мин', desc:'Котлеты из морозилки на сковороду 5 мин/сторону (или слепить из фарша). Картофель отварить, размять с маслом и молоком.' },
+  { type:'Быстрый ужин', name:'Овощное рагу', needs:['Кабачок','Перец болгарский'], optional:['Помидоры','Лук','Морковь','Чеснок','Замороженные овощи','Консервированная фасоль'], time:'25 мин', desc:'Все овощи нарезать кубиками, обжарить 5 мин. Добавить помидоры/пасту, тушить 15 мин. Можно добавить фасоль.' },
+  { type:'Ужин', name:'Пельмени / вареники', needs:['Тесто (морозилка)',['Говяжий фарш','Свиной фарш','Куриный фарш','Картофель','Творог']], optional:['Сметана','Масло сливочное'], time:'30 мин', desc:'Тесто раскатать, слепить пельмени/вареники с начинкой. Варить 7–10 мин в кипящей воде. Подать со сметаной.' },
+  { type:'Ужин', name:'Рис с овощами и яйцом', needs:['Рис','Яйца'], optional:['Морковь','Перец болгарский','Замороженные овощи','Соевый соус','Чеснок'], time:'20 мин', desc:'Рис отварить. На сковороде обжарить овощи 5 мин, добавить рис, влить взбитое яйцо, перемешать. Полить соевым соусом.' },
+  { type:'Быстрый ужин', name:'Суп-пюре из брокколи', needs:['Брокколи'], optional:['Картофель','Лук','Сливки','Сыр','Чеснок'], time:'25 мин', desc:'Брокколи + картофель + лук отварить 15 мин. Пробить блендером. Добавить сливки, прогреть. Посыпать сыром.' },
+];
+
+let selected = new Set();
+let currentCat = 'Мясо';
+
+function renderCategories() {
+  const el = document.getElementById('categories');
+  el.innerHTML = Object.keys(allProducts).map(cat =>
+    `<button class="cat-btn ${cat === currentCat ? 'active' : ''}" onclick="selectCat('${cat}')">${cat}</button>`
+  ).join('');
+}
+
+function selectCat(cat) {
+  currentCat = cat;
+  renderCategories();
+  renderProducts();
+}
+
+function renderProducts() {
+  const el = document.getElementById('products');
+  const items = allProducts[currentCat];
+  el.innerHTML = items.map(p =>
+    `<button class="prod-btn ${selected.has(p.n) ? 'selected' : ''}" onclick="toggleProduct('${p.n}')">
+      <span class="em">${p.e}</span> ${p.n}
+    </button>`
+  ).join('');
+}
+
+function toggleProduct(name) {
+  if (selected.has(name)) selected.delete(name);
+  else selected.add(name);
+  renderProducts();
+  renderSelected();
+}
+
+function addCustom() {
+  const input = document.getElementById('custom');
+  const val = input.value.trim();
+  if (val) {
+    selected.add(val);
+    input.value = '';
+    renderSelected();
+  }
+}
+
+function removeProduct(name) {
+  selected.delete(name);
+  renderProducts();
+  renderSelected();
+}
+
+function renderSelected() {
+  const el = document.getElementById('selected');
+  const count = document.getElementById('sel-count');
+  const btn = document.getElementById('btn-cook');
+
+  count.textContent = selected.size;
+  btn.disabled = selected.size < 2;
+
+  if (selected.size === 0) {
+    el.innerHTML = '<div class="empty-msg">Нажмите на продукты слева, чтобы добавить</div>';
+    return;
+  }
+
+  el.innerHTML = [...selected].map(name =>
+    `<div class="selected-tag" onclick="removeProduct('${name}')"><span>${name}</span><span class="x">×</span></div>`
+  ).join('');
+}
+
+function cook() {
+  const myProducts = [...selected];
+  const matched = [];
+
+  recipes.forEach(r => {
+    let score = 0;
+    let hasAll = true;
+    let usedProducts = [];
+
+    // Check required ingredients
+    for (const need of r.needs) {
+      if (Array.isArray(need)) {
+        // Any of these
+        const found = need.find(n => myProducts.includes(n));
+        if (found) { score += 3; usedProducts.push(found); }
+        else hasAll = false;
+      } else {
+        if (myProducts.includes(need)) { score += 3; usedProducts.push(need); }
+        else hasAll = false;
+      }
+    }
+
+    if (!hasAll) return;
+
+    // Bonus for optional ingredients
+    (r.optional || []).forEach(opt => {
+      if (myProducts.includes(opt)) { score += 1; usedProducts.push(opt); }
+    });
+
+    matched.push({ ...r, score, usedProducts: [...new Set(usedProducts)] });
+  });
+
+  // Sort by score (most matching ingredients first)
+  matched.sort((a, b) => b.score - a.score);
+
+  const section = document.getElementById('results-section');
+  const list = document.getElementById('meals-list');
+
+  if (matched.length === 0) {
+    section.style.display = 'block';
+    list.innerHTML = '<div class="no-meals">Не нашлось рецептов с этими продуктами. Попробуйте добавить ещё что-нибудь — яйца, лук, макароны...</div>';
+    return;
+  }
+
+  section.style.display = 'block';
+  list.innerHTML = matched.map(m =>
+    `<div class="meal-card">
+      <div class="meal-type">${m.type}</div>
+      <div class="meal-name">${m.name}</div>
+      <div class="meal-desc">${m.desc}</div>
+      <div class="meal-products">Используем: ${m.usedProducts.join(', ')}</div>
+      <div class="meal-time">⏱ ${m.time}</div>
+    </div>`
+  ).join('');
+
+  section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Init
+renderCategories();
+renderProducts();
+renderSelected();
+</script>
+
+</body>
+</html>
