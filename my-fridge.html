@@ -342,6 +342,7 @@ function renderSelected() {
 function cook() {
   const myProducts = [...selected];
   const matched = [];
+  const almostMatched = [];
 
   recipes.forEach(r => {
     let score = 0;
@@ -361,7 +362,25 @@ function cook() {
       }
     }
 
-    if (!hasAll) return;
+    if (!hasAll) {
+      // Count missing ingredients for "almost" matches
+      let missing = [];
+      for (const need of r.needs) {
+        if (Array.isArray(need)) {
+          if (!need.find(n => myProducts.includes(n))) missing.push(need[0]);
+        } else {
+          if (!myProducts.includes(need)) missing.push(need);
+        }
+      }
+      if (missing.length === 1) {
+        // Almost! Only 1 ingredient missing
+        (r.optional || []).forEach(opt => {
+          if (myProducts.includes(opt)) { score += 1; usedProducts.push(opt); }
+        });
+        almostMatched.push({ ...r, score, usedProducts: [...new Set(usedProducts)], missing: missing });
+      }
+      return;
+    }
 
     // Bonus for optional ingredients
     (r.optional || []).forEach(opt => {
@@ -373,27 +392,48 @@ function cook() {
 
   // Sort by score (most matching ingredients first)
   matched.sort((a, b) => b.score - a.score);
+  almostMatched.sort((a, b) => b.score - a.score);
 
   const section = document.getElementById('results-section');
   const list = document.getElementById('meals-list');
 
-  if (matched.length === 0) {
+  if (matched.length === 0 && almostMatched.length === 0) {
     section.style.display = 'block';
     list.innerHTML = '<div class="no-meals">Не нашлось рецептов с этими продуктами. Попробуйте добавить ещё что-нибудь — яйца, лук, макароны...</div>';
     return;
   }
 
   section.style.display = 'block';
-  list.innerHTML = matched.map(m =>
+
+  let html = '';
+
+  if (matched.length > 0) {
+    html += '<div style="font-size:12px;color:#22C55E;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:2px;text-align:center">Можно приготовить (' + matched.length + ')</div>';
+    html += matched.map(m =>
     `<div class="meal-card">
       <div class="meal-type">${m.type}</div>
       <div class="meal-name">${m.name}</div>
       <div class="meal-desc">${m.desc}</div>
-      <div class="meal-products">Используем: ${m.usedProducts.join(', ')}</div>
+      <div class="meal-products" style="color:#22C55E">Используем: ${m.usedProducts.join(', ')}</div>
       <div class="meal-time">⏱ ${m.time}</div>
     </div>`
-  ).join('');
+    ).join('');
+  }
 
+  if (almostMatched.length > 0) {
+    html += '<div style="font-size:12px;color:#F5A623;font-weight:700;margin:16px 0 8px;text-transform:uppercase;letter-spacing:2px;text-align:center">Почти подходит — не хватает 1 продукта (' + almostMatched.length + ')</div>';
+    html += almostMatched.slice(0, 5).map(m =>
+    `<div class="meal-card" style="border-color:rgba(245,166,35,0.2);opacity:0.85">
+      <div class="meal-type">${m.type}</div>
+      <div class="meal-name">${m.name}</div>
+      <div class="meal-desc">${m.desc}</div>
+      <div style="font-size:12px;color:#F5A623;margin-top:6px;font-weight:600">Не хватает: ${m.missing.join(', ')}</div>
+      <div class="meal-time">⏱ ${m.time}</div>
+    </div>`
+    ).join('');
+  }
+
+  list.innerHTML = html;
   section.scrollIntoView({ behavior: 'smooth' });
 }
 

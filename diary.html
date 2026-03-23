@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мой кулинарный дневник — Планета X</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #10101A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(59,130,246,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(96,165,250,0.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 75%, rgba(96,165,250,0.35) 0%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 700px; width: 100%; margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { text-align: center; padding: 15px 0 5px; }
+  .logo { font-size: 12px; font-weight: 800; color: #3B82F6; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 24px; font-weight: 800; margin: 4px 0; }
+  h1 span { color: #F5A623; }
+  .subtitle { color: #94A3B8; font-size: 12px; }
+
+  /* Stats */
+  .stats {
+    display: flex; gap: 8px; justify-content: center; margin: 16px 0;
+  }
+  .stat {
+    background: rgba(30,30,50,0.6); border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 12px; padding: 10px 16px; text-align: center; flex: 1; max-width: 120px;
+  }
+  .stat-num { font-size: 20px; font-weight: 800; color: #F5A623; }
+  .stat-label { font-size: 9px; color: #94A3B8; margin-top: 2px; }
+
+  /* Calendar */
+  .calendar {
+    background: rgba(30,30,50,0.5); border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 14px; padding: 14px; margin: 16px 0;
+  }
+
+  .cal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .cal-month { font-size: 15px; font-weight: 700; }
+  .cal-nav {
+    background: none; border: 1px solid #2A2A3A; color: #94A3B8;
+    width: 30px; height: 30px; border-radius: 8px; font-size: 14px;
+    cursor: pointer; font-family: inherit;
+  }
+  .cal-nav:hover { border-color: #3B82F6; color: #E2E8F0; }
+
+  .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+
+  .cal-weekday {
+    text-align: center; font-size: 10px; color: #64748B;
+    font-weight: 700; padding: 4px 0;
+  }
+
+  .cal-day {
+    aspect-ratio: 1; border-radius: 8px; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.15s;
+    position: relative;
+  }
+
+  .cal-day:hover { border-color: #3B82F6; }
+  .cal-day.empty { cursor: default; }
+  .cal-day.empty:hover { border-color: transparent; }
+  .cal-day.today { border-color: #3B82F6; color: #3B82F6; }
+  .cal-day.has-entry { background: rgba(34,197,94,0.15); color: #22C55E; }
+  .cal-day.has-entry .cal-dot { display: block; }
+  .cal-day.selected { background: rgba(245,166,35,0.2); border-color: #F5A623; color: #F5A623; }
+
+  .cal-dot {
+    display: none; width: 4px; height: 4px; border-radius: 50%;
+    background: #22C55E; margin-top: 2px;
+  }
+
+  /* Add entry form */
+  .add-form {
+    background: rgba(30,30,50,0.7); border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 14px; padding: 16px; margin: 16px 0;
+    display: none;
+  }
+
+  .add-form.visible { display: block; animation: fadeIn 0.3s; }
+
+  .form-date {
+    font-size: 13px; font-weight: 700; color: #F5A623; margin-bottom: 12px;
+  }
+
+  .form-row { margin-bottom: 10px; }
+  .form-label { font-size: 11px; color: #94A3B8; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .form-input {
+    width: 100%; padding: 10px 12px; border-radius: 10px;
+    background: #141420; border: 1px solid #2A2A3A; color: #E2E8F0;
+    font-size: 13px; font-family: inherit; outline: none;
+  }
+  .form-input:focus { border-color: #3B82F6; }
+  .form-textarea { resize: vertical; min-height: 60px; }
+
+  .form-rating { display: flex; gap: 4px; margin: 4px 0; }
+  .form-star {
+    font-size: 24px; cursor: pointer; opacity: 0.3; transition: all 0.15s;
+  }
+  .form-star.active { opacity: 1; }
+  .form-star:hover { transform: scale(1.2); }
+
+  .meal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .meal-tag {
+    padding: 5px 10px; border-radius: 8px; font-size: 11px;
+    font-weight: 600; font-family: inherit; cursor: pointer;
+    border: 1px solid #2A2A3A; background: #1A1A2A; color: #94A3B8;
+    transition: all 0.15s;
+  }
+  .meal-tag:hover { border-color: #3B82F6; color: #E2E8F0; }
+  .meal-tag.selected { background: #3B82F6; color: white; border-color: #3B82F6; }
+
+  .form-photo-area {
+    border: 2px dashed #2A2A3A; border-radius: 10px;
+    padding: 16px; text-align: center; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .form-photo-area:hover { border-color: #3B82F6; }
+  .form-photo-area .icon { font-size: 28px; margin-bottom: 4px; }
+  .form-photo-area .text { font-size: 11px; color: #64748B; }
+
+  .form-preview {
+    width: 100%; max-height: 200px; object-fit: cover;
+    border-radius: 10px; margin-top: 8px; display: none;
+  }
+
+  .form-btns { display: flex; gap: 8px; margin-top: 12px; }
+  .btn-save {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: linear-gradient(135deg, #F5A623, #D97706);
+    color: #10101A; border: none; font-size: 13px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+  }
+  .btn-save:hover { opacity: 0.9; }
+  .btn-cancel {
+    padding: 10px 16px; border-radius: 10px;
+    background: transparent; border: 1px solid #2A2A3A;
+    color: #94A3B8; font-size: 13px; font-family: inherit; cursor: pointer;
+  }
+  .btn-cancel:hover { border-color: #EF4444; color: #EF4444; }
+
+  /* Entries feed */
+  .feed { margin: 16px 0; }
+  .feed-title { font-size: 12px; color: #94A3B8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+
+  .entry-card {
+    background: rgba(30,30,50,0.6); border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 12px; padding: 14px; margin-bottom: 10px;
+    animation: fadeIn 0.3s;
+  }
+
+  .entry-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .entry-date { font-size: 11px; color: #94A3B8; }
+  .entry-meal-type {
+    font-size: 10px; padding: 2px 8px; border-radius: 4px;
+    font-weight: 600;
+  }
+  .type-breakfast { background: rgba(245,166,35,0.15); color: #F5A623; }
+  .type-lunch { background: rgba(34,197,94,0.15); color: #22C55E; }
+  .type-dinner { background: rgba(59,130,246,0.15); color: #3B82F6; }
+  .type-snack { background: rgba(168,85,247,0.15); color: #A855F7; }
+  .type-dessert { background: rgba(236,72,153,0.15); color: #EC4899; }
+
+  .entry-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .entry-stars { font-size: 14px; margin-bottom: 4px; }
+  .entry-comment { font-size: 12px; color: #94A3B8; line-height: 1.5; }
+
+  .entry-photo {
+    width: 100%; max-height: 250px; object-fit: cover;
+    border-radius: 8px; margin-top: 8px;
+  }
+
+  .entry-delete {
+    float: right; background: none; border: none;
+    color: #4A5568; font-size: 14px; cursor: pointer; padding: 2px 6px;
+  }
+  .entry-delete:hover { color: #EF4444; }
+
+  .empty-feed {
+    text-align: center; color: #4A5568; font-size: 13px;
+    font-style: italic; padding: 30px;
+  }
+
+  .streak-bar {
+    background: rgba(30,30,50,0.5); border: 1px solid rgba(245,166,35,0.2);
+    border-radius: 10px; padding: 10px 14px; margin: 12px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .streak-fire { font-size: 24px; }
+  .streak-text { font-size: 12px; color: #F5A623; font-weight: 700; }
+  .streak-days { display: flex; gap: 3px; }
+  .streak-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1px solid #2A2A3A;
+  }
+  .streak-dot.filled { background: #F5A623; border-color: #F5A623; }
+
+  .app-promo {
+    background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(59,130,246,0.12));
+    border: 1px solid rgba(168,85,247,0.25);
+    border-radius: 12px; padding: 12px; margin: 16px 0;
+    text-align: center; font-size: 11px;
+  }
+  .app-promo strong { color: #A855F7; }
+
+  .footer { text-align: center; padding: 16px 0; color: #4A5568; font-size: 11px; }
+  .footer a { color: #3B82F6; text-decoration: none; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 500px) {
+    .stats { flex-wrap: wrap; }
+    .stat { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">Планета X</div>
+    <h1>Мой кулинарный <span>дневник</span></h1>
+    <div class="subtitle">Записывай, что готовишь — создавай свою историю</div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="s-total">0</div><div class="stat-label">записей</div></div>
+    <div class="stat"><div class="stat-num" id="s-month">0</div><div class="stat-label">в этом месяце</div></div>
+    <div class="stat"><div class="stat-num" id="s-streak">0</div><div class="stat-label">дней подряд</div></div>
+    <div class="stat"><div class="stat-num" id="s-avg">—</div><div class="stat-label">средняя оценка</div></div>
+  </div>
+
+  <div id="streak-bar"></div>
+
+  <div class="calendar">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+      <div class="cal-month" id="cal-month"></div>
+      <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+    </div>
+    <div class="cal-days" id="cal-days"></div>
+  </div>
+
+  <div class="add-form" id="add-form">
+    <div class="form-date" id="form-date"></div>
+
+    <div class="form-row">
+      <div class="form-label">Что приготовили?</div>
+      <input type="text" class="form-input" id="f-name" placeholder="Например: Борщ по бабушкиному рецепту" maxlength="60">
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">Приём пищи</div>
+      <div class="meal-tags" id="f-meal">
+        <button class="meal-tag" data-meal="breakfast">Завтрак</button>
+        <button class="meal-tag" data-meal="lunch">Обед</button>
+        <button class="meal-tag selected" data-meal="dinner">Ужин</button>
+        <button class="meal-tag" data-meal="snack">Перекус</button>
+        <button class="meal-tag" data-meal="dessert">Десерт</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">Оценка</div>
+      <div class="form-rating" id="f-rating">
+        <span class="form-star active" data-r="1">⭐</span>
+        <span class="form-star active" data-r="2">⭐</span>
+        <span class="form-star active" data-r="3">⭐</span>
+        <span class="form-star" data-r="4">⭐</span>
+        <span class="form-star" data-r="5">⭐</span>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">Заметка</div>
+      <textarea class="form-input form-textarea" id="f-comment" placeholder="Добавила чуть больше чеснока — получилось огонь!" maxlength="200"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-label">Фото (необязательно)</div>
+      <div class="form-photo-area" id="photo-area" onclick="document.getElementById('f-photo').click()">
+        <div class="icon">📷</div>
+        <div class="text">Нажмите, чтобы добавить фото блюда</div>
+      </div>
+      <input type="file" id="f-photo" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+      <img class="form-preview" id="f-preview">
+    </div>
+
+    <div class="form-btns">
+      <button class="btn-save" onclick="saveEntry()">Сохранить запись</button>
+      <button class="btn-cancel" onclick="closeForm()">Отмена</button>
+    </div>
+  </div>
+
+  <div class="feed">
+    <div class="feed-title" id="feed-title">Последние записи</div>
+    <div id="feed-list"></div>
+  </div>
+
+  <div class="app-promo">
+    <strong>FoodCubed</strong> хранит ваш дневник + фото + КБЖУ автоматически.<br>
+    Промокод <strong>PLANETX30</strong> — 30 дней бесплатно!
+  </div>
+
+  <div class="footer"><a href="index.html">Планета X</a></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'planetx_diary';
+const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const weekDays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const mealLabels = { breakfast:'Завтрак', lunch:'Обед', dinner:'Ужин', snack:'Перекус', dessert:'Десерт' };
+const mealClasses = { breakfast:'type-breakfast', lunch:'type-lunch', dinner:'type-dinner', snack:'type-snack', dessert:'type-dessert' };
+
+let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let viewDate = new Date();
+let selectedDate = null;
+let currentRating = 3;
+let currentMeal = 'dinner';
+let currentPhotoData = null;
+
+// Calendar
+function renderCalendar() {
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+
+  document.getElementById('cal-month').textContent = monthNames[month] + ' ' + year;
+
+  const firstDay = new Date(year, month, 1);
+  let startDay = firstDay.getDay() - 1;
+  if (startDay < 0) startDay = 6;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+
+  let html = weekDays.map(d => `<div class="cal-weekday">${d}</div>`).join('');
+
+  for (let i = 0; i < startDay; i++) html += '<div class="cal-day empty"></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+    const hasEntry = entries.some(e => e.date === dateStr);
+    const isSelected = selectedDate === dateStr;
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (hasEntry) cls += ' has-entry';
+    if (isSelected) cls += ' selected';
+
+    html += `<div class="${cls}" onclick="selectDay('${dateStr}')">${d}<div class="cal-dot"></div></div>`;
+  }
+
+  document.getElementById('cal-days').innerHTML = html;
+}
+
+function changeMonth(delta) {
+  viewDate.setMonth(viewDate.getMonth() + delta);
+  renderCalendar();
+}
+
+function selectDay(dateStr) {
+  selectedDate = dateStr;
+  renderCalendar();
+  openForm(dateStr);
+}
+
+// Form
+function openForm(dateStr) {
+  const form = document.getElementById('add-form');
+  form.classList.add('visible');
+
+  const parts = dateStr.split('-');
+  const d = parseInt(parts[2]);
+  const m = parseInt(parts[1]) - 1;
+  document.getElementById('form-date').textContent = `${d} ${monthNames[m]} ${parts[0]}`;
+
+  // Reset
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-comment').value = '';
+  document.getElementById('f-preview').style.display = 'none';
+  document.getElementById('photo-area').style.display = '';
+  currentPhotoData = null;
+  currentRating = 3;
+  currentMeal = 'dinner';
+  updateRatingUI();
+  updateMealUI();
+
+  form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function closeForm() {
+  document.getElementById('add-form').classList.remove('visible');
+  selectedDate = null;
+  renderCalendar();
+}
+
+// Rating
+function updateRatingUI() {
+  document.querySelectorAll('.form-star').forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.r) <= currentRating);
+  });
+}
+
+document.getElementById('f-rating').addEventListener('click', e => {
+  if (e.target.dataset.r) { currentRating = parseInt(e.target.dataset.r); updateRatingUI(); }
+});
+
+// Meal type
+function updateMealUI() {
+  document.querySelectorAll('.meal-tag').forEach(t => {
+    t.classList.toggle('selected', t.dataset.meal === currentMeal);
+  });
+}
+
+document.getElementById('f-meal').addEventListener('click', e => {
+  if (e.target.dataset.meal) { currentMeal = e.target.dataset.meal; updateMealUI(); }
+});
+
+// Photo
+function previewPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      // Compress
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const maxW = 600;
+        const scale = Math.min(maxW / img.width, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+
+        const preview = document.getElementById('f-preview');
+        preview.src = currentPhotoData;
+        preview.style.display = 'block';
+        document.getElementById('photo-area').style.display = 'none';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// Save
+function saveEntry() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); return; }
+
+  const entry = {
+    id: Date.now(),
+    date: selectedDate,
+    name: name,
+    meal: currentMeal,
+    rating: currentRating,
+    comment: document.getElementById('f-comment').value.trim(),
+    photo: currentPhotoData,
+  };
+
+  entries.push(entry);
+  entries.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+
+  closeForm();
+  renderAll();
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  renderAll();
+}
+
+// Stats
+function renderStats() {
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const monthEntries = entries.filter(e => e.date.startsWith(thisMonth));
+
+  document.getElementById('s-total').textContent = entries.length;
+  document.getElementById('s-month').textContent = monthEntries.length;
+
+  if (entries.length > 0) {
+    const avg = entries.reduce((s, e) => s + e.rating, 0) / entries.length;
+    document.getElementById('s-avg').textContent = avg.toFixed(1) + '⭐';
+  }
+
+  // Streak
+  const uniqueDates = [...new Set(entries.map(e => e.date))].sort().reverse();
+  let streak = 0;
+  const today = new Date();
+  let checkDate = new Date(today);
+
+  for (let i = 0; i < 365; i++) {
+    const ds = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+    if (uniqueDates.includes(ds)) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (i === 0) {
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  document.getElementById('s-streak').textContent = streak;
+
+  // Streak bar
+  const bar = document.getElementById('streak-bar');
+  if (streak > 0 || entries.length > 0) {
+    const dots = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const filled = uniqueDates.includes(ds);
+      dots.push(`<div class="streak-dot ${filled ? 'filled' : ''}"></div>`);
+    }
+    bar.innerHTML = `<div class="streak-bar">
+      <div class="streak-fire">${streak >= 7 ? '🔥' : streak >= 3 ? '✨' : '💪'}</div>
+      <div class="streak-text">${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд</div>
+      <div class="streak-days">${dots.join('')}</div>
+    </div>`;
+  } else {
+    bar.innerHTML = '';
+  }
+}
+
+// Feed
+function renderFeed() {
+  const list = document.getElementById('feed-list');
+  const recent = entries.slice(0, 20);
+
+  if (recent.length === 0) {
+    list.innerHTML = '<div class="empty-feed">Пока пусто. Выберите день в календаре и запишите первое блюдо!</div>';
+    return;
+  }
+
+  list.innerHTML = recent.map(e => {
+    const stars = '⭐'.repeat(e.rating) + '☆'.repeat(5 - e.rating);
+    const photoHtml = e.photo ? `<img class="entry-photo" src="${e.photo}" alt="${e.name}">` : '';
+    const parts = e.date.split('-');
+    const dateLabel = `${parseInt(parts[2])} ${monthNames[parseInt(parts[1])-1]}`;
+    const mealCls = mealClasses[e.meal] || 'type-dinner';
+    const mealText = mealLabels[e.meal] || 'Ужин';
+
+    return `<div class="entry-card">
+      <div class="entry-header">
+        <div class="entry-date">${dateLabel}</div>
+        <span class="entry-meal-type ${mealCls}">${mealText}</span>
+        <button class="entry-delete" onclick="deleteEntry(${e.id})" title="Удалить">✕</button>
+      </div>
+      <div class="entry-name">${e.name}</div>
+      <div class="entry-stars">${stars}</div>
+      ${e.comment ? `<div class="entry-comment">${e.comment}</div>` : ''}
+      ${photoHtml}
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  renderCalendar();
+  renderStats();
+  renderFeed();
+}
+
+renderAll();
+</script>
+
+</body>
+</html>
