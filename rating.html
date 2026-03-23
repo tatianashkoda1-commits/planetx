@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рейтинг участников — Планета X</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #10101A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  .stars {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(59,130,246,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(96,165,250,0.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 75%, rgba(96,165,250,0.35) 0%, transparent 100%);
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 650px; width: 100%; margin: 0 auto;
+    padding: 20px;
+  }
+
+  header { text-align: center; padding: 15px 0 5px; }
+  .logo { font-size: 12px; font-weight: 800; color: #3B82F6; letter-spacing: 3px; text-transform: uppercase; }
+  h1 { font-size: 24px; font-weight: 800; margin: 4px 0; }
+  h1 span { color: #F5A623; }
+  .subtitle { color: #94A3B8; font-size: 12px; }
+
+  /* Period tabs */
+  .tabs {
+    display: flex; gap: 6px; justify-content: center;
+    margin: 16px 0;
+  }
+  .tab {
+    padding: 7px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 700; font-family: inherit;
+    cursor: pointer; border: 1px solid #2A2A3A;
+    background: #1A1A2A; color: #94A3B8; transition: all 0.2s;
+  }
+  .tab:hover { border-color: #3B82F6; color: #E2E8F0; }
+  .tab.active { background: #3B82F6; color: white; border-color: #3B82F6; }
+
+  /* Top 3 podium */
+  .podium {
+    display: flex; align-items: flex-end; justify-content: center;
+    gap: 10px; margin: 20px 0 24px; height: 220px;
+  }
+
+  .podium-place {
+    display: flex; flex-direction: column; align-items: center;
+    width: 130px;
+  }
+
+  .podium-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800;
+    margin-bottom: 8px; position: relative;
+  }
+
+  .podium-place:nth-child(2) .podium-avatar {
+    width: 80px; height: 80px; font-size: 34px;
+  }
+
+  .podium-crown {
+    position: absolute; top: -18px; font-size: 22px;
+  }
+
+  .podium-name {
+    font-size: 13px; font-weight: 700; text-align: center;
+    margin-bottom: 4px; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; max-width: 120px;
+  }
+
+  .podium-score {
+    font-size: 11px; color: #F5A623; font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .podium-bar {
+    width: 100%; border-radius: 8px 8px 0 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; color: rgba(0,0,0,0.3);
+  }
+
+  .podium-place:nth-child(1) .podium-bar {
+    height: 80px; background: linear-gradient(to top, #78716C, #A8A29E);
+  }
+  .podium-place:nth-child(2) .podium-bar {
+    height: 110px; background: linear-gradient(to top, #D97706, #F5A623);
+  }
+  .podium-place:nth-child(3) .podium-bar {
+    height: 60px; background: linear-gradient(to top, #92400E, #B45309);
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex; gap: 8px; justify-content: center; margin: 0 0 20px;
+  }
+
+  .stat-card {
+    background: rgba(30,30,50,0.6);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 12px; padding: 12px 16px;
+    text-align: center; flex: 1; max-width: 150px;
+  }
+
+  .stat-num { font-size: 22px; font-weight: 800; color: #F5A623; }
+  .stat-label { font-size: 10px; color: #94A3B8; margin-top: 2px; }
+
+  /* Full list */
+  .list-title {
+    font-size: 12px; font-weight: 700; color: #94A3B8;
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 10px; text-align: center;
+  }
+
+  .player-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; border-radius: 10px;
+    margin-bottom: 4px; transition: all 0.2s;
+  }
+  .player-row:hover { background: rgba(30,30,50,0.5); }
+
+  .player-rank {
+    width: 28px; font-size: 14px; font-weight: 800;
+    text-align: center; flex-shrink: 0;
+  }
+  .player-rank.gold { color: #F5A623; }
+  .player-rank.silver { color: #A8A29E; }
+  .player-rank.bronze { color: #B45309; }
+
+  .player-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; flex-shrink: 0;
+  }
+
+  .player-info { flex: 1; min-width: 0; }
+  .player-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-badges { display: flex; gap: 4px; margin-top: 2px; }
+  .badge {
+    font-size: 9px; padding: 1px 6px; border-radius: 4px;
+    font-weight: 600;
+  }
+  .badge-hw { background: rgba(34,197,94,0.15); color: #22C55E; }
+  .badge-chat { background: rgba(59,130,246,0.15); color: #3B82F6; }
+  .badge-streak { background: rgba(245,166,35,0.15); color: #F5A623; }
+  .badge-chef { background: rgba(168,85,247,0.15); color: #A855F7; }
+
+  .player-score {
+    font-size: 16px; font-weight: 800; color: #F5A623;
+    flex-shrink: 0; min-width: 50px; text-align: right;
+  }
+
+  .player-bar-wrap {
+    width: 80px; height: 6px; background: #1A1A2A;
+    border-radius: 3px; flex-shrink: 0; overflow: hidden;
+  }
+  .player-bar {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #3B82F6, #F5A623);
+    transition: width 0.5s;
+  }
+
+  /* How it works */
+  .how-section {
+    background: rgba(30,30,50,0.5);
+    border: 1px solid rgba(59,130,246,0.15);
+    border-radius: 14px; padding: 16px;
+    margin: 24px 0;
+  }
+
+  .how-title {
+    font-size: 13px; font-weight: 700; color: #F5A623;
+    margin-bottom: 10px;
+  }
+
+  .how-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+
+  .how-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: #LGRAY;
+  }
+
+  .how-pts {
+    background: #1A1A2A; border-radius: 6px;
+    padding: 3px 8px; font-weight: 800; color: #F5A623;
+    font-size: 12px; flex-shrink: 0;
+  }
+
+  .how-desc { color: #94A3B8; }
+
+  .footer {
+    text-align: center; padding: 20px 0;
+    color: #4A5568; font-size: 11px;
+  }
+  .footer a { color: #3B82F6; text-decoration: none; }
+
+  @media (max-width: 500px) {
+    .podium-place { width: 100px; }
+    .podium { height: 190px; }
+    .how-grid { grid-template-columns: 1fr; }
+    .player-bar-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="logo">Планета X</div>
+    <h1>Рейтинг <span>участников</span></h1>
+    <div class="subtitle">Самые активные участники клуба</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchPeriod('week', this)">Неделя</button>
+    <button class="tab" onclick="switchPeriod('month', this)">Месяц</button>
+    <button class="tab" onclick="switchPeriod('all', this)">Всё время</button>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="stat-players">0</div><div class="stat-label">участников</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-hw">0</div><div class="stat-label">ДЗ сдано</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-msgs">0</div><div class="stat-label">сообщений</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-likes">0</div><div class="stat-label">лайков от шефов</div></div>
+  </div>
+
+  <div class="podium" id="podium"></div>
+
+  <div class="list-title">Полный рейтинг</div>
+  <div id="list"></div>
+
+  <div class="how-section">
+    <div class="how-title">Как начисляются баллы</div>
+    <div class="how-grid">
+      <div class="how-item"><div class="how-pts">+10</div><div class="how-desc">Сдать ДЗ (фото блюда)</div></div>
+      <div class="how-item"><div class="how-pts">+5</div><div class="how-desc">Сообщение в чате</div></div>
+      <div class="how-item"><div class="how-pts">+15</div><div class="how-desc">Лайк от шефа</div></div>
+      <div class="how-item"><div class="how-pts">+3</div><div class="how-desc">Реакция на чужой пост</div></div>
+      <div class="how-item"><div class="how-pts">+20</div><div class="how-desc">Серия 7 ДЗ подряд</div></div>
+      <div class="how-item"><div class="how-pts">+8</div><div class="how-desc">Помощь новичку в чате</div></div>
+      <div class="how-item"><div class="how-pts">+25</div><div class="how-desc">Фото в соцсетях с хештегом</div></div>
+      <div class="how-item"><div class="how-pts">+50</div><div class="how-desc">Привёл друга в клуб</div></div>
+    </div>
+  </div>
+
+  <div class="footer"><a href="index.html">Планета X</a></div>
+</div>
+
+<script>
+// Demo data — in production this would come from backend
+const avatarColors = ['#EF4444','#F59E0B','#22C55E','#3B82F6','#8B5CF6','#EC4899','#14B8A6','#F97316','#6366F1','#10B981','#E11D48','#0EA5E9','#A855F7','#D946EF','#84CC16'];
+
+const names = [
+  'Марина К.', 'Елена С.', 'Ольга В.', 'Анна П.', 'Наталья Д.',
+  'Светлана М.', 'Ирина Б.', 'Татьяна Л.', 'Юлия Р.', 'Екатерина Н.',
+  'Алёна Т.', 'Дарья Ф.', 'Виктория Г.', 'Полина Х.', 'Кристина Ш.',
+  'Мария О.', 'Надежда И.', 'Людмила А.', 'Валентина Е.', 'Оксана Ж.',
+];
+
+const allBadges = [
+  { text: 'ДЗ ×7', cls: 'badge-hw' },
+  { text: 'Активный чат', cls: 'badge-chat' },
+  { text: 'Серия 7 дней', cls: 'badge-streak' },
+  { text: 'Лайк шефа', cls: 'badge-chef' },
+  { text: 'ДЗ ×14', cls: 'badge-hw' },
+  { text: 'Помощник', cls: 'badge-chat' },
+  { text: 'Серия 14 дней', cls: 'badge-streak' },
+  { text: 'Фото в соцсетях', cls: 'badge-chef' },
+];
+
+function generateData(period) {
+  const count = period === 'week' ? 15 : period === 'month' ? 20 : 20;
+  const multiplier = period === 'week' ? 1 : period === 'month' ? 3 : 8;
+
+  const players = [];
+  const usedNames = new Set();
+
+  for (let i = 0; i < count; i++) {
+    let name;
+    do { name = names[Math.floor(Math.random() * names.length)]; } while (usedNames.has(name));
+    usedNames.add(name);
+
+    const baseScore = Math.floor(Math.random() * 80 + 40) * multiplier;
+    const score = Math.max(baseScore - i * (5 * multiplier), 10);
+    const hw = Math.floor(Math.random() * (period === 'week' ? 4 : period === 'month' ? 12 : 30)) + 1;
+    const msgs = Math.floor(Math.random() * (period === 'week' ? 20 : period === 'month' ? 60 : 150)) + 5;
+    const likes = Math.floor(Math.random() * (period === 'week' ? 5 : period === 'month' ? 15 : 40));
+
+    const numBadges = Math.max(0, 3 - i + Math.floor(Math.random() * 2));
+    const badges = [];
+    const shuffled = [...allBadges].sort(() => Math.random() - 0.5);
+    for (let b = 0; b < Math.min(numBadges, 3); b++) badges.push(shuffled[b]);
+
+    players.push({
+      name, score, hw, msgs, likes, badges,
+      color: avatarColors[i % avatarColors.length],
+      initial: name[0],
+    });
+  }
+
+  players.sort((a, b) => b.score - a.score);
+  return players;
+}
+
+let currentPeriod = 'week';
+let currentData = generateData('week');
+
+function switchPeriod(period, btn) {
+  currentPeriod = period;
+  currentData = generateData(period);
+
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+
+  render();
+}
+
+function render() {
+  const data = currentData;
+  const maxScore = data[0]?.score || 1;
+
+  // Stats
+  document.getElementById('stat-players').textContent = data.length;
+  document.getElementById('stat-hw').textContent = data.reduce((s, p) => s + p.hw, 0);
+  document.getElementById('stat-msgs').textContent = data.reduce((s, p) => s + p.msgs, 0);
+  document.getElementById('stat-likes').textContent = data.reduce((s, p) => s + p.likes, 0);
+
+  // Podium (top 3, but displayed as 2-1-3)
+  const top = data.slice(0, 3);
+  const podiumOrder = top.length >= 3 ? [top[1], top[0], top[2]] : top;
+  const medals = ['🥈', '🥇', '🥉'];
+  const podiumEl = document.getElementById('podium');
+
+  podiumEl.innerHTML = podiumOrder.map((p, displayIdx) => {
+    const realRank = displayIdx === 0 ? 2 : displayIdx === 1 ? 1 : 3;
+    const medal = realRank === 1 ? '🥇' : realRank === 2 ? '🥈' : '🥉';
+    const crown = realRank === 1 ? '<div class="podium-crown">👑</div>' : '';
+
+    return `
+      <div class="podium-place">
+        <div class="podium-avatar" style="background:${p.color}; color: rgba(255,255,255,0.9);">
+          ${crown}
+          ${p.initial}
+        </div>
+        <div class="podium-name">${p.name}</div>
+        <div class="podium-score">${p.score} баллов</div>
+        <div class="podium-bar">${realRank}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Full list
+  const listEl = document.getElementById('list');
+  listEl.innerHTML = data.map((p, i) => {
+    const rank = i + 1;
+    const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+    const barWidth = Math.round((p.score / maxScore) * 100);
+
+    const badgesHtml = p.badges.map(b => `<span class="badge ${b.cls}">${b.text}</span>`).join('');
+
+    return `
+      <div class="player-row">
+        <div class="player-rank ${rankClass}">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : rank}</div>
+        <div class="player-avatar" style="background:${p.color}; color: rgba(255,255,255,0.9);">${p.initial}</div>
+        <div class="player-info">
+          <div class="player-name">${p.name}</div>
+          <div class="player-badges">${badgesHtml}</div>
+        </div>
+        <div class="player-bar-wrap"><div class="player-bar" style="width:${barWidth}%"></div></div>
+        <div class="player-score">${p.score}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+render();
+</script>
+
+</body>
+</html>
