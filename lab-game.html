@@ -255,75 +255,70 @@ const RECIPES = {
   'egg+ice':{id:'weird5',emoji:'🥶',name:'Замороженное яйцо',desc:'Зачем?!',funny:true},
 };
 
-// Звуки через Web Audio API (работает на iPhone!)
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSound(type) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-
-  if (type === 'success') {
-    // Весёлый "дзынь!" — два тона вверх
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(523, audioCtx.currentTime); // C5
-    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1); // E5
-    osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2); // G5
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.4);
-  }
-  else if (type === 'new') {
-    // Открытие нового рецепта — "та-да-дааам!"
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(392, audioCtx.currentTime); // G4
-    osc.frequency.setValueAtTime(523, audioCtx.currentTime + 0.12); // C5
-    osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.24); // E5
-    osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.36); // G5
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.6);
-  }
-  else if (type === 'fail') {
-    // "Бдыщ!" — низкий шум вниз
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
-    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.3);
-  }
-  else if (type === 'funny') {
-    // Смешной "буль-буль" — вибрирующий тон
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-    osc.frequency.setValueAtTime(350, audioCtx.currentTime + 0.05);
-    osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.1);
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime + 0.15);
-    osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.2);
-    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.35);
-  }
-  else if (type === 'tap') {
-    // Короткий "тык" при добавлении в слот
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.08);
-  }
+// Звуки через Web Audio API
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
 }
 
-// Разблокировка AudioContext на iOS (нужен первый тап)
-document.addEventListener('touchstart', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true });
-document.addEventListener('click', () => { if (audioCtx.state === 'suspended') audioCtx.resume(); }, { once: true });
+function playSound(type) {
+  try {
+    const ctx = getAudio();
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === 'success') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, t);
+      osc.frequency.setValueAtTime(659, t + 0.1);
+      osc.frequency.setValueAtTime(784, t + 0.2);
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
+      osc.start(t); osc.stop(t + 0.4);
+    }
+    else if (type === 'new') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(392, t);
+      osc.frequency.setValueAtTime(523, t + 0.12);
+      osc.frequency.setValueAtTime(659, t + 0.24);
+      osc.frequency.setValueAtTime(784, t + 0.36);
+      gain.gain.setValueAtTime(0.3, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
+      osc.start(t); osc.stop(t + 0.6);
+    }
+    else if (type === 'fail') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(300, t);
+      osc.frequency.exponentialRampToValueAtTime(50, t + 0.3);
+      gain.gain.setValueAtTime(0.25, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+      osc.start(t); osc.stop(t + 0.3);
+    }
+    else if (type === 'funny') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(200, t);
+      osc.frequency.setValueAtTime(350, t + 0.05);
+      osc.frequency.setValueAtTime(150, t + 0.1);
+      osc.frequency.setValueAtTime(400, t + 0.15);
+      osc.frequency.setValueAtTime(100, t + 0.2);
+      gain.gain.setValueAtTime(0.2, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
+      osc.start(t); osc.stop(t + 0.35);
+    }
+    else if (type === 'tap') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, t);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+      osc.start(t); osc.stop(t + 0.08);
+    }
+  } catch(e) {}
+}
 
 let discovered = new Set();
 let available = []; // доступные для смешивания (базовые + открытые)
