@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кубик — персонаж</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#FFF5EB;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:'Inter',sans-serif;gap:30px;padding:20px}
+h2{color:#2D2A26;font-size:18px;margin-bottom:-10px}
+.demo-row{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;align-items:flex-end}
+.demo-label{font-size:11px;color:#8A8580;text-align:center;margin-top:6px}
+
+/* ===== КУБИК-ГЕРОЙ ===== */
+.kubik-wrap{position:relative;width:120px;height:150px;display:flex;align-items:flex-end;justify-content:center}
+
+.kubik-body{
+  width:100px;height:100px;position:relative;
+  background:linear-gradient(145deg,rgba(180,230,255,.85),rgba(130,200,240,.7),rgba(100,180,230,.6));
+  border-radius:18px;
+  border:2px solid rgba(255,255,255,.6);
+  box-shadow:
+    0 8px 24px rgba(100,180,230,.25),
+    inset 0 3px 8px rgba(255,255,255,.6),
+    inset 0 -3px 8px rgba(80,150,200,.15);
+  backdrop-filter:blur(4px);
+  overflow:visible;
+  transition:all .3s;
+}
+
+/* Блик */
+.kubik-body::before{
+  content:'';position:absolute;top:8px;left:10px;
+  width:28px;height:14px;border-radius:50%;
+  background:rgba(255,255,255,.7);
+  transform:rotate(-15deg);
+}
+/* Второй блик */
+.kubik-body::after{
+  content:'';position:absolute;top:18px;right:14px;
+  width:12px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,.4);
+  transform:rotate(-10deg);
+}
+
+/* Глаза */
+.kubik-eyes{position:absolute;top:30px;left:50%;transform:translateX(-50%);display:flex;gap:18px}
+.kubik-eye{width:16px;height:18px;background:#2D2A26;border-radius:50%;position:relative}
+.kubik-eye::before{content:'';position:absolute;top:3px;left:3px;width:6px;height:6px;background:#fff;border-radius:50%}
+/* Анимация моргания */
+.kubik-body.blink .kubik-eye{height:3px;border-radius:3px;transition:height .1s}
+
+/* Рот */
+.kubik-mouth{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+  width:20px;height:10px;border-bottom:3px solid #2D2A26;border-radius:0 0 10px 10px}
+
+/* Рот — говорит */
+.kubik-body.talking .kubik-mouth{
+  width:16px;height:14px;
+  background:#FF8A80;border:2.5px solid #2D2A26;
+  border-radius:50%;
+  animation:mouthTalk .3s infinite alternate;
+}
+@keyframes mouthTalk{0%{height:10px;width:14px}100%{height:16px;width:16px}}
+
+/* Рот — радость */
+.kubik-body.happy .kubik-mouth{width:24px;height:12px;border-width:3px}
+
+/* Рот — удивление */
+.kubik-body.surprised .kubik-mouth{
+  width:14px;height:14px;
+  background:#FF8A80;border:2.5px solid #2D2A26;border-radius:50%;
+  border-bottom:2.5px solid #2D2A26;
+}
+
+/* Рот — грусть */
+.kubik-body.sad .kubik-mouth{
+  width:20px;height:10px;border-bottom:none;
+  border-top:3px solid #2D2A26;border-radius:10px 10px 0 0;
+}
+
+/* Щёчки */
+.kubik-cheeks{position:absolute;top:42px;left:50%;transform:translateX(-50%);width:80px;display:flex;justify-content:space-between}
+.kubik-cheek{width:14px;height:8px;border-radius:50%;background:rgba(255,150,150,.35)}
+
+/* Ручки */
+.kubik-hand-l,.kubik-hand-r{
+  position:absolute;bottom:20px;width:22px;height:22px;
+  background:linear-gradient(145deg,rgba(180,230,255,.8),rgba(130,200,240,.6));
+  border-radius:50%;border:2px solid rgba(255,255,255,.5);
+  box-shadow:0 2px 6px rgba(100,180,230,.2);
+  transition:all .3s;
+}
+.kubik-hand-l{left:-14px}
+.kubik-hand-r{right:-14px}
+.kubik-body.waving .kubik-hand-r{animation:wave .5s infinite alternate;transform-origin:center}
+@keyframes wave{0%{transform:rotate(-20deg) translateY(0)}100%{transform:rotate(20deg) translateY(-8px)}}
+.kubik-body.pointing .kubik-hand-r{transform:translateX(10px) translateY(-20px)}
+
+/* Шарфик */
+.kubik-scarf{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  width:70px;height:16px;background:linear-gradient(90deg,#E85D3A,#D4A052,#E85D3A);
+  border-radius:4px;z-index:2}
+.kubik-scarf::after{
+  content:'';position:absolute;right:8px;top:10px;
+  width:16px;height:22px;background:linear-gradient(180deg,#E85D3A,#D4A052);
+  border-radius:0 0 6px 6px;transform:rotate(10deg);
+}
+
+/* Ножки */
+.kubik-feet{display:flex;gap:10px;margin-top:-2px;justify-content:center}
+.kubik-foot{width:22px;height:10px;background:linear-gradient(180deg,rgba(130,200,240,.6),rgba(100,180,230,.5));
+  border-radius:0 0 8px 8px;border:1.5px solid rgba(255,255,255,.4);border-top:none}
+
+/* Анимация дрожания от холода */
+.kubik-body.cold{animation:shiver 0.15s infinite alternate}
+@keyframes shiver{0%{transform:translateX(-1px) rotate(-0.5deg)}100%{transform:translateX(1px) rotate(0.5deg)}}
+
+/* Анимация прыжка */
+.kubik-wrap.bounce{animation:bounceK 1s infinite}
+@keyframes bounceK{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px)}60%{transform:translateY(-16px)}}
+
+/* Анимация покачивание */
+.kubik-wrap.wobble{animation:wobbleK 2s infinite}
+@keyframes wobbleK{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+
+/* Снежинки вокруг */
+.kubik-sparkle{position:absolute;font-size:10px;opacity:0;animation:sparkle 2s infinite}
+@keyframes sparkle{0%{opacity:0;transform:translateY(0)}30%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+.sp1{top:0;left:5px;animation-delay:0s}
+.sp2{top:10px;right:0;animation-delay:.7s}
+.sp3{top:-5px;right:15px;animation-delay:1.4s}
+
+/* Пузырёк речи */
+.kubik-bubble{position:absolute;top:-36px;left:50%;transform:translateX(-50%);
+  background:#fff;border-radius:12px;padding:4px 12px;font-size:11px;color:#2D2A26;
+  white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.06);opacity:0;transition:all .3s}
+.kubik-bubble::after{content:'';position:absolute;bottom:-6px;left:50%;margin-left:-5px;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #fff}
+.kubik-bubble.show{opacity:1;top:-42px}
+</style>
+</head>
+<body>
+
+<h2>Кубик — персонаж (все эмоции)</h2>
+
+<div class="demo-row">
+
+  <!-- Обычный -->
+  <div>
+    <div class="kubik-wrap wobble">
+      <div class="kubik-sparkle sp1">❄️</div>
+      <div class="kubik-sparkle sp2">✨</div>
+      <div class="kubik-sparkle sp3">❄️</div>
+      <div class="kubik-bubble show">Привет!</div>
+      <div class="kubik-body waving">
+        <div class="kubik-eyes"><div class="kubik-eye"></div><div class="kubik-eye"></div></div>
+        <div class="kubik-cheeks"><div class="kubik-cheek"></div><div class="kubik-cheek"></div></div>
+        <div class="kubik-mouth"></div>
+        <div class="kubik-hand-l"></div>
+        <div class="kubik-hand-r"></div>
+        <div class="kubik-scarf"></div>
+      </div>
+      <div class="kubik-feet"><div class="kubik-foot"></div><div class="kubik-foot"></div></div>
+    </div>
+    <div class="demo-label">Машет</div>
+  </div>
+
+  <!-- Говорит -->
+  <div>
+    <div class="kubik-wrap">
+      <div class="kubik-sparkle sp1">❄️</div>
+      <div class="kubik-sparkle sp2">✨</div>
+      <div class="kubik-bubble show">Помой ручки!</div>
+      <div class="kubik-body talking pointing">
+        <div class="kubik-eyes"><div class="kubik-eye"></div><div class="kubik-eye"></div></div>
+        <div class="kubik-cheeks"><div class="kubik-cheek"></div><div class="kubik-cheek"></div></div>
+        <div class="kubik-mouth"></div>
+        <div class="kubik-hand-l"></div>
+        <div class="kubik-hand-r"></div>
+        <div class="kubik-scarf"></div>
+      </div>
+      <div class="kubik-feet"><div class="kubik-foot"></div><div class="kubik-foot"></div></div>
+    </div>
+    <div class="demo-label">Говорит</div>
+  </div>
+
+  <!-- Радуется -->
+  <div>
+    <div class="kubik-wrap bounce">
+      <div class="kubik-sparkle sp1">⭐</div>
+      <div class="kubik-sparkle sp2">✨</div>
+      <div class="kubik-sparkle sp3">⭐</div>
+      <div class="kubik-bubble show">Вкусно! 😋</div>
+      <div class="kubik-body happy">
+        <div class="kubik-eyes"><div class="kubik-eye"></div><div class="kubik-eye"></div></div>
+        <div class="kubik-cheeks"><div class="kubik-cheek"></div><div class="kubik-cheek"></div></div>
+        <div class="kubik-mouth"></div>
+        <div class="kubik-hand-l"></div>
+        <div class="kubik-hand-r"></div>
+        <div class="kubik-scarf"></div>
+      </div>
+      <div class="kubik-feet"><div class="kubik-foot"></div><div class="kubik-foot"></div></div>
+    </div>
+    <div class="demo-label">Радуется</div>
+  </div>
+
+  <!-- Удивлён -->
+  <div>
+    <div class="kubik-wrap">
+      <div class="kubik-bubble show">Ого!</div>
+      <div class="kubik-body surprised">
+        <div class="kubik-eyes"><div class="kubik-eye" style="width:18px;height:20px"></div><div class="kubik-eye" style="width:18px;height:20px"></div></div>
+        <div class="kubik-cheeks"><div class="kubik-cheek"></div><div class="kubik-cheek"></div></div>
+        <div class="kubik-mouth"></div>
+        <div class="kubik-hand-l" style="transform:translateY(-10px)"></div>
+        <div class="kubik-hand-r" style="transform:translateY(-10px)"></div>
+        <div class="kubik-scarf"></div>
+      </div>
+      <div class="kubik-feet"><div class="kubik-foot"></div><div class="kubik-foot"></div></div>
+    </div>
+    <div class="demo-label">Удивлён</div>
+  </div>
+
+  <!-- Мёрзнет -->
+  <div>
+    <div class="kubik-wrap">
+      <div class="kubik-sparkle sp1">❄️</div>
+      <div class="kubik-sparkle sp2">❄️</div>
+      <div class="kubik-sparkle sp3">❄️</div>
+      <div class="kubik-bubble show">Бррр! 🥶</div>
+      <div class="kubik-body cold sad">
+        <div class="kubik-eyes"><div class="kubik-eye"></div><div class="kubik-eye"></div></div>
+        <div class="kubik-cheeks"><div class="kubik-cheek" style="background:rgba(100,150,255,.3)"></div><div class="kubik-cheek" style="background:rgba(100,150,255,.3)"></div></div>
+        <div class="kubik-mouth"></div>
+        <div class="kubik-hand-l" style="transform:translateX(8px) translateY(-5px)"></div>
+        <div class="kubik-hand-r" style="transform:translateX(-8px) translateY(-5px)"></div>
+        <div class="kubik-scarf"></div>
+      </div>
+      <div class="kubik-feet"><div class="kubik-foot"></div><div class="kubik-foot"></div></div>
+    </div>
+    <div class="demo-label">Мёрзнет</div>
+  </div>
+
+</div>
+
+<!-- Моргание -->
+<script>
+setInterval(()=>{
+  document.querySelectorAll('.kubik-body:not(.talking)').forEach(b=>{
+    b.classList.add('blink');
+    setTimeout(()=>b.classList.remove('blink'),150);
+  });
+},3000);
+</script>
+
+</body>
+</html>
