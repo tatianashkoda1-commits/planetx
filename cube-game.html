@@ -44,12 +44,14 @@ body>*{position:relative;z-index:1}
 .cat-label{font-size:9px;font-weight:600;padding:3px 10px;border-radius:10px;color:#fff}
 
 /* Кубики */
-.cube{position:absolute;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:transform .15s;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-.cube:active{transform:scale(.9)}
-.cube.protein{background:linear-gradient(135deg,#FECACA,#FCA5A5);border:2px solid #F87171}
-.cube.base{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:2px solid #FBBF24}
-.cube.veggie{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border:2px solid #34D399}
-.cube.sauce{background:linear-gradient(135deg,#E0E7FF,#C7D2FE);border:2px solid #818CF8}
+.cube{position:absolute;width:62px;height:62px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;transition:transform .15s;z-index:3;
+  box-shadow:0 6px 0 rgba(0,0,0,.15),0 8px 20px rgba(0,0,0,.12);
+  transform-style:preserve-3d;border:none}
+.cube:active{transform:scale(.9) translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.15),0 4px 10px rgba(0,0,0,.1)}
+.cube.protein{background:linear-gradient(145deg,#FF8A80,#FF5252,#D32F2F);box-shadow:0 6px 0 #B71C1C,0 8px 20px rgba(211,47,47,.3)}
+.cube.base{background:linear-gradient(145deg,#FFE082,#FFD54F,#FFC107);box-shadow:0 6px 0 #FF8F00,0 8px 20px rgba(255,193,7,.3)}
+.cube.veggie{background:linear-gradient(145deg,#69F0AE,#00E676,#00C853);box-shadow:0 6px 0 #00961F,0 8px 20px rgba(0,200,83,.3)}
+.cube.sauce{background:linear-gradient(145deg,#B388FF,#7C4DFF,#651FFF);box-shadow:0 6px 0 #4A148C,0 8px 20px rgba(101,31,255,.3)}
 .cube.caught{animation:cubeCatch .4s forwards}
 @keyframes cubeCatch{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(0);opacity:0}}
 .cube.wrong-catch{animation:wrongCatch .4s forwards}
