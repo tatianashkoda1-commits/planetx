@@ -499,9 +499,15 @@ body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparen
 @media(max-width:768px){
   .nav-links{display:none}
   .mobile-menu{display:flex!important}
+  .hero{padding:0 20px 10px}
+  .hero .hero-logo-wrap{margin-bottom:-30px !important}
+  .hero .hero-logo-wrap img{width:60vw !important;max-width:300px !important}
   .hero h1{font-size:28px}
+  .hero-sub{font-size:14px;margin-bottom:10px}
   .hero-stats{gap:20px;flex-wrap:wrap}
   .h-stat-num{font-size:24px}
+  .hero-badge{font-size:10px;padding:5px 14px;margin-bottom:2px}
+  .btn-join{padding:12px 36px;font-size:15px}
   .gallery{grid-template-columns:repeat(2,1fr)}
   .chefs-grid{grid-template-columns:repeat(2,1fr)}
   .reviews-grid{grid-template-columns:1fr}
@@ -571,7 +577,7 @@ body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparen
 
 <!-- HERO -->
 <div class="hero">
-  <div style="margin-bottom:-60px;width:100%;display:flex;justify-content:center"><img src="chef_nobg.png" alt="Планета X" style="width:50vw;max-width:600px;height:auto"></div>
+  <div class="hero-logo-wrap" style="margin-bottom:-60px;width:100%;display:flex;justify-content:center"><img src="chef_nobg.png" alt="Планета X" style="width:50vw;max-width:600px;height:auto"></div>
   <div class="hero-badge">&#10022; Закрытый кулинарный клуб &#10022;</div>
   <h1 class="glow-text">Кулинарная <span>вселенная</span>,<br>где рождаются <span>шедевры</span></h1>
   <div class="hero-sub">Научитесь готовить ресторанные блюда и десерты дома.<br>10 шефов, 16 уроков в месяц, живое общение и еженедельные розыгрыши.</div>
