@@ -15,124 +15,111 @@ body>*{position:relative;z-index:1}
 .screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;padding:20px;text-align:center}
 .screen.active{display:flex}
 
-/* Старт */
 .start-title{font-size:28px;font-weight:800;color:#2D2A26;margin-bottom:6px}
 .start-sub{font-size:14px;color:#8A8580;margin-bottom:20px;max-width:320px}
 .btn{background:#E85D3A;color:#fff;border:none;padding:16px 48px;border-radius:14px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 15px rgba(232,93,58,.3)}
 .btn:active{transform:scale(.95)}
 
-/* Игра */
-.game-top{position:absolute;top:0;left:0;right:0;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:10}
-.discovered{font-size:13px;font-weight:700;color:#E85D3A}
-.hint-btn{font-size:11px;color:#8A8580;background:rgba(255,255,255,.8);border:1px solid rgba(0,0,0,.06);padding:4px 12px;border-radius:8px;cursor:pointer;font-family:inherit}
+/* === ИГРОВОЙ ЭКРАН === */
+.game-screen{display:none;flex-direction:column;height:100vh;width:100vw}
+.game-screen.active{display:flex}
+
+/* Верхняя полка — приготовленные блюда */
+.shelf{flex:1;overflow-y:auto;padding:8px 10px;-webkit-overflow-scrolling:touch;min-height:0}
+.shelf-label{font-size:10px;font-weight:700;color:#D4A052;letter-spacing:2px;text-transform:uppercase;text-align:center;padding:6px 0}
+.shelf-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;padding-bottom:8px}
+.shelf-item{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;cursor:pointer;transition:transform .15s;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(4px);
+  border:1px solid rgba(212,160,82,.15);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.shelf-item:active{transform:scale(.85)}
+.shelf-empty{font-size:11px;color:#C8BEAA;text-align:center;padding:20px;font-style:italic}
 
 /* Зона смешивания */
-.mix-zone{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;border-radius:50%;
-  background:radial-gradient(circle,rgba(232,93,58,.08),rgba(232,93,58,.02));
-  border:3px dashed rgba(232,93,58,.2);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:5;transition:all .3s}
-.mix-zone.active{border-color:#E85D3A;background:radial-gradient(circle,rgba(232,93,58,.15),rgba(232,93,58,.05));transform:translate(-50%,-50%) scale(1.05)}
-.mix-zone.boom{animation:boom .6s}
-@keyframes boom{0%{transform:translate(-50%,-50%) scale(1)}30%{transform:translate(-50%,-50%) scale(1.3)}60%{transform:translate(-50%,-50%) scale(.9)}100%{transform:translate(-50%,-50%) scale(1)}}
-.mix-slots{display:flex;gap:6px}
-.mix-slot{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.6);border:2px dashed rgba(232,93,58,.15);display:flex;align-items:center;justify-content:center;font-size:24px;transition:all .2s}
-.mix-slot.filled{border:2px solid #E85D3A;background:rgba(255,255,255,.9)}
-.mix-label{font-size:10px;color:#8A8580;margin-top:2px}
+.mix-area{padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:10px;flex-shrink:0}
+.mix-slot{width:56px;height:56px;border-radius:14px;border:2.5px dashed rgba(232,93,58,.2);display:flex;align-items:center;justify-content:center;font-size:28px;transition:all .2s;background:rgba(255,255,255,.6)}
+.mix-slot.filled{border:2.5px solid #E85D3A;background:rgba(255,255,255,.9);box-shadow:0 2px 10px rgba(232,93,58,.1)}
+.mix-plus{font-size:24px;color:#C8BEAA;font-weight:800}
+.mix-equals{font-size:20px;color:#C8BEAA;font-weight:800}
+.mix-result{width:56px;height:56px;border-radius:14px;border:2.5px dashed rgba(212,160,82,.2);display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(255,255,255,.4)}
+.clear-btn{position:absolute;right:16px;font-size:10px;color:#8A8580;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.06);padding:4px 10px;border-radius:8px;cursor:pointer;font-family:inherit}
 
-/* Ингредиенты */
-.ingredients{position:absolute;bottom:0;left:0;right:0;padding:10px;z-index:5;
-  display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
-  background:linear-gradient(transparent,rgba(255,248,240,.95) 30%);padding-top:30px}
-.ing{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-  font-size:26px;cursor:grab;transition:transform .15s;
-  background:rgba(255,255,255,.75);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  border:1px solid rgba(255,255,255,.5);box-shadow:0 4px 10px rgba(0,0,0,.06)}
-.ing:active{transform:scale(.85);cursor:grabbing}
-.ing.used{opacity:.3;pointer-events:none}
+/* Нижняя полка — базовые ингредиенты */
+.base-area{flex-shrink:0;padding:6px 10px 12px;background:linear-gradient(transparent,rgba(255,248,240,.98) 20%)}
+.base-label{font-size:10px;font-weight:700;color:#E85D3A;letter-spacing:2px;text-transform:uppercase;text-align:center;padding:4px 0}
+.base-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}
+.base-item{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;cursor:pointer;transition:transform .15s;
+  background:rgba(255,255,255,.75);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.5);box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.base-item:active{transform:scale(.85)}
 
-/* Результат смешивания */
-.result-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
-  background:#fff;border-radius:24px;padding:30px;text-align:center;z-index:100;
-  box-shadow:0 20px 60px rgba(0,0,0,.15);transition:transform .3s;min-width:280px}
-.result-popup.show{transform:translate(-50%,-50%) scale(1)}
-.result-popup.fail{animation:failShake .4s}
-@keyframes failShake{0%,100%{transform:translate(-50%,-50%) scale(1)}25%{transform:translate(-48%,-50%) scale(1)}75%{transform:translate(-52%,-50%) scale(1)}}
-.rp-emoji{font-size:64px;margin-bottom:12px}
-.rp-name{font-size:20px;font-weight:800;color:#2D2A26;margin-bottom:4px}
-.rp-desc{font-size:13px;color:#8A8580;margin-bottom:6px}
-.rp-tag{display:inline-block;font-size:10px;font-weight:600;padding:3px 12px;border-radius:10px;margin-bottom:16px}
-.rp-tag.new{background:#E8F5E9;color:#2D8B4E}
-.rp-tag.known{background:#FFF3E0;color:#E85D3A}
-.rp-tag.fail{background:#FFEBEE;color:#D32F2F}
-.rp-close{background:#2D2A26;color:#fff;border:none;padding:10px 32px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+/* Счётчик */
+.counter{position:fixed;top:8px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;color:#E85D3A;
+  background:rgba(255,255,255,.85);padding:4px 14px;border-radius:20px;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.book-btn{position:fixed;top:8px;right:12px;font-size:20px;cursor:pointer;z-index:10;
+  background:rgba(255,255,255,.85);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.04)}
 
-/* Реакция на провал — монстрик */
-.fail-monster{position:fixed;z-index:150;pointer-events:none;font-size:120px;
-  top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
-  animation:monsterPop 1.2s forwards}
-@keyframes monsterPop{
-  0%{transform:translate(-50%,-50%) scale(0) rotate(0deg);opacity:0}
-  20%{transform:translate(-50%,-50%) scale(1.4) rotate(-10deg);opacity:1}
-  35%{transform:translate(-50%,-50%) scale(1.1) rotate(5deg)}
-  50%{transform:translate(-50%,-50%) scale(1.3) rotate(-5deg)}
-  70%{transform:translate(-50%,-50%) scale(1.2) rotate(3deg)}
-  85%{transform:translate(-50%,-50%) scale(1.1) rotate(0deg);opacity:1}
-  100%{transform:translate(-50%,-50%) scale(0) rotate(20deg);opacity:0}
-}
-/* Тряска экрана */
-.screen-shake{animation:screenShake .4s}
-@keyframes screenShake{
-  0%,100%{transform:translateX(0)}
-  10%{transform:translateX(-8px) rotate(-1deg)}
-  30%{transform:translateX(8px) rotate(1deg)}
-  50%{transform:translateX(-6px)}
-  70%{transform:translateX(6px)}
-  90%{transform:translateX(-3px)}
-}
-/* Дым/взрыв */
-.explosion{position:fixed;z-index:140;pointer-events:none;
-  top:50%;left:50%;transform:translate(-50%,-50%);
+/* Попап результата */
+.popup-bg{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.popup-bg.show{display:flex}
+.popup{background:#fff;border-radius:24px;padding:30px;text-align:center;min-width:280px;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.popup.fail-shake{animation:fShake .4s}
+@keyframes fShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.p-emoji{font-size:64px;margin-bottom:12px}
+.p-name{font-size:20px;font-weight:800;color:#2D2A26;margin-bottom:4px}
+.p-desc{font-size:13px;color:#8A8580;margin-bottom:8px}
+.p-tag{display:inline-block;font-size:10px;font-weight:600;padding:3px 12px;border-radius:10px;margin-bottom:16px}
+.p-tag.new{background:#E8F5E9;color:#2D8B4E}
+.p-tag.known{background:#FFF3E0;color:#E85D3A}
+.p-tag.fail{background:#FFEBEE;color:#D32F2F}
+.p-tag.funny{background:#FFF8E1;color:#F57F17}
+.p-close{background:#2D2A26;color:#fff;border:none;padding:10px 32px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* Монстрик */
+.monster{position:fixed;z-index:150;pointer-events:none;font-size:120px;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0);animation:monPop 1.2s forwards}
+@keyframes monPop{0%{transform:translate(-50%,-50%) scale(0) rotate(0)}20%{transform:translate(-50%,-50%) scale(1.4) rotate(-10deg);opacity:1}50%{transform:translate(-50%,-50%) scale(1.2) rotate(5deg)}85%{opacity:1}100%{transform:translate(-50%,-50%) scale(0) rotate(20deg);opacity:0}}
+.explosion{position:fixed;z-index:140;pointer-events:none;top:50%;left:50%;transform:translate(-50%,-50%);
   width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(100,100,100,.6),rgba(80,80,80,.3),transparent);
-  animation:explode .8s forwards}
-@keyframes explode{
-  0%{transform:translate(-50%,-50%) scale(0);opacity:1}
-  50%{transform:translate(-50%,-50%) scale(1.5);opacity:.7}
-  100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}
+  background:radial-gradient(circle,rgba(100,100,100,.5),transparent);animation:expl .8s forwards}
+@keyframes expl{0%{transform:translate(-50%,-50%) scale(0);opacity:1}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
+.screen-shake{animation:sShake .4s}
+@keyframes sShake{0%,100%{transform:translateX(0)}10%{transform:translateX(-6px)}30%{transform:translateX(6px)}50%{transform:translateX(-4px)}70%{transform:translateX(4px)}}
+
+/* Книга */
+.book-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.book-bg.show{display:flex}
+.book{background:#fff;border-radius:20px;padding:20px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
+.book-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.book-top h3{font-size:18px;font-weight:800;color:#2D2A26}
+.book-close{font-size:20px;cursor:pointer;color:#8A8580;background:none;border:none}
+.book-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.b-item{text-align:center;padding:8px 4px;border-radius:10px;background:#FDF8F3}
+.b-item.locked{filter:grayscale(1);opacity:.25}
+.b-item .b-e{font-size:26px}
+.b-item .b-n{font-size:8px;color:#5C5550;margin-top:2px;line-height:1.2}
+
+@media(max-width:380px){
+  .base-item,.shelf-item{width:44px;height:44px;font-size:20px}
+  .mix-slot,.mix-result{width:48px;height:48px;font-size:24px}
 }
-
-/* Книга рецептов */
-.book-btn{position:absolute;top:10px;right:60px;font-size:24px;cursor:pointer;z-index:10;
-  background:rgba(255,255,255,.8);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.book{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
-.book.show{display:flex}
-.book-card{background:#fff;border-radius:20px;padding:24px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
-.book-title{font-size:20px;font-weight:800;color:#2D2A26;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
-.book-close{font-size:20px;cursor:pointer;color:#8A8580}
-.book-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.book-item{text-align:center;padding:8px 4px;border-radius:10px;background:#FDF8F3}
-.book-item.locked{filter:grayscale(1);opacity:.3}
-.book-item .bi-emoji{font-size:28px}
-.book-item .bi-name{font-size:9px;color:#5C5550;margin-top:2px}
-
-/* Оверлей */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:90;display:none}
-.overlay.show{display:block}
 </style>
 </head>
 <body>
 
 <!-- СТАРТ -->
-<div class="screen active" id="screen-start">
+<div class="screen active" id="s-start">
   <div style="font-size:60px;margin-bottom:12px">🧪🍳</div>
   <div class="start-title">Кулинарная лаборатория</div>
   <div class="start-sub">Смешивай ингредиенты и открывай рецепты! Что получится если соединить муку с яйцом? А если добавить огонь?</div>
   <div style="background:rgba(255,255,255,.85);border-radius:16px;padding:18px 22px;margin-bottom:20px;max-width:320px;text-align:left;box-shadow:0 4px 15px rgba(0,0,0,.05)">
     <div style="font-size:13px;font-weight:700;color:#2D2A26;margin-bottom:10px;text-align:center">Как играть</div>
     <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:#5C5550;line-height:1.5">
-      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">👆</span><span>Тапни на ингредиент — он попадёт в зону смешивания</span></div>
-      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🔬</span><span>Положи <b>2 ингредиента</b> — посмотри что получится</span></div>
-      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">✨</span><span>Новые рецепты можно смешивать дальше!</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">👆</span><span>Тапни на 2 ингредиента — они попадут в зону смешивания</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🍳</span><span><b>Внизу</b> — базовые продукты. <b>Вверху</b> — то, что приготовил</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">✨</span><span>Смешивай результаты дальше — открывай новые блюда!</span></div>
       <div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">📖</span><span>Собери <b>все рецепты</b> в книгу!</span></div>
     </div>
   </div>
@@ -140,406 +127,283 @@ body>*{position:relative;z-index:1}
 </div>
 
 <!-- ИГРА -->
-<div class="screen" id="screen-game">
-  <div class="game-top">
-    <div class="discovered" id="discovered">Открыто: 0 / 0</div>
-    <div class="hint-btn" onclick="clearMix()">Очистить ✕</div>
-  </div>
-
+<div class="game-screen" id="s-game">
+  <div class="counter" id="counter">0 / 0</div>
   <div class="book-btn" onclick="openBook()">📖</div>
 
-  <div class="mix-zone" id="mix-zone">
-    <div class="mix-slots">
-      <div class="mix-slot" id="slot-0"></div>
-      <div class="mix-slot" id="slot-1"></div>
+  <!-- Приготовленные блюда -->
+  <div class="shelf" id="shelf">
+    <div class="shelf-label">Приготовленные блюда</div>
+    <div class="shelf-grid" id="shelf-grid">
+      <div class="shelf-empty" id="shelf-empty">Пока пусто — начни смешивать!</div>
     </div>
-    <div class="mix-label">Положи 2 ингредиента</div>
   </div>
 
-  <div class="ingredients" id="ingredients"></div>
+  <!-- Зона смешивания -->
+  <div class="mix-area" style="position:relative">
+    <div class="mix-slot" id="sl0"></div>
+    <div class="mix-plus">+</div>
+    <div class="mix-slot" id="sl1"></div>
+    <div class="mix-equals">=</div>
+    <div class="mix-result" id="sl-res">?</div>
+    <div class="clear-btn" onclick="clearMix()">✕ Очистить</div>
+  </div>
+
+  <!-- Базовые ингредиенты -->
+  <div class="base-area">
+    <div class="base-label">Ингредиенты</div>
+    <div class="base-grid" id="base-grid"></div>
+  </div>
 </div>
 
-<!-- Результат -->
-<div class="overlay" id="overlay" onclick="closeResult()"></div>
-<div class="result-popup" id="result-popup">
-  <div class="rp-emoji" id="rp-emoji"></div>
-  <div class="rp-name" id="rp-name"></div>
-  <div class="rp-desc" id="rp-desc"></div>
-  <div class="rp-tag" id="rp-tag"></div><br>
-  <button class="rp-close" onclick="closeResult()">Круто!</button>
+<!-- Попап -->
+<div class="popup-bg" id="popup-bg" onclick="closePopup()">
+  <div class="popup" id="popup" onclick="event.stopPropagation()">
+    <div class="p-emoji" id="p-emoji"></div>
+    <div class="p-name" id="p-name"></div>
+    <div class="p-desc" id="p-desc"></div>
+    <div class="p-tag" id="p-tag"></div><br>
+    <button class="p-close" onclick="closePopup()">Круто!</button>
+  </div>
 </div>
 
-<!-- Книга рецептов -->
-<div class="book" id="book">
-  <div class="book-card">
-    <div class="book-title">📖 Книга рецептов <span class="book-close" onclick="closeBook()">✕</span></div>
+<!-- Книга -->
+<div class="book-bg" id="book-bg" onclick="closeBook()">
+  <div class="book" onclick="event.stopPropagation()">
+    <div class="book-top"><h3>📖 Книга рецептов</h3><button class="book-close" onclick="closeBook()">✕</button></div>
     <div class="book-grid" id="book-grid"></div>
   </div>
 </div>
 
 <script>
-// Базовые ингредиенты
-const BASE = [
-  {id:'flour',emoji:'🌾',name:'Мука'},
-  {id:'egg',emoji:'🥚',name:'Яйцо'},
-  {id:'milk',emoji:'🥛',name:'Молоко'},
-  {id:'sugar',emoji:'🍬',name:'Сахар'},
-  {id:'butter',emoji:'🧈',name:'Масло'},
-  {id:'water',emoji:'💧',name:'Вода'},
-  {id:'salt',emoji:'🧂',name:'Соль'},
-  {id:'fire',emoji:'🔥',name:'Огонь'},
-  {id:'ice',emoji:'🧊',name:'Лёд'},
-  {id:'tomato',emoji:'🍅',name:'Помидор'},
-  {id:'cheese',emoji:'🧀',name:'Сыр'},
-  {id:'meat',emoji:'🥩',name:'Мясо'},
-  {id:'rice',emoji:'🍚',name:'Рис'},
-  {id:'fish',emoji:'🐟',name:'Рыба'},
-  {id:'chocolate',emoji:'🍫',name:'Шоколад'},
-  {id:'strawberry',emoji:'🍓',name:'Клубника'},
+// ===== АУДИО =====
+let audioCtx=null;
+function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext);if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
+function playSound(type){try{const c=getAudio(),t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+if(type==='tap'){o.type='sine';o.frequency.setValueAtTime(880,t);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.01,t+.08);o.start(t);o.stop(t+.08)}
+else if(type==='success'){o.type='sine';o.frequency.setValueAtTime(523,t);o.frequency.setValueAtTime(659,t+.1);o.frequency.setValueAtTime(784,t+.2);g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.01,t+.4);o.start(t);o.stop(t+.4)}
+else if(type==='new'){o.type='sine';o.frequency.setValueAtTime(392,t);o.frequency.setValueAtTime(523,t+.12);o.frequency.setValueAtTime(659,t+.24);o.frequency.setValueAtTime(784,t+.36);g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.01,t+.6);o.start(t);o.stop(t+.6)}
+else if(type==='fail'){o.type='sawtooth';o.frequency.setValueAtTime(300,t);o.frequency.exponentialRampToValueAtTime(50,t+.3);g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.01,t+.3);o.start(t);o.stop(t+.3)}
+else if(type==='funny'){o.type='square';o.frequency.setValueAtTime(200,t);o.frequency.setValueAtTime(350,t+.05);o.frequency.setValueAtTime(150,t+.1);o.frequency.setValueAtTime(400,t+.15);o.frequency.setValueAtTime(100,t+.2);g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.01,t+.35);o.start(t);o.stop(t+.35)}
+}catch(e){}}
+document.addEventListener('touchstart',()=>{getAudio()},{once:true});
+
+// ===== ДАННЫЕ =====
+const BASE=[
+  {id:'flour',e:'🌾',n:'Мука'},{id:'egg',e:'🥚',n:'Яйцо'},{id:'milk',e:'🥛',n:'Молоко'},
+  {id:'sugar',e:'🍬',n:'Сахар'},{id:'butter',e:'🧈',n:'Масло'},{id:'water',e:'💧',n:'Вода'},
+  {id:'salt',e:'🧂',n:'Соль'},{id:'fire',e:'🔥',n:'Огонь'},{id:'ice',e:'🧊',n:'Лёд'},
+  {id:'tomato',e:'🍅',n:'Помидор'},{id:'cheese',e:'🧀',n:'Сыр'},{id:'meat',e:'🥩',n:'Мясо'},
+  {id:'rice',e:'🍚',n:'Рис'},{id:'fish',e:'🐟',n:'Рыба'},{id:'chocolate',e:'🍫',n:'Шоколад'},
+  {id:'strawberry',e:'🍓',n:'Клубника'}
 ];
 
-// Рецепты: [ингр1, ингр2] => результат
-const RECIPES = {
-  'flour+egg':{id:'dough',emoji:'🫓',name:'Тесто',desc:'Основа для всего!',funny:false},
-  'flour+water':{id:'flatbread',emoji:'🫓',name:'Лепёшка',desc:'Простое тесто на воде',funny:false},
-  'flour+milk':{id:'batter',emoji:'🥣',name:'Жидкое тесто',desc:'Для блинов и оладий!',funny:false},
-  'egg+sugar':{id:'meringue_mix',emoji:'🍮',name:'Белковая масса',desc:'Взбитые яйца с сахаром',funny:false},
-  'milk+ice':{id:'milkshake',emoji:'🥤',name:'Молочный коктейль',desc:'Холодненький!',funny:false},
-  'milk+chocolate':{id:'hot_choco',emoji:'☕',name:'Горячий шоколад',desc:'Ммм, какао!',funny:false},
-  'milk+sugar':{id:'sweet_milk',emoji:'🍼',name:'Сладкое молоко',desc:'Как в детстве',funny:false},
-  'butter+sugar':{id:'cream',emoji:'🍰',name:'Крем',desc:'Масляный крем для торта',funny:false},
-  'tomato+fire':{id:'tomato_sauce',emoji:'🫕',name:'Томатный соус',desc:'Основа итальянской кухни',funny:false},
-  'tomato+cheese':{id:'caprese',emoji:'🥗',name:'Капрезе',desc:'Классика! Не хватает базилика',funny:false},
-  'cheese+fire':{id:'fondue',emoji:'🫕',name:'Фондю',desc:'Расплавленный сыр — мечта!',funny:false},
-  'meat+fire':{id:'steak',emoji:'🥩',name:'Стейк',desc:'Прожарка идеальная!',funny:false},
-  'meat+salt':{id:'jerky',emoji:'🍖',name:'Вяленое мясо',desc:'Сушёное мясо с солью',funny:false},
-  'rice+water':{id:'boiled_rice',emoji:'🍚',name:'Варёный рис',desc:'Идеальный гарнир',funny:false},
-  'rice+fish':{id:'sushi',emoji:'🍣',name:'Суши',desc:'Японская классика!',funny:false},
-  'fish+fire':{id:'grilled_fish',emoji:'🐟',name:'Рыба на гриле',desc:'С корочкой!',funny:false},
-  'fish+salt':{id:'dried_fish',emoji:'🐡',name:'Солёная рыба',desc:'К пиву... то есть к чаю!',funny:false},
-  'chocolate+strawberry':{id:'choco_straw',emoji:'🍫',name:'Клубника в шоколаде',desc:'Романтика!',funny:false},
-  'chocolate+fire':{id:'melted_choco',emoji:'🫠',name:'Растопленный шоколад',desc:'Для глазури и фонтана',funny:false},
-  'strawberry+sugar':{id:'jam',emoji:'🍯',name:'Варенье',desc:'Бабушкин рецепт!',funny:false},
-  'strawberry+ice':{id:'sorbet',emoji:'🍧',name:'Сорбет',desc:'Ледяной десерт!',funny:false},
-  'water+fire':{id:'steam',emoji:'♨️',name:'Пар',desc:'Кипяток! Осторожно!',funny:false},
-  'water+ice':{id:'cold_water',emoji:'🥶',name:'Ледяная вода',desc:'Бррр!',funny:false},
-  'water+sugar':{id:'syrup',emoji:'🍯',name:'Сироп',desc:'Сладкая вода',funny:false},
-  'egg+fire':{id:'fried_egg',emoji:'🍳',name:'Яичница',desc:'Завтрак чемпиона!',funny:false},
-  'salt+ice':{id:'salt_ice',emoji:'❄️',name:'Солёный лёд',desc:'Секрет мороженщиков!',funny:true},
-  'sugar+fire':{id:'caramel',emoji:'🍮',name:'Карамель',desc:'Жжённый сахар — вкусно!',funny:false},
-  'butter+fire':{id:'ghee',emoji:'✨',name:'Топлёное масло',desc:'Золотистое и ароматное',funny:false},
-  // Составные (из результатов)
-  'dough+fire':{id:'bread',emoji:'🍞',name:'Хлеб',desc:'Свежий, горячий!',funny:false},
-  'dough+sugar':{id:'cookie_dough',emoji:'🍪',name:'Печенье',desc:'Тесто + сахар = счастье',funny:false},
-  'dough+cheese':{id:'pizza_base',emoji:'🍕',name:'Пицца',desc:'Мамма миа!',funny:false},
-  'dough+strawberry':{id:'pie',emoji:'🥧',name:'Пирог',desc:'С клубничной начинкой!',funny:false},
-  'batter+fire':{id:'pancake',emoji:'🥞',name:'Блины',desc:'Масленица круглый год!',funny:false},
-  'tomato_sauce+cheese':{id:'pizza_full',emoji:'🍕',name:'Пицца Маргарита',desc:'Просто и гениально!',funny:false},
-  'tomato_sauce+meat':{id:'bolognese',emoji:'🍝',name:'Болоньезе',desc:'Итальянская классика!',funny:false},
-  'steak+tomato_sauce':{id:'steak_sauce',emoji:'🥘',name:'Стейк в соусе',desc:'Ресторанное блюдо!',funny:false},
-  'boiled_rice+steak':{id:'rice_bowl',emoji:'🍛',name:'Рис со стейком',desc:'Сытный обед!',funny:false},
-  'boiled_rice+sushi':{id:'sushi_set',emoji:'🍱',name:'Сет суши',desc:'Полный набор!',funny:false},
-  'cream+chocolate':{id:'choco_cake',emoji:'🎂',name:'Шоколадный торт',desc:'Мечта сладкоежки!',funny:false},
-  'cream+strawberry':{id:'straw_cake',emoji:'🍰',name:'Клубничный торт',desc:'Нежный и красивый!',funny:false},
-  'milkshake+chocolate':{id:'choco_shake',emoji:'🧋',name:'Шоко-шейк',desc:'Густой и шоколадный!',funny:false},
-  'caramel+ice':{id:'caramel_candy',emoji:'🍭',name:'Карамелька',desc:'Леденец!',funny:false},
-  'hot_choco+cream':{id:'mocha',emoji:'☕',name:'Мокко',desc:'Кофейня дома!',funny:false},
-  'fried_egg+bread':{id:'toast',emoji:'🥪',name:'Тост с яйцом',desc:'Идеальный завтрак!',funny:false},
-  'pancake+jam':{id:'pancake_jam',emoji:'🥞',name:'Блины с вареньем',desc:'Объедение!',funny:false},
-  'syrup+ice':{id:'popsicle',emoji:'🍦',name:'Фруктовый лёд',desc:'Освежает!',funny:false},
-  // Дополнительные логичные комбинации
-  'bread+butter':{id:'buttered_bread',emoji:'🍞',name:'Бутерброд с маслом',desc:'Просто и вкусно!',funny:false},
-  'bread+cheese':{id:'cheese_sandwich',emoji:'🧀',name:'Сырный бутерброд',desc:'Классика на завтрак!',funny:false},
-  'bread+jam':{id:'jam_toast',emoji:'🍯',name:'Хлеб с вареньем',desc:'Сладкий завтрак!',funny:false},
-  'bread+steak':{id:'steak_sandwich',emoji:'🥪',name:'Сэндвич со стейком',desc:'Сытный перекус!',funny:false},
-  'bread+tomato':{id:'bruschetta',emoji:'🍅',name:'Брускетта',desc:'Итальянская закуска!',funny:false},
-  'pancake+butter':{id:'pancake_butter',emoji:'🥞',name:'Блины с маслом',desc:'Масленица!',funny:false},
-  'pancake+strawberry':{id:'pancake_straw',emoji:'🥞',name:'Блины с клубникой',desc:'Нежные и сладкие!',funny:false},
-  'pancake+chocolate':{id:'pancake_choco',emoji:'🥞',name:'Блины с шоколадом',desc:'Десертные блины!',funny:false},
-  'pizza_base+tomato_sauce':{id:'pizza_ready',emoji:'🍕',name:'Пицца с соусом',desc:'Почти готова!',funny:false},
-  'pizza_base+meat':{id:'meat_pizza',emoji:'🍕',name:'Мясная пицца',desc:'Пепперони!',funny:false},
-  'sushi+salt':{id:'sushi_soy',emoji:'🍣',name:'Суши с соевым',desc:'Как в ресторане!',funny:false},
-  'steak+salt':{id:'salted_steak',emoji:'🥩',name:'Стейк с солью',desc:'Минимализм — лучший рецепт!',funny:false},
-  'boiled_rice+tomato_sauce':{id:'rice_tomato',emoji:'🍛',name:'Рис в томате',desc:'Мексиканский стиль!',funny:false},
-  'boiled_rice+butter':{id:'rice_butter',emoji:'🍚',name:'Рис с маслом',desc:'Нежный гарнир!',funny:false},
-  'fried_egg+cheese':{id:'egg_cheese',emoji:'🍳',name:'Яичница с сыром',desc:'Сырная корочка!',funny:false},
-  'fried_egg+tomato':{id:'shakshuka',emoji:'🍳',name:'Шакшука',desc:'Яйца в томатах — бомба!',funny:false},
-  'fried_egg+steak':{id:'steak_egg',emoji:'🥘',name:'Стейк с яйцом',desc:'Завтрак настоящего шефа!',funny:false},
-  'hot_choco+ice':{id:'iced_choco',emoji:'🧋',name:'Айс-шоколад',desc:'Холодный и вкусный!',funny:false},
-  'milkshake+strawberry':{id:'straw_shake',emoji:'🥤',name:'Клубничный шейк',desc:'Розовый и сладкий!',funny:false},
-  'caramel+chocolate':{id:'choco_caramel',emoji:'🍬',name:'Шоколадная карамель',desc:'Конфета!',funny:false},
-  'jam+butter':{id:'jam_butter',emoji:'🍯',name:'Масло с вареньем',desc:'Намажь на хлеб!',funny:false},
-  'sorbet+chocolate':{id:'choco_sorbet',emoji:'🍨',name:'Шоколадное мороженое',desc:'Двойной десерт!',funny:false},
-  'melted_choco+strawberry':{id:'fondue_straw',emoji:'🍓',name:'Фондю с клубникой',desc:'Романтический вечер!',funny:false},
-  'melted_choco+butter':{id:'choco_spread',emoji:'🍫',name:'Шоколадная паста',desc:'Как Нутелла!',funny:false},
-  'dough+butter':{id:'croissant',emoji:'🥐',name:'Круассан',desc:'Французская выпечка!',funny:false},
-  'dough+meat':{id:'meat_pie',emoji:'🥟',name:'Пирожок с мясом',desc:'Бабушкин рецепт!',funny:false},
-  'dough+chocolate':{id:'choco_bun',emoji:'🧁',name:'Шоколадная булочка',desc:'Тёплая, с начинкой!',funny:false},
-  'cookie_dough+fire':{id:'cookie',emoji:'🍪',name:'Свежее печенье',desc:'Хрустящее, из духовки!',funny:false},
-  'cookie+chocolate':{id:'choco_cookie',emoji:'🍪',name:'Печенье с шоколадом',desc:'Классика Америки!',funny:false},
-  'grilled_fish+rice':{id:'fish_rice',emoji:'🍱',name:'Рыба с рисом',desc:'Здоровый обед!',funny:false},
-  'grilled_fish+tomato_sauce':{id:'fish_tomato',emoji:'🐟',name:'Рыба в томате',desc:'Средиземноморье!',funny:false},
-  'fondue+bread':{id:'fondue_bread',emoji:'🫕',name:'Фондю с хлебом',desc:'Швейцарская классика!',funny:false},
-  'caprese+bread':{id:'caprese_sandwich',emoji:'🥪',name:'Сэндвич капрезе',desc:'Итальянский ланч!',funny:false},
-  // Смешные
-  'meat+chocolate':{id:'weird1',emoji:'🤢',name:'Мясо в шоколаде',desc:'Кто это придумал?!',funny:true},
-  'fish+sugar':{id:'weird2',emoji:'😵',name:'Сладкая рыба',desc:'Нет, просто нет.',funny:true},
-  'salt+sugar':{id:'weird3',emoji:'🤪',name:'Солёный сахар',desc:'Ты точно шеф?!',funny:true},
-  'ice+fire':{id:'weird4',emoji:'💨',name:'Пшшшш!',desc:'Лёд и огонь — ничего не осталось!',funny:true},
-  'egg+ice':{id:'weird5',emoji:'🥶',name:'Замороженное яйцо',desc:'Зачем?!',funny:true},
-  'fish+chocolate':{id:'weird6',emoji:'🤮',name:'Рыба в шоколаде',desc:'Даже монстрик не съест!',funny:true},
-  'meat+ice':{id:'weird7',emoji:'🧊',name:'Замороженное мясо',desc:'Это не готовка, это морозилка!',funny:true},
-  'cheese+sugar':{id:'weird8',emoji:'😖',name:'Сладкий сыр',desc:'Нууу... бывает чизкейк, но это не он.',funny:true},
-  'cheese+chocolate':{id:'weird9',emoji:'🫣',name:'Шоко-сыр',desc:'Швейцарцы бы не одобрили!',funny:true},
-  'fish+milk':{id:'weird10',emoji:'🙈',name:'Рыба в молоке',desc:'Бабушка говорила — нельзя!',funny:true},
+const R={
+// Уровень 1: база+база
+'egg+flour':{id:'dough',e:'🫓',n:'Тесто',d:'Основа для всего!'},
+'flour+water':{id:'flatbread',e:'🫓',n:'Простое тесто',d:'Тесто на воде'},
+'flour+milk':{id:'batter',e:'🥣',n:'Жидкое тесто',d:'Для блинов!'},
+'butter+flour':{id:'shortcrust',e:'🧁',n:'Песочное тесто',d:'Рассыпчатое!'},
+'egg+sugar':{id:'meringue_mix',e:'🍮',n:'Белковая масса',d:'Взбитые яйца с сахаром'},
+'egg+fire':{id:'fried_egg',e:'🍳',n:'Яичница',d:'Завтрак чемпиона!'},
+'egg+milk':{id:'omelet_mix',e:'🥚',n:'Омлет-микс',d:'Осталось пожарить!'},
+'ice+milk':{id:'milkshake',e:'🥤',n:'Молочный коктейль',d:'Холодненький!'},
+'chocolate+milk':{id:'hot_choco',e:'☕',n:'Горячий шоколад',d:'Ммм, какао!'},
+'milk+sugar':{id:'sweet_milk',e:'🍼',n:'Сладкое молоко',d:'Как в детстве'},
+'butter+sugar':{id:'cream',e:'🍰',n:'Крем',d:'Масляный крем для торта'},
+'butter+fire':{id:'ghee',e:'✨',n:'Топлёное масло',d:'Золотистое!'},
+'fire+water':{id:'steam',e:'♨️',n:'Кипяток',d:'Осторожно, горячо!'},
+'ice+water':{id:'cold_water',e:'🥶',n:'Ледяная вода',d:'Бррр!'},
+'sugar+water':{id:'syrup',e:'🍯',n:'Сироп',d:'Сладкая вода'},
+'salt+water':{id:'brine',e:'💧',n:'Рассол',d:'Для засолки!'},
+'fire+sugar':{id:'caramel',e:'🍮',n:'Карамель',d:'Жжённый сахар!'},
+'fire+tomato':{id:'tom_sauce',e:'🫕',n:'Томатный соус',d:'Основа итальянской кухни'},
+'cheese+tomato':{id:'caprese',e:'🥗',n:'Капрезе',d:'Не хватает базилика!'},
+'salt+tomato':{id:'salt_tomato',e:'🍅',n:'Солёный помидор',d:'Закусочка!'},
+'cheese+fire':{id:'fondue',e:'🫕',n:'Фондю',d:'Расплавленный сыр!'},
+'fire+meat':{id:'steak',e:'🥩',n:'Стейк',d:'Прожарка идеальная!'},
+'meat+salt':{id:'jerky',e:'🍖',n:'Вяленое мясо',d:'С солью'},
+'rice+water':{id:'boiled_rice',e:'🍚',n:'Варёный рис',d:'Идеальный гарнир'},
+'fish+rice':{id:'sushi',e:'🍣',n:'Суши',d:'Японская классика!'},
+'fire+fish':{id:'grilled_fish',e:'🐟',n:'Рыба-гриль',d:'С корочкой!'},
+'fish+salt':{id:'salt_fish',e:'🐡',n:'Солёная рыба',d:'К чаю!'},
+'chocolate+fire':{id:'melted_choco',e:'🫠',n:'Растопленный шоколад',d:'Для глазури!'},
+'chocolate+strawberry':{id:'choco_straw',e:'🍫',n:'Клубника в шоколаде',d:'Романтика!'},
+'strawberry+sugar':{id:'jam',e:'🍯',n:'Варенье',d:'Бабушкин рецепт!'},
+'ice+strawberry':{id:'sorbet',e:'🍧',n:'Сорбет',d:'Ледяной десерт!'},
+// Уровень 2: результат+база
+'dough+fire':{id:'bread',e:'🍞',n:'Хлеб',d:'Свежий, горячий!'},
+'dough+sugar':{id:'cookie_dough',e:'🍪',n:'Тесто для печенья',d:'Сладкое тесто'},
+'cheese+dough':{id:'pizza',e:'🍕',n:'Пицца',d:'Мамма миа!'},
+'dough+strawberry':{id:'pie',e:'🥧',n:'Пирог',d:'С клубникой!'},
+'butter+dough':{id:'croissant',e:'🥐',n:'Круассан',d:'Французская выпечка!'},
+'dough+meat':{id:'meat_pie',e:'🥟',n:'Пирожок с мясом',d:'Бабушкин!'},
+'chocolate+dough':{id:'choco_bun',e:'🧁',n:'Шоко-булочка',d:'С начинкой!'},
+'batter+fire':{id:'pancake',e:'🥞',n:'Блины',d:'Масленица!'},
+'fire+shortcrust':{id:'shortbread',e:'🍪',n:'Песочное печенье',d:'Рассыпчатое!'},
+'fire+omelet_mix':{id:'omelet',e:'🍳',n:'Омлет',d:'Пышный!'},
+'cheese+fried_egg':{id:'egg_cheese',e:'🍳',n:'Яичница с сыром',d:'Сырная корочка!'},
+'fried_egg+tomato':{id:'shakshuka',e:'🍳',n:'Шакшука',d:'Яйца в томатах!'},
+'salt+steak':{id:'salted_steak',e:'🥩',n:'Стейк с солью',d:'Минимализм!'},
+'butter+boiled_rice':{id:'rice_butter',e:'🍚',n:'Рис с маслом',d:'Нежный гарнир'},
+'boiled_rice+tom_sauce':{id:'rice_tomato',e:'🍛',n:'Рис в томате',d:'Мексиканский!'},
+'cheese+tom_sauce':{id:'pizza_marg',e:'🍕',n:'Пицца Маргарита',d:'Просто и гениально!'},
+'meat+tom_sauce':{id:'bolognese',e:'🍝',n:'Болоньезе',d:'Итальянская классика!'},
+'steak+tom_sauce':{id:'steak_sauce',e:'🥘',n:'Стейк в соусе',d:'Ресторанное!'},
+'grilled_fish+tom_sauce':{id:'fish_tomato',e:'🐟',n:'Рыба в томате',d:'Средиземноморье!'},
+'chocolate+cream':{id:'choco_cake',e:'🎂',n:'Шоколадный торт',d:'Мечта!'},
+'cream+strawberry':{id:'straw_cake',e:'🍰',n:'Клубничный торт',d:'Нежный!'},
+'caramel+ice':{id:'caramel_candy',e:'🍭',n:'Карамелька',d:'Леденец!'},
+'caramel+chocolate':{id:'choco_caramel',e:'🍬',n:'Шоко-карамель',d:'Конфета!'},
+'ice+syrup':{id:'popsicle',e:'🍦',n:'Фруктовый лёд',d:'Освежает!'},
+'butter+jam':{id:'jam_butter',e:'🍯',n:'Масло с вареньем',d:'Намажь на хлеб!'},
+'melted_choco+strawberry':{id:'fondue_straw',e:'🍓',n:'Фондю с клубникой',d:'Романтика!'},
+'butter+melted_choco':{id:'choco_spread',e:'🍫',n:'Шоколадная паста',d:'Как Нутелла!'},
+'chocolate+milkshake':{id:'choco_shake',e:'🧋',n:'Шоко-шейк',d:'Густой!'},
+'milkshake+strawberry':{id:'straw_shake',e:'🥤',n:'Клубничный шейк',d:'Розовый!'},
+'cream+hot_choco':{id:'mocha',e:'☕',n:'Мокко',d:'Кофейня дома!'},
+'hot_choco+ice':{id:'iced_choco',e:'🧋',n:'Айс-шоколад',d:'Холодный!'},
+'chocolate+sorbet':{id:'choco_ice',e:'🍨',n:'Шоко-мороженое',d:'Двойной десерт!'},
+// Уровень 3: результат+результат
+'bread+butter':{id:'buttered_bread',e:'🍞',n:'Бутерброд с маслом',d:'Просто и вкусно!'},
+'bread+cheese':{id:'cheese_sand',e:'🧀',n:'Сырный бутерброд',d:'Классика!'},
+'bread+jam':{id:'jam_toast',e:'🍯',n:'Хлеб с вареньем',d:'Сладкий завтрак!'},
+'bread+steak':{id:'steak_sand',e:'🥪',n:'Сэндвич со стейком',d:'Сытный!'},
+'bread+caprese':{id:'caprese_sand',e:'🥪',n:'Сэндвич капрезе',d:'Итальянский!'},
+'bread+fried_egg':{id:'egg_toast',e:'🥪',n:'Тост с яйцом',d:'Идеальный завтрак!'},
+'bread+fondue':{id:'fondue_bread',e:'🫕',n:'Фондю с хлебом',d:'Швейцарское!'},
+'bread+tomato':{id:'bruschetta',e:'🍅',n:'Брускетта',d:'Итальянская закуска!'},
+'jam+pancake':{id:'pancake_jam',e:'🥞',n:'Блины с вареньем',d:'Объедение!'},
+'butter+pancake':{id:'pancake_butter',e:'🥞',n:'Блины с маслом',d:'Масленица!'},
+'pancake+strawberry':{id:'pancake_straw',e:'🥞',n:'Блины с клубникой',d:'Нежные!'},
+'chocolate+pancake':{id:'pancake_choco',e:'🥞',n:'Блины с шоколадом',d:'Десертные!'},
+'cream+pancake':{id:'pancake_cream',e:'🥞',n:'Блины со сливками',d:'Роскошь!'},
+'cookie_dough+fire':{id:'cookie',e:'🍪',n:'Свежее печенье',d:'Из духовки!'},
+'chocolate+cookie':{id:'choco_cookie',e:'🍪',n:'Печенье с шоколадом',d:'Американское!'},
+'meat+pizza':{id:'meat_pizza',e:'🍕',n:'Мясная пицца',d:'Пепперони!'},
+'pizza+tom_sauce':{id:'pizza_sauce',e:'🍕',n:'Пицца с соусом',d:'Почти готова!'},
+'boiled_rice+steak':{id:'rice_steak',e:'🍛',n:'Рис со стейком',d:'Сытный обед!'},
+'boiled_rice+grilled_fish':{id:'fish_rice',e:'🍱',n:'Рыба с рисом',d:'Здоровый обед!'},
+'boiled_rice+sushi':{id:'sushi_set',e:'🍱',n:'Сет суши',d:'Полный набор!'},
+'fried_egg+steak':{id:'steak_egg',e:'🥘',n:'Стейк с яйцом',d:'Завтрак шефа!'},
+// Смешные
+'chocolate+meat':{id:'w1',e:'🤢',n:'Мясо в шоколаде',d:'Кто это придумал?!',f:1},
+'fish+sugar':{id:'w2',e:'😵',n:'Сладкая рыба',d:'Нет, просто нет.',f:1},
+'salt+sugar':{id:'w3',e:'🤪',n:'Солёный сахар',d:'Ты точно шеф?!',f:1},
+'fire+ice':{id:'w4',e:'💨',n:'Пшшшш!',d:'Ничего не осталось!',f:1},
+'egg+ice':{id:'w5',e:'🥶',n:'Замороженное яйцо',d:'Зачем?!',f:1},
+'chocolate+fish':{id:'w6',e:'🤮',n:'Рыба в шоколаде',d:'Даже монстрик не съест!',f:1},
+'ice+meat':{id:'w7',e:'🧊',n:'Замороженное мясо',d:'Это морозилка, не кухня!',f:1},
+'cheese+sugar':{id:'w8',e:'😖',n:'Сладкий сыр',d:'Это не чизкейк!',f:1},
+'cheese+chocolate':{id:'w9',e:'🫣',n:'Шоко-сыр',d:'Швейцарцы не одобряют!',f:1},
+'fish+milk':{id:'w10',e:'🙈',n:'Рыба в молоке',d:'Бабушка говорила — нельзя!',f:1},
 };
 
-// Звуки через Web Audio API
-let audioCtx = null;
-function getAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
+const MONSTERS=['👾','👻','💩','🤡','👹','💀','🧟','👽','🤮','😈'];
+const FAIL_SAY=['Не сочетается!','Так не готовят!','Попробуй другое!','Монстрик сбежал!','Кухня в дыму!','Бдыщ!','Ой-ой!','Что это?!','Шеф в шоке!'];
+
+let discovered=new Set(), cooked=[], slots=[null,null];
+
+function getKey(a,b){const k1=a+'+'+b,k2=b+'+'+a;if(R[k1])return k1;if(R[k2])return k2;return k1}
+
+function renderBase(){
+  const g=document.getElementById('base-grid');g.innerHTML='';
+  BASE.forEach(item=>{const d=document.createElement('div');d.className='base-item';d.textContent=item.e;d.title=item.n;d.onclick=()=>addToMix(item);g.appendChild(d)});
 }
 
-function playSound(type) {
-  try {
-    const ctx = getAudio();
-    const t = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    if (type === 'success') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(523, t);
-      osc.frequency.setValueAtTime(659, t + 0.1);
-      osc.frequency.setValueAtTime(784, t + 0.2);
-      gain.gain.setValueAtTime(0.3, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.4);
-      osc.start(t); osc.stop(t + 0.4);
-    }
-    else if (type === 'new') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(392, t);
-      osc.frequency.setValueAtTime(523, t + 0.12);
-      osc.frequency.setValueAtTime(659, t + 0.24);
-      osc.frequency.setValueAtTime(784, t + 0.36);
-      gain.gain.setValueAtTime(0.3, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
-      osc.start(t); osc.stop(t + 0.6);
-    }
-    else if (type === 'fail') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(300, t);
-      osc.frequency.exponentialRampToValueAtTime(50, t + 0.3);
-      gain.gain.setValueAtTime(0.25, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
-      osc.start(t); osc.stop(t + 0.3);
-    }
-    else if (type === 'funny') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(200, t);
-      osc.frequency.setValueAtTime(350, t + 0.05);
-      osc.frequency.setValueAtTime(150, t + 0.1);
-      osc.frequency.setValueAtTime(400, t + 0.15);
-      osc.frequency.setValueAtTime(100, t + 0.2);
-      gain.gain.setValueAtTime(0.2, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
-      osc.start(t); osc.stop(t + 0.35);
-    }
-    else if (type === 'tap') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, t);
-      gain.gain.setValueAtTime(0.15, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
-      osc.start(t); osc.stop(t + 0.08);
-    }
-  } catch(e) {}
+function renderShelf(){
+  const g=document.getElementById('shelf-grid');g.innerHTML='';
+  if(cooked.length===0){g.innerHTML='<div class="shelf-empty">Пока пусто — начни смешивать!</div>';return}
+  cooked.forEach(item=>{const d=document.createElement('div');d.className='shelf-item';d.textContent=item.e;d.title=item.n;d.onclick=()=>addToMix(item);g.appendChild(d)});
 }
 
-let discovered = new Set();
-let available = []; // доступные для смешивания (базовые + открытые)
-let mixSlots = [null, null];
-
-function getKey(a, b) {
-  // Проверяем оба порядка
-  const k1 = a + '+' + b;
-  const k2 = b + '+' + a;
-  if (RECIPES[k1]) return k1;
-  if (RECIPES[k2]) return k2;
-  return k1; // вернуть любой если нет рецепта
+function updateCounter(){
+  const total=Object.keys(R).length;
+  document.getElementById('counter').textContent=`✨ ${discovered.size} / ${total}`;
 }
 
-function updateCounter() {
-  const total = Object.keys(RECIPES).length;
-  document.getElementById('discovered').textContent = `Открыто: ${discovered.size} / ${total}`;
-}
-
-function renderIngredients() {
-  const el = document.getElementById('ingredients');
-  el.innerHTML = '';
-  available.forEach(item => {
-    const d = document.createElement('div');
-    d.className = 'ing';
-    d.textContent = item.emoji;
-    d.title = item.name;
-    d.onclick = () => addToMix(item);
-    el.appendChild(d);
-  });
-}
-
-function addToMix(item) {
-  if (mixSlots[0] && mixSlots[1]) return;
-  const idx = mixSlots[0] ? 1 : 0;
-  mixSlots[idx] = item;
-  document.getElementById('slot-' + idx).textContent = item.emoji;
-  document.getElementById('slot-' + idx).classList.add('filled');
+function addToMix(item){
+  if(slots[0]&&slots[1])return;
+  const idx=slots[0]?1:0;
+  slots[idx]=item;
+  document.getElementById('sl'+idx).textContent=item.e;
+  document.getElementById('sl'+idx).classList.add('filled');
   playSound('tap');
-  document.getElementById('mix-zone').classList.add('active');
-
-  if (mixSlots[0] && mixSlots[1]) {
-    setTimeout(doMix, 400);
-  }
+  if(slots[0]&&slots[1])setTimeout(doMix,350);
 }
 
-function doMix() {
-  const key = getKey(mixSlots[0].id, mixSlots[1].id);
-  const recipe = RECIPES[key];
-  const zone = document.getElementById('mix-zone');
-  zone.classList.add('boom');
-  setTimeout(() => zone.classList.remove('boom'), 600);
+function doMix(){
+  const key=getKey(slots[0].id,slots[1].id);
+  const recipe=R[key];
 
-  if (recipe) {
-    const isNew = !discovered.has(recipe.id);
+  if(recipe){
+    const isNew=!discovered.has(recipe.id);
     discovered.add(recipe.id);
-
-    if (recipe.funny) {
-      playSound('funny');
-      spawnMonster(true);
-      setTimeout(() => showResult(recipe, isNew), 600);
+    if(recipe.f){
+      playSound('funny');spawnMonster(true);
+      setTimeout(()=>{document.getElementById('sl-res').textContent=recipe.e;showPopup(recipe,isNew,true)},500);
     } else {
-      playSound(isNew ? 'new' : 'success');
-      if (!available.find(a => a.id === recipe.id)) {
-        available.push({ id: recipe.id, emoji: recipe.emoji, name: recipe.name });
-        renderIngredients();
-      }
-      showResult(recipe, isNew);
+      if(isNew&&!cooked.find(c=>c.id===recipe.id)){cooked.push({id:recipe.id,e:recipe.e,n:recipe.n});renderShelf()}
+      document.getElementById('sl-res').textContent=recipe.e;
+      playSound(isNew?'new':'success');
+      showPopup(recipe,isNew,false);
     }
   } else {
-    showFail();
+    playSound('fail');spawnMonster(false);
+    document.getElementById('sl-res').textContent='💥';
+    setTimeout(()=>showPopup(null,false,false),500);
   }
-
   updateCounter();
-  setTimeout(clearMix, 300);
+  setTimeout(clearMix,300);
 }
 
-function showResult(recipe, isNew) {
-  document.getElementById('rp-emoji').textContent = recipe.emoji;
-  document.getElementById('rp-name').textContent = recipe.name;
-  document.getElementById('rp-desc').textContent = recipe.desc;
-  const tag = document.getElementById('rp-tag');
-  if (recipe.funny) {
-    tag.textContent = '😂 Странная комбинация!';
-    tag.className = 'rp-tag fail';
-  } else if (isNew) {
-    tag.textContent = '✨ Новый рецепт!';
-    tag.className = 'rp-tag new';
+function showPopup(recipe,isNew,funny){
+  const p=document.getElementById('popup');
+  if(!recipe){
+    document.getElementById('p-emoji').textContent=MONSTERS[Math.random()*MONSTERS.length|0];
+    document.getElementById('p-name').textContent=FAIL_SAY[Math.random()*FAIL_SAY.length|0];
+    document.getElementById('p-desc').textContent='Эти ингредиенты не сочетаются.';
+    document.getElementById('p-tag').textContent='💥 Провал';document.getElementById('p-tag').className='p-tag fail';
+    p.classList.add('fail-shake');setTimeout(()=>p.classList.remove('fail-shake'),400);
   } else {
-    tag.textContent = 'Уже открыто';
-    tag.className = 'rp-tag known';
+    document.getElementById('p-emoji').textContent=recipe.e;
+    document.getElementById('p-name').textContent=recipe.n;
+    document.getElementById('p-desc').textContent=recipe.d;
+    const tag=document.getElementById('p-tag');
+    if(funny){tag.textContent='😂 Странная комбинация!';tag.className='p-tag funny'}
+    else if(isNew){tag.textContent='✨ Новый рецепт!';tag.className='p-tag new'}
+    else{tag.textContent='Уже открыто';tag.className='p-tag known'}
   }
-  document.getElementById('result-popup').classList.add('show');
-  document.getElementById('overlay').classList.add('show');
+  document.getElementById('popup-bg').classList.add('show');
+}
+function closePopup(){document.getElementById('popup-bg').classList.remove('show')}
+
+function clearMix(){
+  slots=[null,null];
+  ['sl0','sl1'].forEach(id=>{const s=document.getElementById(id);s.textContent='';s.classList.remove('filled')});
+  document.getElementById('sl-res').textContent='?';
 }
 
-const FAIL_MONSTERS = ['👾','👻','💩','🤡','👹','💀','🧟','👽','🤮','😈'];
-const FAIL_PHRASES = [
-  'Это не съедобно!','Монстрик сбежал!','Бурлит и пенится!',
-  'Кухня в дыму!','Ой-ой-ой!','Что это было?!','Шеф в шоке!',
-  'Так не готовят!','Кастрюля взорвалась!','Попробуй ещё раз!'
-];
-
-function vibrate(pattern) {
-  if (navigator.vibrate) navigator.vibrate(pattern);
+function spawnMonster(isFunny){
+  if(navigator.vibrate)navigator.vibrate([100,50,100,50,200]);
+  const ex=document.createElement('div');ex.className='explosion';document.body.appendChild(ex);setTimeout(()=>ex.remove(),800);
+  const m=document.createElement('div');m.className='monster';m.textContent=isFunny?'🤪':MONSTERS[Math.random()*MONSTERS.length|0];document.body.appendChild(m);setTimeout(()=>m.remove(),1200);
+  document.getElementById('s-game').classList.add('screen-shake');setTimeout(()=>document.getElementById('s-game').classList.remove('screen-shake'),400);
 }
 
-function spawnMonster(isFunny) {
-  vibrate([100, 50, 100, 50, 200]);
-  playSound(isFunny ? 'funny' : 'fail');
-  // Взрыв/дым
-  const expl = document.createElement('div');
-  expl.className = 'explosion';
-  document.body.appendChild(expl);
-  setTimeout(() => expl.remove(), 800);
-
-  // Монстрик
-  const monster = document.createElement('div');
-  monster.className = 'fail-monster';
-  monster.textContent = isFunny ? '🤪' : FAIL_MONSTERS[Math.floor(Math.random()*FAIL_MONSTERS.length)];
-  document.body.appendChild(monster);
-  setTimeout(() => monster.remove(), 1200);
-
-  // Тряска экрана
-  document.getElementById('screen-game').classList.add('screen-shake');
-  setTimeout(() => document.getElementById('screen-game').classList.remove('screen-shake'), 400);
+function openBook(){
+  const g=document.getElementById('book-grid');g.innerHTML='';
+  Object.values(R).forEach(r=>{const d=document.createElement('div');d.className='b-item'+(discovered.has(r.id)?'':' locked');
+  d.innerHTML=`<div class="b-e">${discovered.has(r.id)?r.e:'❓'}</div><div class="b-n">${discovered.has(r.id)?r.n:'???'}</div>`;g.appendChild(d)});
+  document.getElementById('book-bg').classList.add('show');
 }
+function closeBook(){document.getElementById('book-bg').classList.remove('show')}
 
-function showFail() {
-  spawnMonster(false);
-  setTimeout(() => {
-    document.getElementById('rp-emoji').textContent = FAIL_MONSTERS[Math.floor(Math.random()*FAIL_MONSTERS.length)];
-    document.getElementById('rp-name').textContent = FAIL_PHRASES[Math.floor(Math.random()*FAIL_PHRASES.length)];
-    document.getElementById('rp-desc').textContent = 'Эти ингредиенты не сочетаются. Попробуй другую комбинацию!';
-    const tag = document.getElementById('rp-tag');
-    tag.textContent = '💥 Провал!';
-    tag.className = 'rp-tag fail';
-    document.getElementById('result-popup').classList.add('show');
-    document.getElementById('result-popup').classList.add('fail');
-    document.getElementById('overlay').classList.add('show');
-  }, 600);
-}
-
-function closeResult() {
-  document.getElementById('result-popup').classList.remove('show', 'fail');
-  document.getElementById('overlay').classList.remove('show');
-}
-
-function clearMix() {
-  mixSlots = [null, null];
-  document.getElementById('slot-0').textContent = '';
-  document.getElementById('slot-0').classList.remove('filled');
-  document.getElementById('slot-1').textContent = '';
-  document.getElementById('slot-1').classList.remove('filled');
-  document.getElementById('mix-zone').classList.remove('active');
-}
-
-function openBook() {
-  const grid = document.getElementById('book-grid');
-  grid.innerHTML = '';
-  Object.values(RECIPES).forEach(r => {
-    const d = document.createElement('div');
-    d.className = 'book-item' + (discovered.has(r.id) ? '' : ' locked');
-    d.innerHTML = `<div class="bi-emoji">${discovered.has(r.id) ? r.emoji : '❓'}</div><div class="bi-name">${discovered.has(r.id) ? r.name : '???'}</div>`;
-    grid.appendChild(d);
-  });
-  document.getElementById('book').classList.add('show');
-}
-
-function closeBook() {
-  document.getElementById('book').classList.remove('show');
-}
-
-function startGame() {
-  discovered = new Set();
-  available = [...BASE];
-  mixSlots = [null, null];
-  renderIngredients();
-  updateCounter();
-  clearMix();
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-game').classList.add('active');
+function startGame(){
+  discovered=new Set();cooked=[];slots=[null,null];
+  renderBase();renderShelf();updateCounter();clearMix();
+  document.getElementById('s-start').classList.remove('active');
+  document.getElementById('s-game').classList.add('active');
 }
 </script>
 </body>
