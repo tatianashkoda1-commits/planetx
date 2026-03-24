@@ -1,4 +1,4 @@
-const CACHE_NAME = 'planetx-v5';
+const CACHE_NAME = 'planetx-v6';
 const ASSETS = [
   '/planetx/v3.html',
   '/planetx/chef_nobg.png',
