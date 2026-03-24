@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кубик-конструктор | Маленький Шеф</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+body{font-family:'Inter',sans-serif;background:#FDF8F3;overflow:hidden;height:100vh;width:100vw}
+
+/* Экран */
+.screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;padding:20px;text-align:center}
+.screen.active{display:flex}
+
+/* Стартовый */
+.start-logo{font-size:60px;margin-bottom:16px}
+.start-title{font-size:32px;font-weight:800;color:#2D2A26;margin-bottom:8px}
+.start-sub{font-size:16px;color:#8A8580;margin-bottom:32px}
+.btn{background:#E85D3A;color:#fff;border:none;padding:16px 48px;border-radius:14px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 4px 15px rgba(232,93,58,.3)}
+.btn:active{transform:scale(.95)}
+.btn-dark{background:#2D2A26;box-shadow:0 4px 15px rgba(45,42,38,.2)}
+
+/* Игровое поле */
+.game{background:#FDF8F3;position:relative}
+.game-header{position:absolute;top:0;left:0;right:0;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+.score{font-size:20px;font-weight:800;color:#E85D3A}
+.level{font-size:13px;font-weight:600;color:#8A8580}
+.timer{font-size:16px;font-weight:700;color:#2D2A26}
+.combo-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;font-weight:800;color:#E85D3A;opacity:0;pointer-events:none;transition:all .5s;z-index:20}
+.combo-text.show{opacity:1;transform:translate(-50%,-70%);font-size:64px}
+
+/* Тарелка */
+.plate{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);width:200px;height:60px;background:#fff;border-radius:100px/30px;box-shadow:0 4px 20px rgba(45,42,38,.08);border:2px solid rgba(45,42,38,.06);display:flex;align-items:center;justify-content:center;gap:4px;z-index:5}
+.plate-slot{width:40px;height:40px;border-radius:10px;border:2px dashed rgba(232,93,58,.2);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .3s}
+.plate-slot.filled{border:2px solid #E85D3A;background:rgba(232,93,58,.06)}
+.plate-slot.wrong{border:2px solid #DC2626;background:rgba(220,38,38,.06);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* Категории внизу */
+.categories{position:absolute;bottom:16px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:5}
+.cat-label{font-size:9px;font-weight:600;padding:3px 10px;border-radius:10px;color:#fff}
+
+/* Кубики */
+.cube{position:absolute;width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:transform .15s;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.cube:active{transform:scale(.9)}
+.cube.protein{background:linear-gradient(135deg,#FECACA,#FCA5A5);border:2px solid #F87171}
+.cube.base{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:2px solid #FBBF24}
+.cube.veggie{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border:2px solid #34D399}
+.cube.sauce{background:linear-gradient(135deg,#E0E7FF,#C7D2FE);border:2px solid #818CF8}
+.cube.caught{animation:cubeCatch .4s forwards}
+@keyframes cubeCatch{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(0);opacity:0}}
+.cube.wrong-catch{animation:wrongCatch .4s forwards}
+@keyframes wrongCatch{0%{transform:scale(1)}50%{transform:scale(1.2) rotate(15deg)}100%{transform:scale(0) rotate(30deg);opacity:0}}
+
+/* Рецепт */
+.recipe-bar{position:absolute;top:50px;left:50%;transform:translateX(-50%);background:#fff;border-radius:14px;padding:10px 20px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 10px rgba(45,42,38,.06);z-index:10;white-space:nowrap}
+.recipe-bar .need{font-size:22px;opacity:.3;transition:all .3s}
+.recipe-bar .need.got{opacity:1;transform:scale(1.1)}
+.recipe-bar .plus{font-size:14px;color:#8A8580}
+.recipe-name{position:absolute;top:90px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:600;color:#D4A052;z-index:10;white-space:nowrap}
+
+/* Результат */
+.result-emoji{font-size:80px;margin-bottom:16px}
+.result-title{font-size:28px;font-weight:800;color:#2D2A26;margin-bottom:8px}
+.result-score{font-size:48px;font-weight:800;color:#E85D3A;margin-bottom:4px}
+.result-sub{font-size:14px;color:#8A8580;margin-bottom:24px}
+.result-stars{font-size:36px;margin-bottom:24px;letter-spacing:4px}
+.result-dishes{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px}
+.result-dish{background:#fff;border-radius:10px;padding:6px 12px;font-size:12px;color:#5C5550;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+</style>
+</head>
+<body>
+
+<!-- СТАРТ -->
+<div class="screen active" id="screen-start">
+  <div class="start-logo">🧊🍳</div>
+  <div class="start-title">Кубик-конструктор</div>
+  <div class="start-sub">Собери обед из кубиков!<br>Белок + Гарнир + Овощи + Соус = Блюдо</div>
+  <button class="btn" onclick="startGame()">Играть!</button>
+</div>
+
+<!-- ИГРА -->
+<div class="screen" id="screen-game">
+  <div class="game-header">
+    <div class="score" id="score">0</div>
+    <div class="level" id="level">Уровень 1</div>
+    <div class="timer" id="timer">60</div>
+  </div>
+  <div class="recipe-bar" id="recipe-bar"></div>
+  <div class="recipe-name" id="recipe-name"></div>
+  <div class="combo-text" id="combo-text"></div>
+  <div class="plate" id="plate">
+    <div class="plate-slot" id="slot-0" data-cat="protein"></div>
+    <div class="plate-slot" id="slot-1" data-cat="base"></div>
+    <div class="plate-slot" id="slot-2" data-cat="veggie"></div>
+    <div class="plate-slot" id="slot-3" data-cat="sauce"></div>
+  </div>
+  <div class="categories">
+    <span class="cat-label" style="background:#F87171">Белок</span>
+    <span class="cat-label" style="background:#FBBF24">Гарнир</span>
+    <span class="cat-label" style="background:#34D399">Овощи</span>
+    <span class="cat-label" style="background:#818CF8">Соус</span>
+  </div>
+</div>
+
+<!-- РЕЗУЛЬТАТ -->
+<div class="screen" id="screen-result">
+  <div class="result-emoji" id="result-emoji"></div>
+  <div class="result-title" id="result-title"></div>
+  <div class="result-score" id="result-score"></div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="result-stars" id="result-stars"></div>
+  <div class="result-dishes" id="result-dishes"></div>
+  <button class="btn" onclick="startGame()">Ещё раз!</button>
+  <button class="btn btn-dark" style="margin-top:10px;font-size:14px;padding:12px 32px" onclick="goHome()">Меню</button>
+</div>
+
+<script>
+const ITEMS = {
+  protein: [
+    {emoji:'🍗',name:'Курица'},{emoji:'🥩',name:'Говядина'},{emoji:'🐟',name:'Рыба'},
+    {emoji:'🥚',name:'Яйцо'},{emoji:'🦐',name:'Креветки'},{emoji:'🧆',name:'Фрикадельки'}
+  ],
+  base: [
+    {emoji:'🍚',name:'Рис'},{emoji:'🍝',name:'Паста'},{emoji:'🥔',name:'Картофель'},
+    {emoji:'🫓',name:'Лепёшка'},{emoji:'🍞',name:'Хлеб'},{emoji:'🌾',name:'Гречка'}
+  ],
+  veggie: [
+    {emoji:'🥦',name:'Брокколи'},{emoji:'🥕',name:'Морковь'},{emoji:'🌽',name:'Кукуруза'},
+    {emoji:'🥒',name:'Огурец'},{emoji:'🍅',name:'Помидор'},{emoji:'🫑',name:'Перец'}
+  ],
+  sauce: [
+    {emoji:'🟤',name:'Терияки'},{emoji:'🔴',name:'Кетчуп'},{emoji:'🟡',name:'Карри'},
+    {emoji:'🟢',name:'Песто'},{emoji:'⚪',name:'Сметана'},{emoji:'🟠',name:'Чили'}
+  ]
+};
+
+const RECIPES = [
+  {protein:'🍗',base:'🍚',veggie:'🥦',sauce:'🟤',name:'Курица терияки с рисом'},
+  {protein:'🥩',base:'🥔',veggie:'🥕',sauce:'🔴',name:'Стейк с картошкой'},
+  {protein:'🐟',base:'🍚',veggie:'🥒',sauce:'🟡',name:'Рыба карри'},
+  {protein:'🦐',base:'🍝',veggie:'🍅',sauce:'🟢',name:'Паста с креветками'},
+  {protein:'🥚',base:'🍞',veggie:'🥒',sauce:'⚪',name:'Завтрак с яйцом'},
+  {protein:'🧆',base:'🫓',veggie:'🫑',sauce:'🟠',name:'Фрикадельки в лепёшке'},
+  {protein:'🍗',base:'🌾',veggie:'🌽',sauce:'⚪',name:'Курица с гречкой'},
+  {protein:'🐟',base:'🥔',veggie:'🥦',sauce:'🟡',name:'Рыба с пюре'},
+  {protein:'🥩',base:'🍝',veggie:'🍅',sauce:'🔴',name:'Болоньезе'},
+  {protein:'🦐',base:'🍚',veggie:'🫑',sauce:'🟤',name:'Тайские креветки'},
+];
+
+let score=0, timeLeft=60, level=1, cubes=[], timerInterval, spawnInterval;
+let currentRecipe=null, collected={protein:null,base:null,veggie:null,sauce:null};
+let dishesCooked=[], combo=0;
+
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+function newRecipe(){
+  currentRecipe=pick(RECIPES);
+  collected={protein:null,base:null,veggie:null,sauce:null};
+  document.querySelectorAll('.plate-slot').forEach(s=>{s.textContent='';s.classList.remove('filled','wrong')});
+  const bar=document.getElementById('recipe-bar');
+  bar.innerHTML=`<span class="need" id="need-protein">${currentRecipe.protein}</span><span class="plus">+</span><span class="need" id="need-base">${currentRecipe.base}</span><span class="plus">+</span><span class="need" id="need-veggie">${currentRecipe.veggie}</span><span class="plus">+</span><span class="need" id="need-sauce">${currentRecipe.sauce}</span>`;
+  document.getElementById('recipe-name').textContent=currentRecipe.name;
+}
+
+function spawnCube(){
+  const cats=Object.keys(ITEMS);
+  const cat=pick(cats);
+  const item=pick(ITEMS[cat]);
+  const cube=document.createElement('div');
+  cube.className='cube '+cat;
+  cube.textContent=item.emoji;
+  cube.dataset.cat=cat;
+  cube.dataset.emoji=item.emoji;
+  const x=20+Math.random()*(window.innerWidth-76);
+  cube.style.left=x+'px';
+  cube.style.top='-60px';
+  document.getElementById('screen-game').appendChild(cube);
+
+  const speed=2+level*0.5+Math.random()*1.5;
+  let y=-60;
+  const fall=()=>{
+    y+=speed;
+    cube.style.top=y+'px';
+    if(y>window.innerHeight+60){cube.remove();return}
+    if(!cube.dataset.dead) requestAnimationFrame(fall);
+  };
+  requestAnimationFrame(fall);
+
+  cube.addEventListener('click',()=>catchCube(cube));
+  cube.addEventListener('touchstart',(e)=>{e.preventDefault();catchCube(cube)},{passive:false});
+}
+
+function catchCube(cube){
+  if(cube.dataset.dead) return;
+  cube.dataset.dead='1';
+  const cat=cube.dataset.cat;
+  const emoji=cube.dataset.emoji;
+
+  // Проверяем нужен ли этот кубик
+  if(currentRecipe[cat]===emoji && !collected[cat]){
+    // Правильный!
+    collected[cat]=emoji;
+    cube.classList.add('caught');
+    const slotIdx={protein:0,base:1,veggie:2,sauce:3}[cat];
+    const slot=document.getElementById('slot-'+slotIdx);
+    slot.textContent=emoji;
+    slot.classList.add('filled');
+    const need=document.getElementById('need-'+cat);
+    if(need) need.classList.add('got');
+
+    score+=10;
+    document.getElementById('score').textContent=score;
+
+    // Проверяем все ли собрали
+    if(collected.protein&&collected.base&&collected.veggie&&collected.sauce){
+      dishComplete();
+    }
+  } else {
+    // Неправильный
+    cube.classList.add('wrong-catch');
+    combo=0;
+  }
+  setTimeout(()=>cube.remove(),400);
+}
+
+function dishComplete(){
+  combo++;
+  const bonus=combo>1?combo*5:0;
+  score+=50+bonus;
+  document.getElementById('score').textContent=score;
+  dishesCooked.push(currentRecipe.name);
+
+  // Анимация
+  const ct=document.getElementById('combo-text');
+  if(combo>1){
+    ct.textContent=combo+'x КОМБО!';
+  } else {
+    ct.textContent='Вкусно! +50';
+  }
+  ct.classList.add('show');
+  setTimeout(()=>ct.classList.remove('show'),800);
+
+  // Повышение уровня
+  if(dishesCooked.length%3===0){
+    level++;
+    document.getElementById('level').textContent='Уровень '+level;
+  }
+
+  setTimeout(newRecipe,600);
+}
+
+function updateTimer(){
+  timeLeft--;
+  document.getElementById('timer').textContent=timeLeft;
+  if(timeLeft<=0) endGame();
+}
+
+function startGame(){
+  score=0;timeLeft=60;level=1;dishesCooked=[];combo=0;
+  document.getElementById('score').textContent='0';
+  document.getElementById('level').textContent='Уровень 1';
+  document.getElementById('timer').textContent='60';
+  // Убрать старые кубики
+  document.querySelectorAll('.cube').forEach(c=>c.remove());
+  showScreen('screen-game');
+  newRecipe();
+  timerInterval=setInterval(updateTimer,1000);
+  spawnInterval=setInterval(spawnCube,800);
+}
+
+function endGame(){
+  clearInterval(timerInterval);
+  clearInterval(spawnInterval);
+  document.querySelectorAll('.cube').forEach(c=>c.remove());
+
+  const stars=dishesCooked.length>=8?'⭐⭐⭐':dishesCooked.length>=5?'⭐⭐':dishesCooked.length>=2?'⭐':'';
+  const emoji=dishesCooked.length>=8?'🏆':dishesCooked.length>=5?'👨‍🍳':dishesCooked.length>=2?'🍽':'😅';
+  const title=dishesCooked.length>=8?'Шеф-мастер!':dishesCooked.length>=5?'Отличный повар!':dishesCooked.length>=2?'Хорошее начало!':'Попробуй ещё!';
+
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-score').textContent=score;
+  document.getElementById('result-sub').textContent=`Собрано блюд: ${dishesCooked.length}`;
+  document.getElementById('result-stars').textContent=stars||'Без звёзд';
+
+  const dd=document.getElementById('result-dishes');
+  dd.innerHTML='';
+  dishesCooked.forEach(d=>{
+    const el=document.createElement('div');
+    el.className='result-dish';
+    el.textContent=d;
+    dd.appendChild(el);
+  });
+
+  showScreen('screen-result');
+}
+
+function goHome(){showScreen('screen-start')}
+</script>
+</body>
+</html>
