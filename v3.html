@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Планета X — Кулинарный клуб</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{overflow-x:hidden;width:100%;position:relative}
+a{text-decoration:none;color:inherit}
+button,a{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+:root{--bg:#FDF8F3;--bg2:#F9F3EB;--card:rgba(255,255,255,.95);--gold:#E85D3A;--gold-light:#F07A5A;--gold-dark:#C94B2A;--text:#5C5550;--text-dim:#8A8580;--dark:#2D2A26;--border:rgba(232,93,58,.12);--green:#10B981;--ochre:#D4A052}
+body{font-family:'Inter',sans-serif;background:#FDF8F3;color:var(--text);overflow-x:hidden;min-height:100vh;max-width:100vw}
+#app{overflow:hidden;position:relative;width:100%}
+
+/* ===== COSMIC KITCHEN BACKGROUND ===== */
+.cosmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 15% 15%,rgba(232,93,58,.04) 0%,transparent 40%),
+    radial-gradient(ellipse at 85% 20%,rgba(212,160,82,.04) 0%,transparent 35%),
+    radial-gradient(ellipse at 50% 80%,rgba(232,93,58,.03) 0%,transparent 40%),
+    linear-gradient(180deg,#FDF8F3 0%,#F9F3EB 50%,#FDF8F3 100%)}
+.cosmos::before{content:'';display:none}
+.cosmos::after{content:'';display:none}
+
+/* ===== PLANETS ===== */
+.planet{display:none !important}
+.planet::before{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.7) 0%,transparent 50%)}
+
+/* Mercury */
+.p-mercury{width:12px;height:12px;top:8%;
+  background:radial-gradient(circle at 35% 30%,#D1D5DB,#9CA3AF,#6B7280);
+  box-shadow:0 0 8px rgba(156,163,175,.3),inset -2px -2px 4px rgba(0,0,0,.2);
+  animation:orbit-mercury 18s linear infinite}
+@keyframes orbit-mercury{
+  0%{left:-20px;top:8%}25%{left:25%;top:5%}50%{left:50%;top:10%}75%{left:75%;top:6%}100%{left:calc(100% + 20px);top:8%}}
+
+/* Venus */
+.p-venus{width:16px;height:16px;top:18%;
+  background:radial-gradient(circle at 35% 30%,#FEF9C3,#FDE68A,#D4A017);
+  box-shadow:0 0 12px rgba(253,230,138,.3),inset -2px -2px 5px rgba(0,0,0,.15);
+  animation:orbit-venus 24s linear infinite;animation-delay:-5s}
+@keyframes orbit-venus{
+  0%{left:-20px;top:18%}25%{left:25%;top:14%}50%{left:50%;top:20%}75%{left:75%;top:15%}100%{left:calc(100% + 20px);top:18%}}
+
+/* Earth */
+.p-earth{width:18px;height:18px;top:35%;
+  background:radial-gradient(circle at 35% 30%,#86EFAC,#E85D3A,#B8431F);
+  box-shadow:0 0 15px rgba(232,93,58,.3),inset -3px -3px 6px rgba(0,0,0,.15);
+  animation:orbit-earth 28s linear infinite;animation-delay:-10s}
+@keyframes orbit-earth{
+  0%{left:-25px;top:35%}25%{left:25%;top:30%}50%{left:50%;top:38%}75%{left:75%;top:31%}100%{left:calc(100% + 25px);top:35%}}
+
+/* Mars */
+.p-mars{width:14px;height:14px;top:55%;
+  background:radial-gradient(circle at 35% 30%,#FCA5A5,#DC2626,#991B1B);
+  box-shadow:0 0 10px rgba(220,38,38,.25),inset -2px -2px 5px rgba(0,0,0,.2);
+  animation:orbit-mars 32s linear infinite;animation-delay:-3s}
+@keyframes orbit-mars{
+  0%{left:-20px;top:55%}25%{left:25%;top:50%}50%{left:50%;top:58%}75%{left:75%;top:51%}100%{left:calc(100% + 20px);top:55%}}
+
+/* Jupiter */
+.p-jupiter{width:35px;height:35px;top:25%;
+  background:radial-gradient(circle at 35% 30%,#FDE68A,#B8862D,#92400E);
+  box-shadow:0 0 25px rgba(217,119,6,.2),inset -4px -4px 10px rgba(0,0,0,.15);
+  animation:orbit-jupiter 40s linear infinite;animation-delay:-15s;
+  overflow:hidden}
+.p-jupiter::after{content:'';position:absolute;top:40%;left:0;right:0;height:3px;background:rgba(146,64,14,.3);box-shadow:0 6px 0 rgba(146,64,14,.2),0 -5px 0 rgba(146,64,14,.15)}
+@keyframes orbit-jupiter{
+  0%{left:-40px;top:25%}25%{left:25%;top:20%}50%{left:50%;top:28%}75%{left:75%;top:21%}100%{left:calc(100% + 40px);top:25%}}
+
+/* Saturn */
+.p-saturn{width:30px;height:30px;top:70%;
+  background:radial-gradient(circle at 35% 30%,#FEF3C7,#D4A017,#A16207);
+  box-shadow:0 0 20px rgba(212,160,23,.2),inset -3px -3px 8px rgba(0,0,0,.15);
+  animation:orbit-saturn 36s linear infinite;animation-delay:-8s}
+.p-saturn::after{content:'';position:absolute;top:50%;left:50%;width:50px;height:12px;margin-left:-25px;margin-top:-6px;border:2px solid rgba(212,160,23,.4);border-radius:50%;transform:rotateX(70deg);background:transparent}
+@keyframes orbit-saturn{
+  0%{left:-50px;top:70%}25%{left:25%;top:65%}50%{left:50%;top:73%}75%{left:75%;top:66%}100%{left:calc(100% + 50px);top:70%}}
+
+/* Uranus */
+.p-uranus{width:20px;height:20px;top:45%;
+  background:radial-gradient(circle at 35% 30%,#E0F2FE,#7DD3FC,#0EA5E9);
+  box-shadow:0 0 15px rgba(125,211,252,.3),inset -3px -3px 6px rgba(0,0,0,.1);
+  animation:orbit-uranus 34s linear infinite;animation-delay:-20s}
+@keyframes orbit-uranus{
+  0%{left:-25px;top:45%}25%{left:25%;top:40%}50%{left:50%;top:48%}75%{left:75%;top:41%}100%{left:calc(100% + 25px);top:45%}}
+
+/* Neptune */
+.p-neptune{width:20px;height:20px;top:82%;
+  background:radial-gradient(circle at 35% 30%,#F5A07A,#D4662E,#8B3318);
+  box-shadow:0 0 15px rgba(37,99,235,.3),inset -3px -3px 6px rgba(0,0,0,.15);
+  animation:orbit-neptune 38s linear infinite;animation-delay:-12s}
+@keyframes orbit-neptune{
+  0%{left:-25px;top:82%}25%{left:25%;top:78%}50%{left:50%;top:85%}75%{left:75%;top:79%}100%{left:calc(100% + 25px);top:82%}}
+
+/* ===== GLOW ===== */
+.glow-text{text-shadow:none}
+
+/* ===== NAV ===== */
+.nav{background:rgba(253,248,243,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(45,42,38,.06);box-shadow:0 1px 12px rgba(45,42,38,.04);padding:0 40px;display:flex;align-items:center;height:48px;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Inter',sans-serif;font-size:17px;font-weight:700;color:#2D2A26;letter-spacing:.5px}
+.nav-logo img{height:36px;width:auto}
+.nav-links{display:flex;gap:4px;margin-left:20px;flex:1}
+.nav-link{display:inline-block;padding:8px 16px;border-radius:10px;color:#8A8580;font-size:12px;font-weight:500;white-space:nowrap;transition:all .3s;border:none;background:transparent;position:relative;line-height:1.4}
+.nav-link::before{content:'';position:absolute;top:4px;left:6px;width:5px;height:5px;border-radius:50%;background:transparent;transition:all .3s}
+.nav-link:hover{color:#E85D3A;background:rgba(232,93,58,.06)}
+.nav-link.active{color:#E85D3A;background:rgba(232,93,58,.08);box-shadow:none}
+.nav-link.active::before{background:var(--green);box-shadow:0 0 6px var(--green)}
+.btn-join-nav{background:#2D2A26;color:#fff;border:none;padding:9px 24px;border-radius:10px;font-weight:600;font-size:12px;font-family:inherit;box-shadow:0 2px 8px rgba(45,42,38,.12);transition:all .3s}
+.btn-join-nav:hover{box-shadow:0 4px 16px rgba(45,42,38,.18);transform:translateY(-1px);background:#1a1815}
+
+/* ===== PAGE VISIBILITY ===== */
+.page{display:none;position:relative;z-index:1}
+.page.active{display:block}
+
+/* ===== HERO ===== */
+.hero{text-align:center;padding:0 40px 0;margin-top:-10px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#FDF8F3 0%,#FFF5EE 30%,#FEF0E5 60%,#FDF8F3 100%);min-height:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.hero::before{content:'';position:absolute;top:-200px;right:-150px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(232,93,58,.08) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-150px;left:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,82,.08) 0%,transparent 70%);pointer-events:none}
+@keyframes hero-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.hero-badge{display:inline-block;background:linear-gradient(135deg,#E85D3A,#D4A052);color:#fff;border:none;border-radius:24px;padding:6px 18px;font-size:11px;margin-bottom:4px;margin-top:0;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.hero h1{font-family:'Inter',sans-serif;font-size:54px;font-weight:800;color:#2D2A26;margin-bottom:4px;position:relative;line-height:1.1;letter-spacing:-1px}
+.hero h1 span{color:#E85D3A}
+.hero-sub{font-size:18px;color:#8A8580;margin-bottom:10px;line-height:1.7;position:relative;max-width:600px}
+.hero-stats{display:flex;justify-content:center;gap:50px;margin-bottom:10px;position:relative}
+.h-stat-num{font-size:40px;font-weight:800;color:#2D2A26;letter-spacing:-1px}
+.h-stat-label{font-size:12px;color:#8A8580;text-transform:uppercase;letter-spacing:1.5px;font-weight:500}
+.btn-join{background:#2D2A26;color:#fff;border:none;padding:14px 44px;border-radius:14px;font-size:17px;font-weight:700;font-family:inherit;transition:all .3s;position:relative;box-shadow:0 8px 30px rgba(45,42,38,.15);display:inline-block;letter-spacing:.3px}
+.btn-join:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 40px rgba(45,42,38,.2);background:#1a1815}
+.btn-join:active{transform:translateY(0) scale(.98)}
+.hero-note{font-size:12px;color:#8A8580;margin-top:4px;position:relative}
+
+/* ===== SECTIONS ===== */
+.section{max-width:100%;margin:0 auto;padding:60px 40px;position:relative;z-index:1}
+.section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 10%,rgba(45,42,38,.04) 50%,transparent 90%)}
+.section-title{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;color:#2D2A26;text-align:center;margin-bottom:8px;letter-spacing:-.5px}
+.section-sub{font-size:15px;color:#8A8580;text-align:center;margin-bottom:40px}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,rgba(232,93,58,.3),transparent);margin:0 auto 32px;border-radius:2px;position:relative}
+.divider::before{content:'\u25C6';position:absolute;left:50%;top:-8px;transform:translateX(-50%);color:rgba(232,93,58,.3);font-size:10px}
+
+/* ===== GLASS CARD ===== */
+.glass{background:#fff;border:1px solid rgba(45,42,38,.06);border-radius:20px;padding:28px;box-shadow:0 4px 20px rgba(45,42,38,.04);transition:all .3s}
+.glass:hover{border-color:rgba(232,93,58,.12);box-shadow:0 8px 30px rgba(232,93,58,.06);transform:translateY(-3px)}
+.glass-sm{background:#fff;border:1px solid rgba(45,42,38,.06);border-radius:16px;padding:16px 20px;box-shadow:0 2px 12px rgba(45,42,38,.03);transition:all .3s}
+.glass-sm:hover{border-color:rgba(232,93,58,.12);box-shadow:0 6px 20px rgba(232,93,58,.05);transform:translateY(-2px)}
+
+/* ===== LIVE FEED ===== */
+.live-feed{display:flex;flex-direction:column;gap:12px}
+.live-item{display:flex;align-items:center;gap:12px}
+.live-ava{width:40px;height:40px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:#fff;overflow:hidden}
+.ava-img{width:100%;height:100%;object-fit:cover;border-radius:20%}
+
+/* Роли — рамки и бейджи */
+.role-chef{position:relative;border:none !important;box-shadow:none !important;overflow:visible !important}
+.role-curator{position:relative;border:none !important;box-shadow:none !important;overflow:visible !important}
+.role-chef::after,.role-curator::after{content:'';position:absolute;inset:-2px;border-radius:20%;pointer-events:none;z-index:1}
+.role-chef::after{border:2px solid #D4A052;box-shadow:0 0 8px rgba(212,160,82,.15)}
+.role-curator::after{border:2px solid #8B7355;box-shadow:0 0 8px rgba(139,115,85,.12)}
+.role-badge{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);font-size:6.5px;font-weight:700;letter-spacing:.5px;padding:1px 5px;border-radius:6px;white-space:nowrap;line-height:1.4;z-index:2}
+.role-chef .role-badge,.role-curator .role-badge{display:none}
+.role-chef .rank-bars,.role-curator .rank-bars{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);display:flex;gap:2px;z-index:3}
+.rank-bar{width:8px;height:2.5px;border-radius:1px}
+.role-chef .rank-bar{background:#D4A052;box-shadow:0 0 4px rgba(212,160,82,.3)}
+.role-curator .rank-bar{background:#8B7355;box-shadow:0 0 4px rgba(139,115,85,.2)}
+.role-chef .ava-img,.role-curator .ava-img{border-radius:20%}
+.role-chef,.role-curator{border-radius:20% !important}
+.role-chef .role-badge,.role-curator .role-badge{border-radius:6px}
+
+/* ===== СИСТЕМА УРОВНЕЙ — квадратная рамка прогресса ===== */
+.ava-ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.ava-ring svg{position:absolute;inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);transform:rotate(180deg);pointer-events:none;z-index:1}
+.ava-ring svg rect{fill:none;stroke-width:2;stroke-linecap:round;rx:7;ry:7}
+.ava-ring svg .ring-bg{stroke:rgba(45,42,38,.06)}
+.ava-ring svg .ring-fill{transition:stroke-dashoffset .6s ease}
+
+/* Цвета рамок по уровням */
+.ava-ring.lvl-0 svg .ring-fill{stroke:transparent}
+.ava-ring.lvl-1 svg .ring-fill{stroke:#C8BEAA}
+.ava-ring.lvl-2 svg .ring-fill{stroke:#D4A052}
+.ava-ring.lvl-3 svg .ring-fill{stroke:#E85D3A}
+.ava-ring.lvl-4 svg .ring-fill{stroke:#E85D3A;filter:drop-shadow(0 0 3px rgba(232,93,58,.3))}
+.ava-ring.lvl-5 svg .ring-fill{stroke:#D4A052;filter:drop-shadow(0 0 6px rgba(212,160,82,.4))}
+
+/* Бейдж уровня */
+.lvl-badge{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:7px;font-weight:700;padding:2px 6px;border-radius:6px;white-space:nowrap;z-index:3;letter-spacing:.5px}
+.lvl-0 .lvl-badge{display:none}
+.lvl-1 .lvl-badge{background:#C8BEAA;color:#fff}
+.lvl-2 .lvl-badge{background:#D4A052;color:#fff}
+.lvl-3 .lvl-badge{background:#E85D3A;color:#fff}
+.lvl-4 .lvl-badge{background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;box-shadow:0 1px 4px rgba(232,93,58,.25)}
+.lvl-5 .lvl-badge{background:linear-gradient(135deg,#D4A052,#B8862D);color:#fff;box-shadow:0 2px 8px rgba(212,160,82,.3)}
+
+/* Большие аватарки шефов */
+.chef-ava.role-chef{border-width:3px !important;box-shadow:0 0 20px rgba(212,160,82,.15) !important}
+.chef-ava.role-chef .role-badge{font-size:8px;padding:2px 8px;bottom:-8px}
+
+.live-ava.gold{background:linear-gradient(135deg,#E85D3A,#C94B2A)}
+.live-ava.green{background:linear-gradient(135deg,#8B7355,#6B5840)}
+.live-ava.purple{background:linear-gradient(135deg,#A08060,#7A6045)}
+.live-ava.blue{background:linear-gradient(135deg,#B8956A,#8B7355)}
+.live-text{flex:1;font-size:13px;line-height:1.5}
+.live-text b{color:var(--gold)}
+.live-time{font-size:11px;color:var(--text-dim);flex-shrink:0}
+.live-badge{background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;font-size:9px;padding:3px 10px;border-radius:10px;font-weight:600;flex-shrink:0}
+
+/* ===== GALLERY ===== */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.gallery-item{aspect-ratio:1;background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(249,243,235,.6));backdrop-filter:blur(10px);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;border:1px solid rgba(232,93,58,.2);position:relative;overflow:hidden;transition:all .4s;box-shadow:0 2px 10px rgba(45,42,38,.06)}
+.gallery-item:hover{border-color:rgba(232,93,58,.3);box-shadow:0 4px 20px rgba(232,93,58,.08);transform:translateY(-3px) scale(1.02)}
+.gallery-overlay{position:absolute;bottom:0;left:0;right:0;padding:6px 10px;background:linear-gradient(transparent,rgba(45,42,38,.05));font-size:10px;color:#fff}
+.gallery-likes{position:absolute;top:8px;right:8px;background:rgba(45,42,38,.06);color:#fff;font-size:10px;padding:2px 6px;border-radius:6px}
+
+/* ===== CHEFS ===== */
+.chefs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.chef-card{text-align:center}
+.chef-ava{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#E85D3A,#D4A052);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin:0 auto 14px;box-shadow:0 6px 20px rgba(232,93,58,.18)}
+.chef-name{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.chef-role{font-size:11px;color:var(--gold);margin-bottom:6px}
+.chef-desc{font-size:11px;color:var(--text-dim);line-height:1.4}
+
+/* ===== SCHEDULE ===== */
+.schedule-list{display:flex;flex-direction:column;gap:10px}
+.sch-row{display:flex;align-items:center;gap:14px}
+.sch-day{background:linear-gradient(135deg,#E85D3A,#D4A052);color:#fff;width:48px;height:48px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.sch-d-name{font-size:9px;font-weight:700;text-transform:uppercase}
+.sch-d-num{font-size:16px;font-weight:700}
+.sch-info{flex:1}
+.sch-info h4{font-size:13px;color:var(--dark);font-weight:600}
+.sch-info p{font-size:11px;color:var(--text-dim)}
+.sch-lock{font-size:11px;color:var(--text-dim);background:rgba(20,20,35,.8);padding:4px 10px;border-radius:6px;flex-shrink:0}
+
+/* ===== CHAT PREVIEW (blurred) ===== */
+.chat-blur{position:relative;overflow:hidden}
+.chat-blur-msgs{filter:blur(4px);pointer-events:none}
+.chat-blur-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.75);backdrop-filter:blur(4px);border-radius:20px;gap:10px}
+.chat-blur-overlay p{font-size:14px;color:var(--dark);font-weight:600}
+.chat-msg-row{display:flex;gap:8px;margin-bottom:10px;align-items:flex-start}
+.chat-msg-ava{width:28px;height:28px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff}
+.chat-msg-bbl{background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(249,243,235,.6));border-radius:10px;padding:8px 12px;font-size:12px;line-height:1.4;max-width:300px}
+.chat-msg-nm{font-weight:600;font-size:10px;color:var(--gold);margin-bottom:2px}
+
+/* ===== PRIZE ===== */
+.prize-preview{text-align:center}
+.prize-icon{font-size:48px;margin-bottom:12px}
+.prize-name{font-family:'Playfair Display',serif;font-size:22px;color:var(--dark);margin-bottom:6px}
+.prize-val{font-size:13px;color:var(--gold);margin-bottom:16px}
+.timer{display:flex;justify-content:center;gap:14px;margin-bottom:20px}
+.t-block{text-align:center}
+.t-num{font-family:'Inter',sans-serif;font-size:28px;font-weight:800;color:#2D2A26;background:#fff;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(45,42,38,.06);box-shadow:0 2px 8px rgba(45,42,38,.04)}
+.t-label{font-size:9px;color:var(--text-dim);text-transform:uppercase;margin-top:4px}
+.past-winners{display:flex;justify-content:center;gap:24px;margin-top:20px;flex-wrap:wrap}
+.pw-item{text-align:center}
+.pw-icon{font-size:24px}
+.pw-name{font-size:11px;color:var(--text-dim)}
+.pw-winner{font-size:10px;color:var(--gold)}
+
+/* ===== REVIEWS ===== */
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.review-text{font-size:12px;line-height:1.6;font-style:italic;margin-bottom:12px}
+.review-author{display:flex;align-items:center;gap:10px}
+.review-ava{width:32px;height:32px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+.review-name{font-size:12px;font-weight:600;color:var(--dark)}
+.review-since{font-size:10px;color:var(--text-dim)}
+
+/* ===== CTA ===== */
+.cta{text-align:center;padding:80px 40px;position:relative;overflow:hidden;background:linear-gradient(135deg,#FFF5EE,#FEF0E5,#FDF8F3)}
+.cta::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,82,.06) 0%,transparent 70%);pointer-events:none}
+.cta h2{font-family:'Inter',sans-serif;font-size:36px;font-weight:800;color:#2D2A26;margin-bottom:12px;position:relative;letter-spacing:-.5px}
+.cta-sub{font-size:16px;color:#8A8580;margin-bottom:36px;position:relative}
+.cta-features{display:flex;justify-content:center;gap:32px;margin-top:28px;position:relative;flex-wrap:wrap}
+.cta-feat{text-align:center}
+.cta-feat-icon{font-size:20px;margin-bottom:4px}
+.cta-feat-text{font-size:11px;color:var(--text-dim)}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:40px;color:#8A8580;font-size:12px;border-top:1px solid rgba(45,42,38,.05);position:relative;z-index:1;background:#fff}
+.footer span{color:var(--gold);font-weight:600}
+
+/* ===== MODAL ===== */
+.modal{display:none;position:fixed;inset:0;z-index:500;align-items:center;justify-content:center;background:rgba(45,42,38,.1);padding:20px}
+.modal.show{display:flex}
+.modal-card{background:#fff;border:none;border-radius:24px;padding:40px;max-width:420px;width:100%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(45,42,38,.12)}
+.modal-close{position:absolute;top:14px;right:18px;font-size:20px;color:var(--text-dim);background:none;border:none}
+.modal-title{font-family:'Inter',sans-serif;font-size:24px;font-weight:800;color:#2D2A26;margin-bottom:8px}
+.modal-sub{font-size:12px;color:var(--text-dim);margin-bottom:24px}
+.modal-field{margin-bottom:14px;text-align:left}
+.modal-field label{display:block;font-size:10px;font-weight:600;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.modal-field input{width:100%;background:#FDF8F3;border:1px solid rgba(45,42,38,.1);border-radius:12px;padding:14px 16px;color:#2D2A26;font-size:14px;outline:none;font-family:inherit}
+.modal-field input:focus{border-color:var(--gold)}
+.modal-btn{width:100%;background:#2D2A26;color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;margin-top:8px;box-shadow:0 4px 16px rgba(45,42,38,.12)}
+.modal-note{font-size:11px;color:var(--text-dim);margin-top:12px}
+.modal-demo{width:100%;background:transparent;border:1px solid var(--border);padding:12px;border-radius:14px;font-size:13px;font-weight:500;font-family:inherit;margin-top:8px;color:var(--text)}
+.modal-demo:hover{background:rgba(232,93,58,.05);border-color:var(--gold)}
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu{display:none;background:rgba(255,255,255,.95);border-bottom:1px solid var(--border);padding:6px 10px;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:56px;z-index:99}
+.mobile-menu a{flex-shrink:0;display:inline-block;padding:7px 14px;border-radius:16px;border:1px solid transparent;background:transparent;color:var(--text-dim);font-size:11px;font-weight:500;white-space:nowrap;transition:all .2s}
+.mobile-menu a.active,.mobile-menu a:hover{color:#E85D3A;background:rgba(232,93,58,.08);border-color:rgba(232,93,58,.15)}
+
+/* ===== CLUB FEED PAGE ===== */
+.feed-layout{display:grid;grid-template-columns:1fr 340px;gap:24px;max-width:100%;margin:0 auto;padding:24px 40px}
+.feed-main{display:flex;flex-direction:column;gap:16px}
+.feed-sidebar{display:flex;flex-direction:column;gap:16px}
+.post{padding:20px}
+.post-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.post-ava{width:40px;height:40px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;color:#fff}
+.post-name{font-weight:600;font-size:13px;color:var(--dark)}
+.post-role{font-size:10px;color:var(--gold)}
+.post-time{font-size:10px;color:var(--text-dim)}
+.post-body{font-size:13px;line-height:1.7;margin-bottom:12px}
+.post-actions{display:flex;gap:16px;font-size:12px;color:var(--text-dim)}
+.post-actions span{cursor:pointer;transition:color .2s}
+.post-actions span:hover{color:var(--gold)}
+.welcome-banner{padding:24px;text-align:center;background:linear-gradient(135deg,rgba(232,93,58,.08),rgba(96,165,250,.05))!important}
+.welcome-banner h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--dark);margin-bottom:8px}
+.welcome-banner p{font-size:13px;color:var(--text-dim)}
+.sidebar-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
+.online-list{display:flex;flex-wrap:wrap;gap:6px}
+.online-dot{width:32px;height:32px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;position:relative}
+.online-dot::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:var(--green);border:2px solid #fff}
+
+/* ===== LESSONS PAGE ===== */
+.filter-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.filter-tab{padding:8px 20px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--text-dim);font-family:inherit;transition:all .2s;display:inline-block}
+.filter-tab.active,.filter-tab:hover{background:rgba(232,93,58,.1);color:var(--gold);border-color:rgba(232,93,58,.2)}
+.lessons-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.lesson-card{text-align:center;position:relative}
+.lesson-thumb{width:100%;aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:10px;background:#fff;border:1px solid rgba(45,42,38,.06);overflow:hidden;box-shadow:0 2px 8px rgba(45,42,38,.03)}
+.lesson-title{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.lesson-meta{font-size:10px;color:var(--text-dim)}
+.lesson-badge{position:absolute;top:8px;right:8px;font-size:9px;padding:3px 8px;border-radius:8px;font-weight:600}
+.badge-new{background:var(--gold);color:#fff}
+.badge-popular{background:var(--green);color:#fff}
+.badge-soon{background:#D4A052;color:#fff}
+
+/* ===== COOKING / PASTRY PAGES ===== */
+.chef-profile{display:flex;gap:20px;align-items:center;margin-bottom:24px}
+.chef-profile-ava{width:80px;height:80px;border-radius:20%;background:linear-gradient(135deg,#F07A5A,#C94B2A);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;flex-shrink:0;box-shadow:0 6px 25px rgba(232,93,58,.3)}
+.chef-profile-info h3{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:4px}
+.chef-profile-info p{font-size:12px;color:var(--text-dim);line-height:1.5}
+.chef-profile-info .chef-stats{display:flex;gap:16px;margin-top:8px}
+.chef-profile-info .chef-stat{font-size:11px;color:var(--gold);font-weight:600}
+
+/* Рейтинг звёзды */
+.rating{display:flex;align-items:center;gap:3px;margin-top:8px}
+.rating-star{font-size:18px;cursor:pointer;color:#3A3A4A;transition:all .2s;user-select:none;-webkit-user-select:none}
+.rating-star.lit{color:#D4A052;text-shadow:0 0 8px rgba(212,160,82,.4)}
+.rating-star:hover{transform:scale(1.2)}
+.rating-label{font-size:11px;color:var(--text-dim);margin-left:8px}
+.rating-thanks{font-size:11px;color:#10B981;margin-left:8px;display:none}
+.rating.rated .rating-thanks{display:inline}
+.rating.rated .rating-label{display:none}
+.chef-rating-live{font-size:13px;color:#D4A052;font-weight:700;transition:all .3s}
+.chef-rating-live.updated{animation:pulse-gold .5s}
+@keyframes pulse-gold{0%{transform:scale(1)}50%{transform:scale(1.3);text-shadow:0 0 12px rgba(212,160,82,.5)}100%{transform:scale(1)}}
+
+/* ===== CHAT PAGE ===== */
+.chat-layout{display:grid;grid-template-columns:240px 1fr;max-width:100%;margin:0 auto;height:calc(100vh - 60px);overflow:hidden}
+.chat-sidebar{background:rgba(255,255,255,.8);backdrop-filter:blur(10px);border-right:1px solid var(--border);padding:16px;overflow-y:auto}
+.chat-channel{padding:10px 14px;border-radius:12px;font-size:13px;font-weight:500;color:var(--text-dim);margin-bottom:4px;transition:all .2s;display:block;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+.chat-channel:hover,.chat-channel.active{background:rgba(232,93,58,.1);color:var(--gold)}
+.chat-channel .ch-icon{margin-right:6px}
+.chat-main{display:flex;flex-direction:column}
+.chat-header{padding:14px 20px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.6);font-weight:600;font-size:14px;color:var(--dark)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.chat-message{display:flex;gap:10px;align-items:flex-start}
+.chat-m-ava{width:32px;height:32px;border-radius:20%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:#fff}
+.chat-m-body{flex:1}
+.chat-m-name{font-size:11px;font-weight:600;color:var(--gold);margin-bottom:2px}
+.chat-m-name span{font-weight:400;color:var(--text-dim);margin-left:8px;font-size:10px}
+.chat-m-text{font-size:13px;line-height:1.5;background:#F9F3EB;padding:10px 14px;border-radius:0 14px 14px 14px;display:inline-block;max-width:500px;color:#2D2A26}
+.chat-reactions{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.chat-react{font-size:12px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.6);border:1px solid rgba(232,93,58,.12);cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none}
+.chat-react:hover{border-color:rgba(232,93,58,.3);background:rgba(232,93,58,.1)}
+.chat-react.reacted{border-color:rgba(232,93,58,.4);background:rgba(232,93,58,.15)}
+.chat-react-count{font-size:10px;color:var(--text-dim);margin-left:2px}
+.chat-react-add{font-size:14px;padding:2px 6px;border-radius:10px;background:none;border:1px dashed rgba(232,93,58,.15);cursor:pointer;color:var(--text-dim);transition:all .2s}
+.chat-react-add:hover{border-color:rgba(232,93,58,.3);color:var(--gold)}
+.chat-input-area{padding:14px 20px;border-top:1px solid var(--border);background:rgba(255,255,255,.6);display:flex;gap:10px}
+.chat-input-area input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit}
+.chat-input-area button{background:#2D2A26;color:#fff;border:none;padding:12px 24px;border-radius:12px;font-weight:600;font-size:13px;font-family:inherit}
+.chat-container{display:none}
+.chat-container.active{display:flex;flex-direction:column;flex:1}
+
+/* ===== PRIZES PAGE ===== */
+.prizes-how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.prizes-how-item{text-align:center;padding:20px}
+.prizes-how-num{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin:0 auto 10px}
+.prizes-how-title{font-weight:600;font-size:13px;color:var(--dark);margin-bottom:4px}
+.prizes-how-text{font-size:11px;color:var(--text-dim);line-height:1.4}
+.winners-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
+.winner-card{text-align:center;padding:16px}
+.winner-icon{font-size:32px;margin-bottom:8px}
+.winner-prize{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:2px}
+.winner-name{font-size:11px;color:var(--gold)}
+.winner-date{font-size:10px;color:var(--text-dim)}
+
+/* ===== VIP PAGE ===== */
+.vip-banner{text-align:center;padding:48px;background:linear-gradient(135deg,#FFF5EE,#FEF0E5)!important;margin-bottom:24px;border-radius:24px}
+.vip-badge-icon{font-size:48px;margin-bottom:12px}
+.vip-title{font-family:'Inter',sans-serif;font-size:32px;font-weight:800;color:#2D2A26;margin-bottom:8px}
+.vip-sub{font-size:14px;color:var(--text-dim)}
+.vip-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.vip-priv{padding:20px}
+.vip-priv h4{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:12px}
+.vip-priv-list{list-style:none;padding:0}
+.vip-priv-list li{font-size:12px;padding:6px 0;border-bottom:1px solid rgba(232,93,58,.06);color:var(--text);display:flex;align-items:center;gap:8px}
+.vip-priv-list li::before{content:'\2713';color:var(--gold);font-weight:700}
+
+/* ===== MOBILE ===== */
+/* ===== DARK MODE - внутри клуба ===== */
+body.dark-mode{--bg:#FDF8F3;--bg2:#F9F3EB;--card:rgba(255,255,255,.95);--text:#5C5550;--text-dim:#8A8580;--dark:#2D2A26;--border:rgba(232,93,58,.1)}
+body.dark-mode{background:#FDF8F3;color:#5C5550}
+body.dark-mode .cosmos{background:linear-gradient(180deg,#FDF8F3 0%,#F9F3EB 50%,#FDF8F3 100%)}
+body.dark-mode .nav{background:rgba(253,248,243,.95);border-bottom-color:rgba(45,42,38,.06)}
+body.dark-mode .modal-field input{background:#FDF8F3;border-color:rgba(45,42,38,.1);color:#2D2A26}
+body.dark-mode .modal-title{color:#2D2A26}
+body.dark-mode .modal-sub,.dark-mode .modal-note{color:#8A8580}
+body.dark-mode .footer{border-top-color:rgba(45,42,38,.05);color:#8A8580;background:#fff}
+body.dark-mode .footer span{color:#E85D3A}
+body.dark-mode .planet{display:none !important}
+body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparent 10%,rgba(255,255,255,.15) 50%,transparent 90%)}
+
+/* ===== BIG PLANET ===== */
+.big-planet{
+  display:none !important;
+  position:fixed;
+  width:50vh;height:50vh;
+  border-radius:50%;
+  z-index:1;
+  pointer-events:none;
+  animation:big-planet-drift 112s linear infinite;
+  top:-55vh;
+  left:-55vh;
+  opacity:0;
+  /* Реалистичная газовая планета */
+  background:
+    radial-gradient(circle at 35% 25%,rgba(255,255,255,.15) 0%,transparent 30%),
+    radial-gradient(ellipse at 50% 50%,#E8B84B 0%,#D4952B 15%,#C47E1E 25%,#A86318 40%,#8B4F14 55%,#6E3B0F 70%,#4A2508 90%);
+  box-shadow:
+    0 0 100px rgba(232,184,75,.12),
+    0 0 200px rgba(232,184,75,.05),
+    inset -15px -15px 40px rgba(45,42,38,.08),
+    inset 8px 8px 25px rgba(255,255,255,.08);
+  overflow:visible;
+}
+/* Блик */
+.big-planet::before{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:
+    radial-gradient(circle at 28% 22%,rgba(255,255,255,.25) 0%,transparent 35%),
+    radial-gradient(circle at 70% 75%,rgba(0,0,0,.15) 0%,transparent 30%);
+}
+/* Кольцо Сатурна */
+.big-planet::after{
+  content:'';position:absolute;
+  top:44%;left:-30%;width:160%;height:18px;
+  background:
+    linear-gradient(90deg,
+      transparent 3%,
+      rgba(253,230,138,.08) 10%,
+      rgba(253,230,138,.18) 20%,
+      rgba(212,149,43,.12) 30%,
+      transparent 35%,
+      rgba(253,230,138,.2) 40%,
+      rgba(253,230,138,.3) 50%,
+      rgba(253,230,138,.2) 60%,
+      transparent 65%,
+      rgba(212,149,43,.12) 70%,
+      rgba(253,230,138,.18) 80%,
+      rgba(253,230,138,.08) 90%,
+      transparent 97%);
+  border-radius:50%;
+  transform:rotateX(75deg) rotateZ(-5deg);
+  box-shadow:0 0 8px rgba(253,230,138,.08);
+}
+/* Атмосферные полосы */
+.big-planet .band{
+  position:absolute;left:5%;right:5%;border-radius:50%;opacity:.15;
+  background:linear-gradient(90deg,transparent,rgba(139,79,20,.5),transparent);
+}
+.big-planet .b1{top:30%;height:3%}
+.big-planet .b2{top:42%;height:2%;opacity:.1}
+.big-planet .b3{top:55%;height:4%;opacity:.2}
+.big-planet .b4{top:65%;height:2%;opacity:.12}
+.big-planet .b5{top:75%;height:3%;opacity:.08}
+
+@keyframes big-planet-drift{
+  0%{left:-55vh;top:-30vh;opacity:0}
+  4%{opacity:.5}
+  96%{opacity:.5}
+  100%{left:calc(100vw + 10vh);top:calc(100vh + 10vh);opacity:0}
+}
+.big-planet.hidden{display:none}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .mobile-menu{display:flex!important}
+  .hero h1{font-size:28px}
+  .hero-stats{gap:20px;flex-wrap:wrap}
+  .h-stat-num{font-size:24px}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .chefs-grid{grid-template-columns:repeat(2,1fr)}
+  .reviews-grid{grid-template-columns:1fr}
+  .cta-features{gap:16px}
+  .mobile-stack{grid-template-columns:1fr !important}
+  .feed-layout{grid-template-columns:1fr}
+  .feed-sidebar{order:-1}
+  .lessons-grid{grid-template-columns:repeat(2,1fr)}
+  .chat-layout{grid-template-columns:1fr;height:auto;overflow:visible}
+  .chat-sidebar{display:flex;flex-direction:row;overflow-x:auto;padding:8px;gap:6px;border-right:none;border-bottom:1px solid var(--border);-webkit-overflow-scrolling:touch}
+  .chat-sidebar .chat-channel{flex-shrink:0;padding:6px 12px;white-space:nowrap;font-size:11px}
+  .chef-profile{flex-direction:column;text-align:center}
+  .vip-grid{grid-template-columns:1fr}
+  .prizes-how{grid-template-columns:1fr}
+  .winners-grid{grid-template-columns:repeat(2,1fr)}
+  .past-winners{gap:12px}
+  .p-jupiter{width:24px;height:24px}
+  .p-saturn{width:20px;height:20px}
+  .p-saturn::after{width:34px;margin-left:-17px}
+}
+@media(max-width:480px){
+  .lessons-grid{grid-template-columns:1fr}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .chefs-grid{grid-template-columns:1fr}
+  .winners-grid{grid-template-columns:1fr}
+  .hero-stats{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- COSMIC BACKGROUND -->
+<div id="app">
+<div class="cosmos"></div>
+<div class="big-planet" id="big-planet"><div class="band b1"></div><div class="band b2"></div><div class="band b3"></div><div class="band b4"></div><div class="band b5"></div></div>
+
+
+<!-- ===== MODAL ===== -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="modal-close" data-close>&times;</button>
+    <div class="modal-title">Добро пожаловать на орбиту</div>
+    <div class="modal-sub">Оформите подписку и получите доступ к урокам, чатам, розыгрышам и VIP-зоне</div>
+    <div class="modal-field"><label>Имя</label><input type="text" placeholder="Ваше имя"></div>
+    <div class="modal-field"><label>Email</label><input type="email" placeholder="email@example.com"></div>
+    <div class="modal-field"><label>Телефон</label><input type="tel" placeholder="+7 (999) 123-45-67"></div>
+    <button class="modal-btn">Оформить подписку — 1 290 &#8381;/мес</button>
+    <div class="modal-note">Отмена в любой момент. Первые 3 дня бесплатно.</div>
+    <button class="modal-demo" data-enter>Войти как участник (демо)</button>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="main-nav">
+  <span class="nav-logo"><img src="chef_nobg.png" alt="Планета X"></span>
+  <div class="nav-links" id="nav-links">
+    <!-- Public links (shown before entering) -->
+  </div>
+  <button class="btn-join-nav" data-modal id="nav-join-btn">Вступить</button>
+</nav>
+
+<!-- ===== MOBILE MENU ===== -->
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<!-- ==================== PAGE: PUBLIC LANDING ==================== -->
+<div class="page active" id="page-landing">
+
+<!-- HERO -->
+<div class="hero">
+  <div style="margin-bottom:-60px;width:100%;display:flex;justify-content:center"><img src="chef_nobg.png" alt="Планета X" style="width:50vw;max-width:600px;height:auto"></div>
+  <div class="hero-badge">&#10022; Закрытый кулинарный клуб &#10022;</div>
+  <h1 class="glow-text">Кулинарная <span>вселенная</span>,<br>где рождаются <span>шедевры</span></h1>
+  <div class="hero-sub">Научитесь готовить ресторанные блюда и десерты дома.<br>10 шефов, 16 уроков в месяц, живое общение и еженедельные розыгрыши.</div>
+  <div class="hero-stats">
+    <div><div class="h-stat-num">1 347</div><div class="h-stat-label">участников</div></div>
+    <div><div class="h-stat-num">4</div><div class="h-stat-label">шефа</div></div>
+    <div><div class="h-stat-num">16</div><div class="h-stat-label">уроков / мес</div></div>
+    <div><div class="h-stat-num">48</div><div class="h-stat-label">розыгрышей</div></div>
+  </div>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-join" data-modal>Вступить в клуб</button>
+    <button class="btn-join" data-modal style="background:linear-gradient(135deg,#34D399,#10B981,#059669);box-shadow:0 4px 20px rgba(139,115,85,.35)">Попробовать бесплатно</button>
+  </div>
+  <div class="hero-note">Клуб от 1 290 &#8381;/мес &bull; Марафон — бесплатно &bull; Отмена в любой момент</div>
+</div>
+
+<!-- ТРИ БЛОКА АКТИВНОСТЕЙ -->
+<div class="section" id="s-feed" style="padding-top:45px;padding-bottom:20px">
+  <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto;padding:0 20px">
+
+    <!-- 1. БЕСПЛАТНЫЙ МАРАФОН -->
+    <div class="glass" style="padding:0;overflow:hidden;border-radius:18px;border-color:rgba(139,115,85,.25) !important;position:relative" data-modal>
+      <div style="background:linear-gradient(135deg,#059669,#10B981);padding:20px 16px;text-align:center">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.7);letter-spacing:2px;margin-bottom:6px">БЕСПЛАТНЫЙ МАРАФОН</div>
+        <div style="font-size:20px;font-weight:700;color:#fff;font-family:'Playfair Display',serif;margin-bottom:4px">Бар заготовок</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.8)">5 дней &mdash; 7 баров &mdash; старт 20 апреля</div>
+      </div>
+      <div style="padding:16px">
+        <div style="font-size:11px;color:var(--text);line-height:1.6;margin-bottom:12px">Научитесь заготавливать еду на месяц. Супы, мясо, гарниры, соусы, десерты.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:18px;font-weight:700;color:var(--green)">Бесплатно</div>
+          <div style="font-size:9px;color:var(--text-dim)">247 записались</div>
+        </div>
+        <div style="margin-top:10px;text-align:center">
+          <button class="btn-join" data-modal style="font-size:11px;padding:10px 24px;background:linear-gradient(135deg,#34D399,#10B981,#059669);box-shadow:0 4px 15px rgba(139,115,85,.3);width:100%">Забрать бесплатно</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. РАСПИСАНИЕ УРОКОВ -->
+    <div class="glass" style="padding:0;overflow:hidden;border-radius:18px">
+      <div style="background:linear-gradient(135deg,rgba(232,93,58,.15),rgba(232,93,58,.05));padding:14px 16px">
+        <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:2px">УРОКИ КЛУБА</div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">Ближайшее расписание</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(232,93,58,.08)">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:7px;font-weight:700">ВТ</div><div style="font-size:13px;font-weight:700">25</div></div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--dark)">Стейк рибай</div><div style="font-size:9px;color:var(--text-dim)">Шеф Алексей</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(232,93,58,.08)">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:7px;font-weight:700">ВТ</div><div style="font-size:13px;font-weight:700">25</div></div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--dark)">Шоколадный мусс</div><div style="font-size:9px;color:var(--text-dim)">Шеф Ирина</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(232,93,58,.08)">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:7px;font-weight:700">ПТ</div><div style="font-size:13px;font-weight:700">28</div></div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--dark)">Паста карбонара</div><div style="font-size:9px;color:var(--text-dim)">Шеф Дмитрий</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+          <div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:7px;font-weight:700">ПТ</div><div style="font-size:13px;font-weight:700">28</div></div>
+          <div><div style="font-size:12px;font-weight:600;color:var(--dark)">Эклеры с кремом</div><div style="font-size:9px;color:var(--text-dim)">Шеф Мария</div></div>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-size:9px;color:var(--text-dim)">Доступно участникам клуба</div>
+      </div>
+    </div>
+
+    <!-- 3. РАСПИСАНИЕ ИНТЕНСИВОВ -->
+    <div class="glass" style="padding:0;overflow:hidden;border-radius:18px">
+      <div style="background:linear-gradient(135deg,rgba(212,160,82,.15),rgba(212,160,82,.05));padding:14px 16px">
+        <div style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:2px">ИНТЕНСИВЫ</div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark)">Глубокое погружение</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="padding:10px 0;border-bottom:1px solid rgba(212,160,82,.1)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:600;color:var(--dark)">Домашние колбасы</div>
+            <div style="font-size:11px;font-weight:700;color:var(--gold)">1 500 &#8381;</div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim)">Шеф Сергей Орлов &bull; 8 уроков &bull; Старт 15 апреля</div>
+        </div>
+        <div style="padding:10px 0;border-bottom:1px solid rgba(212,160,82,.1)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:600;color:var(--dark)">Торты с нуля</div>
+            <div style="font-size:11px;font-weight:700;color:var(--gold)">1 800 &#8381;</div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim)">Шеф Ирина Белова &bull; 8 уроков &bull; Старт июнь</div>
+        </div>
+        <div style="padding:10px 0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:600;color:var(--dark)">Домашний хлеб</div>
+            <div style="font-size:11px;font-weight:700;color:var(--gold)">1 500 &#8381;</div>
+          </div>
+          <div style="font-size:9px;color:var(--text-dim)">Шеф Анна Краснова &bull; 8 уроков &bull; Старт август</div>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-size:9px;color:var(--text-dim)">Для участников клуба скидка 10-20%</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHEFS -->
+<div class="section" id="s-chefs">
+  <div class="section-title">Экипаж этого сезона</div>
+  <div class="section-sub">Ваши шефы-повара и шеф-кондитеры. Каждые 3 месяца — новый состав:</div>
+  <div class="divider"></div>
+  <div class="chefs-grid">
+    <div class="glass chef-card"><div class="chef-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chef-name">Алексей Козлов</div><div class="chef-role">Шеф-повар</div><div class="chef-desc">Высокая кухня, мясо, соусы, техники обжарки. 15 лет опыта в ресторанах Москвы.</div></div>
+    <div class="glass chef-card"><div class="chef-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chef-name">Дмитрий Волков</div><div class="chef-role">Шеф-повар</div><div class="chef-desc">Итальянская кухня, паста, рыба, средиземноморские блюда. Стажировка в Риме.</div></div>
+    <div class="glass chef-card"><div class="chef-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chef-name">Ирина Белова</div><div class="chef-role">Шеф-кондитер</div><div class="chef-desc">Торты, муссовые десерты, шоколад, декор. Призёр международных конкурсов.</div></div>
+    <div class="glass chef-card"><div class="chef-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chef-name">Мария Соколова</div><div class="chef-role">Шеф-кондитер</div><div class="chef-desc">Выпечка, эклеры, круассаны, слоёное тесто. Автор кулинарного блога.</div></div>
+  </div>
+  <div style="text-align:center;margin-top:20px">
+    <div class="glass" style="display:inline-block;padding:12px 24px;border-radius:12px;font-size:11px;color:var(--text)">
+      <span style="color:var(--gold);font-weight:600">Следующая ротация: июль 2026</span><br>
+      <span style="color:var(--text-dim);font-size:10px">На борт заступят: Сергей Орлов, Анна Краснова, Павел Морозов</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- РАСПИСАНИЕ УРОКОВ -->
+<div class="section">
+  <div class="section-title">Расписание уроков</div>
+  <div class="section-sub">Новые уроки каждый вторник и пятницу</div>
+  <div class="divider"></div>
+  <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:800px;margin:0 auto">
+    <div class="glass" style="padding:16px;display:flex;gap:12px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:8px;font-weight:700">ВТ</div><div style="font-size:15px;font-weight:700">25</div></div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--dark)">Стейк рибай</div><div style="font-size:10px;color:var(--text-dim)">Шеф Алексей &bull; Кулинария</div></div>
+      <div style="margin-left:auto;font-size:9px;color:var(--text-dim);background:rgba(232,93,58,.08);padding:3px 8px;border-radius:6px">Для участников</div>
+    </div>
+    <div class="glass" style="padding:16px;display:flex;gap:12px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:8px;font-weight:700">ВТ</div><div style="font-size:15px;font-weight:700">25</div></div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--dark)">Шоколадный мусс</div><div style="font-size:10px;color:var(--text-dim)">Шеф Ирина &bull; Кондитерская</div></div>
+      <div style="margin-left:auto;font-size:9px;color:var(--text-dim);background:rgba(232,93,58,.08);padding:3px 8px;border-radius:6px">Для участников</div>
+    </div>
+    <div class="glass" style="padding:16px;display:flex;gap:12px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:8px;font-weight:700">ПТ</div><div style="font-size:15px;font-weight:700">28</div></div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--dark)">Паста карбонара</div><div style="font-size:10px;color:var(--text-dim)">Шеф Дмитрий &bull; Кулинария</div></div>
+      <div style="margin-left:auto;font-size:9px;color:var(--text-dim);background:rgba(232,93,58,.08);padding:3px 8px;border-radius:6px">Для участников</div>
+    </div>
+    <div class="glass" style="padding:16px;display:flex;gap:12px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E85D3A,#C94B2A);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:8px;font-weight:700">ПТ</div><div style="font-size:15px;font-weight:700">28</div></div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--dark)">Эклеры с кремом</div><div style="font-size:10px;color:var(--text-dim)">Шеф Мария &bull; Кондитерская</div></div>
+      <div style="margin-left:auto;font-size:9px;color:var(--text-dim);background:rgba(232,93,58,.08);padding:3px 8px;border-radius:6px">Для участников</div>
+    </div>
+  </div>
+</div>
+
+<!-- АФИША АКТИВНОСТЕЙ -->
+<div class="section">
+  <div class="section-title">Что впереди</div>
+  <div class="section-sub">Интенсивы, мастер-классы и марафоны — кроме уроков клуба</div>
+  <div class="divider"></div>
+  <div style="max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- Бесплатный марафон — КРУПНО -->
+    <div class="glass" style="padding:24px;text-align:center;border-color:rgba(139,115,85,.2) !important" data-modal>
+      <div style="font-size:10px;font-weight:600;color:var(--green);letter-spacing:2px;margin-bottom:10px">&#127919; БЕСПЛАТНЫЙ МАРАФОН &mdash; СТАРТ 20 АПРЕЛЯ</div>
+      <div style="font-size:22px;font-weight:700;color:var(--dark);margin-bottom:6px;font-family:'Playfair Display',serif">Бар заготовок</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px">5 дней &bull; 7 баров &bull; Морозилка мечты &bull; Шеф Виктор Новиков</div>
+      <div style="font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.6;max-width:500px;margin-left:auto;margin-right:auto">Научитесь заготавливать еду на месяц за одни выходные. Супы, мясо, гарниры, соусы, десерты. Попробуйте бесплатно &mdash; прежде чем вступить в клуб.</div>
+      <div style="font-size:24px;font-weight:700;color:var(--green);margin-bottom:12px">Бесплатно</div>
+      <button class="btn-join" data-modal style="font-size:14px;padding:12px 40px;background:linear-gradient(135deg,#34D399,#10B981,#059669);box-shadow:0 4px 20px rgba(139,115,85,.35)">Зарегистрироваться бесплатно</button>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:8px">Уже записались: 247 человек</div>
+    </div>
+
+    <!-- Интенсив -->
+    <div class="glass" style="padding:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap" data-modal>
+      <div style="flex:1;min-width:250px">
+        <div style="font-size:9px;font-weight:600;color:var(--gold);letter-spacing:1px;margin-bottom:6px">&#128640; ИНТЕНСИВ &mdash; 15 АПРЕЛЯ</div>
+        <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Домашние колбасы и деликатесы</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">8 уроков &bull; Шеф Сергей Орлов &bull; 6 недель</div>
+        <div style="font-size:11px;color:var(--text)">Сыровяленые, варёные, копчёные колбасы &mdash; на обычной кухне.</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div style="font-size:20px;font-weight:700;color:var(--gold)">1 500 &#8381;</div>
+        <button class="btn-join" data-modal style="font-size:12px;padding:8px 24px;margin-top:8px">Подробнее</button>
+      </div>
+    </div>
+
+    <!-- Мастер-класс -->
+    <div class="glass" style="padding:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap" data-modal>
+      <div style="flex:1;min-width:250px">
+        <div style="font-size:9px;font-weight:600;color:rgba(139,92,246,.8);letter-spacing:1px;margin-bottom:6px">&#9889; МАСТЕР-КЛАСС &mdash; 5 АПРЕЛЯ, 18:00</div>
+        <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Пасхальная выпечка</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px">Шеф Мария Соколова &bull; 1.5 часа &bull; Онлайн</div>
+        <div style="font-size:11px;color:var(--text)">Куличи, кейк-попсы, пряники &mdash; три рецепта за один вечер.</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div style="font-size:20px;font-weight:700;color:var(--gold)">990 &#8381;</div>
+        <button class="btn-join" data-modal style="font-size:12px;padding:8px 24px;margin-top:8px">Подробнее</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRIZES -->
+<div class="section" id="s-prizes">
+  <div class="section-title">Звёздные награды</div>
+  <div class="section-sub">Каждую неделю разыгрываем подарки — ножи, посуду, технику. Выложи фото блюда и участвуй!</div>
+  <div class="divider"></div>
+  <div class="glass prize-preview">
+    <div style="font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:3px;margin-bottom:14px">Текущий розыгрыш</div>
+    <div class="prize-icon">&#128298;</div>
+    <div class="prize-name">Набор ножей Tramontina</div>
+    <div class="prize-val">4 500 &#8381;</div>
+    <div class="timer">
+      <div class="t-block"><div class="t-num" id="timer-d">2</div><div class="t-label">дня</div></div>
+      <div class="t-block"><div class="t-num" id="timer-h">14</div><div class="t-label">часов</div></div>
+      <div class="t-block"><div class="t-num" id="timer-m">37</div><div class="t-label">мин</div></div>
+    </div>
+    <button class="btn-join" data-modal style="font-size:13px;padding:10px 28px">Войти в экипаж и участвовать</button>
+    <div class="past-winners">
+      <div class="pw-item"><div class="pw-icon">&#127859;</div><div class="pw-name">Сковорода WOK</div><div class="pw-winner">Елена С.</div></div>
+      <div class="pw-item"><div class="pw-icon">&#128218;</div><div class="pw-name">Кулинарная книга</div><div class="pw-winner">Ольга П.</div></div>
+      <div class="pw-item"><div class="pw-icon">&#129474;</div><div class="pw-name">Набор специй</div><div class="pw-winner">Татьяна Н.</div></div>
+      <div class="pw-item"><div class="pw-icon">&#9878;&#65039;</div><div class="pw-name">Кухонные весы</div><div class="pw-winner">Анна Д.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADDITIONAL PRODUCTS -->
+<div class="section">
+  <div class="section-title">Больше, чем клуб</div>
+  <div class="section-sub">Кроме ежемесячных уроков — интенсивы, мастер-классы и бесплатные марафоны</div>
+  <div class="divider"></div>
+  <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+    <div class="glass" style="padding:24px;text-align:center;cursor:pointer" data-modal>
+      <div style="font-size:36px;margin-bottom:12px">&#128640;</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--dark);margin-bottom:8px">Интенсивы</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px">Глубокое погружение в конкретную тему. 8 уроков от специализированного шефа. Домашние колбасы, праздничное меню, хлеб и выпечка.</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gold)">от 1 500 &#8381;</div>
+    </div>
+    <div class="glass" style="padding:24px;text-align:center;cursor:pointer" data-modal>
+      <div style="font-size:36px;margin-bottom:12px">&#9889;</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--dark);margin-bottom:8px">Мастер-классы</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px">Разовые тематические занятия. Новогодний стол, десерты для детей, кухня мира.</div>
+      <div style="font-size:14px;font-weight:700;color:var(--gold)">от 990 &#8381;</div>
+    </div>
+    <div class="glass" style="padding:24px;text-align:center;cursor:pointer" data-modal>
+      <div style="font-size:36px;margin-bottom:12px">&#127919;</div>
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--dark);margin-bottom:8px">Бесплатные марафоны</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:14px">5-дневные онлайн-марафоны для новичков. Попробуйте, прежде чем вступить в клуб.</div>
+      <div style="font-size:14px;font-weight:700;color:var(--green)">Бесплатно</div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEWS -->
+<div class="section" id="s-reviews">
+  <div class="section-title">Голоса с орбиты</div>
+  <div class="section-sub">Что говорят участники — реальные истории и результаты</div>
+  <div class="divider"></div>
+  <div class="reviews-grid">
+    <div class="glass" style="padding:20px">
+      <div class="review-text">&laquo;Я научилась за 2 месяца делать то, что не могла 10 лет. Муж не верит, что это я готовлю. Шефы объясняют так, что понятно с первого раза.&raquo;</div>
+      <div class="review-author"><div class="review-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div><div class="review-name">Елена Смирнова</div><div class="review-since">В клубе 4 месяца</div></div></div>
+    </div>
+    <div class="glass" style="padding:20px">
+      <div class="review-text">&laquo;Стейк получился лучше, чем в ресторане. Жена была в шоке. Подписка окупилась за первый же урок &mdash; теперь не ходим в кафе.&raquo;</div>
+      <div class="review-author"><div class="review-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div><div class="review-name">Андрей Дорохов</div><div class="review-since">В клубе 2 месяца</div></div></div>
+    </div>
+    <div class="glass" style="padding:20px">
+      <div class="review-text">&laquo;Торт на день рождения дочери делала сама! Все гости спрашивали, из какой кондитерской. Ирина &mdash; лучший учитель.&raquo;</div>
+      <div class="review-author"><div class="review-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div><div class="review-name">Ольга Петрова</div><div class="review-since">В клубе 6 месяцев</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2 class="glow-text">Готовы начать готовить по-новому?</h2>
+  <div class="cta-sub">1 347 участников уже учатся у профессиональных шефов. Начните с бесплатного марафона или вступите в клуб.</div>
+  <button class="btn-join" data-modal>Выйти на орбиту</button>
+  <div class="cta-features">
+    <div class="cta-feat"><div class="cta-feat-icon">&#127859;</div><div class="cta-feat-text">16 уроков/мес</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">&#128172;</div><div class="cta-feat-text">Чат с шефами</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">&#127942;</div><div class="cta-feat-text">Розыгрыши</div></div>
+    <div class="cta-feat"><div class="cta-feat-icon">&#11088;</div><div class="cta-feat-text">VIP-зона</div></div>
+  </div>
+</div>
+
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: CLUB FEED ==================== -->
+<div class="page" id="page-feed">
+<div class="feed-layout">
+  <div class="feed-main">
+    <div class="glass welcome-banner">
+      <h2>Добро пожаловать на борт!</h2>
+      <p>Вы на орбите кулинарной вселенной. Новые уроки каждый вторник и пятницу.</p>
+    </div>
+
+    <!-- АФИША: Ближайший урок -->
+    <a href="#" data-page="lessons" style="display:block">
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(147,197,253,.7);background:rgba(232,93,58,.06);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(232,93,58,.08)">&#128302; СЕГОДНЯ</div>
+      <div class="post-header">
+        <div class="post-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+        <div><div class="post-name">Новый урок: Идеальный стейк рибай</div><div class="post-role">Шеф Алексей Козлов &bull; Кулинария &bull; 25 мин</div></div>
+      </div>
+      <div class="post-body">Техника обратного обжаривания &mdash; сначала духовка, потом раскалённая сковорода. Результат: равномерно розовый внутри, идеальная корочка снаружи.</div>
+      <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Смотреть урок &rarr;</span></div>
+    </div>
+    </a>
+
+    <!-- ПОСЛЕДНИЕ ОТЧЁТЫ -->
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(139,115,85,.7);background:rgba(139,115,85,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(139,115,85,.08)">&#128247; ПОСЛЕДНИЕ ОТЧЁТЫ УЧАСТНИКОВ</div>
+      <div style="padding:16px">
+        <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Елена С.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 34</div></div>
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Ольга П.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 28</div></div>
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Татьяна Н.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 41</div></div>
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Марина К.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 19</div></div>
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Андрей Д.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 52</div></div>
+          <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200" style="width:100%;height:100%;object-fit:cover" alt=""><div style="position:absolute;bottom:0;left:0;right:0;padding:4px 8px;background:linear-gradient(transparent,rgba(45,42,38,.1));font-size:9px;color:#fff">Анна В.</div><div style="position:absolute;top:6px;right:6px;background:rgba(45,42,38,.06);color:#fff;font-size:9px;padding:1px 6px;border-radius:6px">&#10084; 23</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);text-align:center">Выложите фото своего блюда — участвуйте в розыгрыше!</div>
+      </div>
+    </div>
+
+    <!-- АФИША: Интенсив -->
+    <a href="#" data-page="intensive" style="display:block">
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(212,160,82,.7);background:rgba(212,160,82,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(212,160,82,.08)">&#128640; ИНТЕНСИВ &mdash; СТАРТ 15 АПРЕЛЯ</div>
+      <div style="padding:16px">
+        <div style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:4px;font-family:'Playfair Display',serif">Домашние колбасы и деликатесы</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px">8 уроков &bull; Шеф Сергей Орлов &bull; 6 недель</div>
+        <div style="font-size:11px;color:var(--text);line-height:1.6;margin-bottom:12px">Научитесь делать сыровяленые, варёные и копчёные колбасы дома. Без сложного оборудования &mdash; всё на обычной кухне.</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:18px;font-weight:700;color:var(--gold)">1 350 &#8381;</div>
+          <div style="font-size:11px;color:var(--text-dim);text-decoration:line-through">1 500 &#8381;</div>
+          <div style="font-size:9px;color:var(--green);font-weight:600;background:rgba(139,115,85,.1);padding:2px 8px;border-radius:6px">Скидка 10% для клуба</div>
+        </div>
+      </div>
+      <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Подробнее &rarr;</span></div>
+    </div>
+    </a>
+
+    <!-- АФИША: Мастер-класс -->
+    <a href="#" data-page="masterclass" style="display:block">
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(139,92,246,.7);background:rgba(139,92,246,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(139,92,246,.08)">&#9889; МАСТЕР-КЛАСС &mdash; 5 АПРЕЛЯ, 18:00</div>
+      <div style="padding:16px">
+        <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Пасхальная выпечка</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Шеф Мария Соколова &bull; 1.5 часа &bull; Онлайн</div>
+        <div style="font-size:11px;color:var(--text);line-height:1.6;margin-bottom:10px">Куличи, кейк-попсы, пряники &mdash; три рецепта за один вечер. Готовим вместе в прямом эфире!</div>
+        <div style="font-size:16px;font-weight:700;color:var(--gold)">990 &#8381;</div>
+      </div>
+      <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Подробнее &rarr;</span></div>
+    </div>
+    </a>
+
+    <!-- АФИША: Бесплатный марафон -->
+    <a href="#" data-page="marathon" style="display:block">
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(139,115,85,.7);background:rgba(139,115,85,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(139,115,85,.08)">&#127919; БЕСПЛАТНЫЙ МАРАФОН &mdash; СТАРТ 20 АПРЕЛЯ</div>
+      <div style="padding:16px">
+        <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Бар заготовок: 5 дней &mdash; 7 баров</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Шеф Виктор Новиков &bull; 5 дней &bull; Бесплатно</div>
+        <div style="font-size:11px;color:var(--text);line-height:1.6;margin-bottom:10px">Научитесь заготавливать еду на месяц за одни выходные. Супы, мясо, гарниры, соусы, десерты.</div>
+        <div style="font-size:16px;font-weight:700;color:var(--green)">Бесплатно</div>
+      </div>
+      <div class="post-actions"><span style="color:var(--green);font-size:12px;font-weight:600">Подробнее &rarr;</span></div>
+    </div>
+    </a>
+
+    <!-- АФИША: VIP Zoom -->
+    <a href="#" data-page="vip" style="display:block">
+    <div class="glass post">
+      <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(212,160,82,.7);background:rgba(212,160,82,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(212,160,82,.08)">&#11088; VIP &mdash; ПЯТНИЦА, 19:00</div>
+      <div style="padding:16px">
+        <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Zoom с шефом Алексеем</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Разбор ваших блюд за месяц &bull; Вопросы и ответы</div>
+        <div style="font-size:11px;color:var(--text);line-height:1.6">Подготовьте фото ваших лучших и проблемных блюд &mdash; шеф разберёт каждое.</div>
+      </div>
+      <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Только для VIP &rarr;</span></div>
+    </div>
+    </a>
+  </div>
+
+  <div class="feed-sidebar">
+    <!-- Schedule Widget -->
+    <div class="glass" style="padding:16px">
+      <div class="sidebar-title">&#128197; Ближайшие уроки</div>
+      <div style="font-size:12px;margin-bottom:8px"><b style="color:var(--gold)">Вт 25</b> &mdash; Стейк рибай (Алексей)</div>
+      <div style="font-size:12px;margin-bottom:8px"><b style="color:var(--gold)">Вт 25</b> &mdash; Шоколадный мусс (Ирина)</div>
+      <div style="font-size:12px;margin-bottom:8px"><b style="color:var(--gold)">Пт 28</b> &mdash; Карбонара (Дмитрий)</div>
+      <div style="font-size:12px"><b style="color:var(--gold)">Пт 28</b> &mdash; Эклеры (Мария)</div>
+    </div>
+
+    <!-- Prize Widget -->
+    <div class="glass" style="padding:16px;text-align:center">
+      <div class="sidebar-title">&#127942; Розыгрыш</div>
+      <div style="font-size:24px;margin-bottom:6px">&#128298;</div>
+      <div style="font-size:13px;font-weight:600;color:var(--dark)">Набор ножей Tramontina</div>
+      <div style="font-size:11px;color:var(--gold);margin-bottom:8px">4 500 &#8381;</div>
+      <div style="font-size:11px;color:var(--text-dim)">Осталось 2 дня 14 часов</div>
+    </div>
+
+    <!-- Mini Chat Preview -->
+    <div class="glass" style="padding:16px">
+      <div class="sidebar-title">&#128172; Последнее в чатах</div>
+
+      <a href="#" data-page="chat" data-chat="0" style="display:block;padding:8px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(232,93,58,.1);transition:all .2s">
+        <div style="font-size:9px;color:var(--gold);font-weight:600;margin-bottom:3px">&#9749; Болталка</div>
+        <div style="font-size:11px"><b style="color:var(--text)">Татьяна:</b> <span style="color:var(--text-dim)">Когда розыгрыш ножей? Хочу участвовать!</span></div>
+      </a>
+
+      <a href="#" data-page="chat" data-chat="1" style="display:block;padding:8px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(232,93,58,.1);transition:all .2s">
+        <div style="font-size:9px;color:var(--gold);font-weight:600;margin-bottom:3px">&#127860; С шефами</div>
+        <div style="font-size:11px"><b style="color:var(--text)">Шеф Алексей:</b> <span style="color:var(--text-dim)">Сковороду разогреваем 3 мин...</span></div>
+      </a>
+
+      <a href="#" data-page="chat" data-chat="2" style="display:block;padding:8px;border-radius:8px;margin-bottom:6px;border:1px solid rgba(232,93,58,.1);transition:all .2s">
+        <div style="font-size:9px;color:var(--gold);font-weight:600;margin-bottom:3px">&#127856; Кондитерская</div>
+        <div style="font-size:11px"><b style="color:var(--text)">Шеф Ирина:</b> <span style="color:var(--text-dim)">Температура шоколада — строго 45°</span></div>
+      </a>
+
+      <a href="#" data-page="chat" data-chat="4" style="display:block;padding:8px;border-radius:8px;border:1px solid rgba(212,160,82,.15);transition:all .2s">
+        <div style="font-size:9px;color:var(--gold);font-weight:600;margin-bottom:3px">&#11088; VIP</div>
+        <div style="font-size:11px"><b style="color:var(--text)">Шеф Ирина:</b> <span style="color:var(--text-dim)">Оля, записала видео-разбор...</span></div>
+      </a>
+
+    </div>
+
+    <!-- Online Users -->
+    <div class="glass" style="padding:16px">
+      <div class="sidebar-title">&#128994; Сейчас на борту (23)</div>
+      <div class="online-list">
+        <div class="online-dot role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+        <div class="online-dot role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+        <div class="online-dot role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+        <div class="online-dot role-curator" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+        <div class="online-dot ava-ring lvl-3" style="overflow:visible"><svg viewBox="0 0 44 44"><rect class="ring-bg" x="2" y="2" width="40" height="40" stroke-dasharray="152" /><rect class="ring-fill" x="2" y="2" width="40" height="40" stroke-dasharray="152" stroke-dashoffset="60" /></svg><img class="ava-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div>
+        <div class="online-dot ava-ring lvl-2" style="overflow:visible"><svg viewBox="0 0 44 44"><rect class="ring-bg" x="2" y="2" width="40" height="40" stroke-dasharray="152" /><rect class="ring-fill" x="2" y="2" width="40" height="40" stroke-dasharray="152" stroke-dashoffset="91" /></svg><img class="ava-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div>
+        <div class="online-dot ava-ring lvl-4" style="overflow:visible"><svg viewBox="0 0 44 44"><rect class="ring-bg" x="2" y="2" width="40" height="40" stroke-dasharray="152" /><rect class="ring-fill" x="2" y="2" width="40" height="40" stroke-dasharray="152" stroke-dashoffset="30" /></svg><img class="ava-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div>
+        <div class="online-dot ava-ring lvl-1" style="overflow:visible"><svg viewBox="0 0 44 44"><rect class="ring-bg" x="2" y="2" width="40" height="40" stroke-dasharray="152" /><rect class="ring-fill" x="2" y="2" width="40" height="40" stroke-dasharray="152" stroke-dashoffset="122" /></svg><img class="ava-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: AFISHA ==================== -->
+<div class="page" id="page-afisha">
+<div class="section">
+  <div class="section-title">Афиша</div>
+  <div class="section-sub">Все предстоящие активности Планеты X</div>
+  <div class="divider"></div>
+
+  <!-- Ближайший урок -->
+  <a href="#" data-page="lessons" style="display:block">
+  <div class="glass post" style="margin-bottom:16px">
+    <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(147,197,253,.7);background:rgba(232,93,58,.06);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(232,93,58,.08)">&#128302; СЕГОДНЯ — НОВЫЙ УРОК</div>
+    <div style="padding:16px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Идеальный стейк рибай</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Шеф Алексей Козлов • Кулинария • 25 мин</div>
+      <div style="font-size:11px;color:var(--text)">Техника обратного обжаривания — сначала духовка, потом сковорода.</div>
+    </div>
+    <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Смотреть урок →</span></div>
+  </div>
+  </a>
+
+  <!-- Розыгрыш -->
+  <a href="#" data-page="prizes" style="display:block">
+  <div class="glass post" style="margin-bottom:16px;text-align:center;padding:20px">
+    <div style="font-size:10px;font-weight:600;color:rgba(253,230,138,.7);letter-spacing:1px;margin-bottom:8px">&#127942; РОЗЫГРЫШ — ОСТАЛОСЬ 2 ДНЯ</div>
+    <div style="font-size:28px;margin-bottom:6px">&#128298;</div>
+    <div style="font-size:16px;font-weight:700;color:var(--dark)">Набор ножей Tramontina</div>
+    <div style="font-size:12px;color:var(--gold);margin-bottom:10px">4 500 ₽</div>
+    <div style="color:var(--gold);font-size:12px;font-weight:600">Участвовать →</div>
+  </div>
+  </a>
+
+  <!-- Интенсив -->
+  <a href="#" data-page="intensive" style="display:block">
+  <div class="glass post" style="margin-bottom:16px">
+    <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(212,160,82,.7);background:rgba(212,160,82,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(212,160,82,.08)">&#128640; ИНТЕНСИВ — СТАРТ 15 АПРЕЛЯ</div>
+    <div style="padding:16px">
+      <div style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:4px;font-family:'Playfair Display',serif">Домашние колбасы и деликатесы</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">8 уроков • Шеф Сергей Орлов • 6 недель</div>
+      <div style="font-size:11px;color:var(--text);margin-bottom:10px">Сыровяленые, варёные, копчёные колбасы, бастурма, паштеты — всё на домашней кухне.</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px;font-weight:700;color:var(--gold)">1 350 ₽</span>
+        <span style="font-size:11px;color:var(--text-dim);text-decoration:line-through">1 500 ₽</span>
+        <span style="font-size:9px;color:var(--green);font-weight:600;background:rgba(139,115,85,.1);padding:2px 8px;border-radius:6px">-10% для клуба</span>
+      </div>
+    </div>
+    <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Подробнее →</span></div>
+  </div>
+  </a>
+
+  <!-- Мастер-класс -->
+  <a href="#" data-page="masterclass" style="display:block">
+  <div class="glass post" style="margin-bottom:16px">
+    <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(139,92,246,.7);background:rgba(139,92,246,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(139,92,246,.08)">&#9889; МАСТЕР-КЛАСС — 5 АПРЕЛЯ, 18:00</div>
+    <div style="padding:16px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Пасхальная выпечка</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Шеф Мария Соколова • 1.5 часа • Онлайн</div>
+      <div style="font-size:11px;color:var(--text);margin-bottom:10px">Куличи, кейк-попсы, пряники — три рецепта за один вечер.</div>
+      <span style="font-size:16px;font-weight:700;color:var(--gold)">990 ₽</span>
+    </div>
+    <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Подробнее →</span></div>
+  </div>
+  </a>
+
+  <!-- Марафон -->
+  <a href="#" data-page="marathon" style="display:block">
+  <div class="glass post" style="margin-bottom:16px">
+    <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(139,115,85,.7);background:rgba(139,115,85,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(139,115,85,.08)">&#127919; БЕСПЛАТНЫЙ МАРАФОН — СТАРТ 20 АПРЕЛЯ</div>
+    <div style="padding:16px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Бар заготовок: 5 дней — 7 баров</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Шеф Виктор Новиков • 5 дней • Бесплатно</div>
+      <div style="font-size:11px;color:var(--text);margin-bottom:10px">Заготовьте еду на месяц за одни выходные.</div>
+      <span style="font-size:16px;font-weight:700;color:var(--green)">Бесплатно</span>
+    </div>
+    <div class="post-actions"><span style="color:var(--green);font-size:12px;font-weight:600">Подробнее →</span></div>
+  </div>
+  </a>
+
+  <!-- VIP Zoom -->
+  <a href="#" data-page="vip" style="display:block">
+  <div class="glass post">
+    <div style="padding:8px 16px;font-size:10px;font-weight:600;color:rgba(212,160,82,.7);background:rgba(212,160,82,.05);border-radius:14px 14px 0 0;margin:-1px -1px 0 -1px;letter-spacing:.5px;border-bottom:1px solid rgba(212,160,82,.08)">&#11088; VIP ZOOM — ПЯТНИЦА, 19:00</div>
+    <div style="padding:16px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:4px">Zoom с шефом Алексеем</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px">Разбор ваших блюд за месяц • Вопросы и ответы</div>
+      <div style="font-size:11px;color:var(--text)">Подготовьте фото — шеф разберёт каждое.</div>
+    </div>
+    <div class="post-actions"><span style="color:var(--gold);font-size:12px;font-weight:600">Только для VIP →</span></div>
+  </div>
+  </a>
+
+</div>
+<div class="footer">© 2026 <span>Планета X</span></div>
+</div>
+
+<!-- ==================== PAGE: LESSONS ==================== -->
+<div class="page" id="page-lessons">
+<div class="section">
+  <div class="section-title">Библиотека уроков</div>
+  <div class="section-sub">Все уроки клуба в одном месте</div>
+  <div class="divider"></div>
+
+  <div class="filter-tabs">
+    <a href="#" class="filter-tab active" data-page="lessons">Все</a>
+    <a href="#" class="filter-tab" data-page="cooking">Кулинария</a>
+    <a href="#" class="filter-tab" data-page="pastry">Кондитерская</a>
+  </div>
+
+  <div class="lessons-grid">
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-new">Новый</div><div class="lesson-title">Идеальный стейк рибай</div><div class="lesson-meta">Шеф Алексей &bull; 25 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-popular">Хит</div><div class="lesson-title">Паста карбонара</div><div class="lesson-meta">Шеф Дмитрий &bull; 20 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Лосось в сливочном соусе</div><div class="lesson-meta">Шеф Дмитрий &bull; 30 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Говядина Веллингтон</div><div class="lesson-meta">Шеф Алексей &bull; 45 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-new">Новый</div><div class="lesson-title">Шоколадный мусс</div><div class="lesson-meta">Шеф Ирина &bull; 30 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-popular">Хит</div><div class="lesson-title">Эклеры с кремом</div><div class="lesson-meta">Шеф Мария &bull; 35 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Чизкейк Нью-Йорк</div><div class="lesson-meta">Шеф Ирина &bull; 40 мин</div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-soon">Скоро</div><div class="lesson-title">Круассаны</div><div class="lesson-meta">Шеф Мария &bull; 50 мин</div></div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: COOKING ==================== -->
+<div class="page" id="page-cooking">
+<div class="section">
+  <div class="section-title">Кулинария</div>
+  <div class="section-sub">Мясо, рыба, паста и высокая кухня</div>
+  <div class="divider"></div>
+
+  <div class="filter-tabs">
+    <a href="#" class="filter-tab" data-page="lessons">Все</a>
+    <a href="#" class="filter-tab active" data-page="cooking">Кулинария</a>
+    <a href="#" class="filter-tab" data-page="pastry">Кондитерская</a>
+  </div>
+
+  <!-- Chef Profiles -->
+  <div class="glass" style="padding:20px;margin-bottom:16px">
+    <div class="chef-profile">
+      <div class="chef-profile-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div class="chef-profile-info">
+        <h3>Алексей Козлов</h3>
+        <p>Шеф-повар с 15-летним опытом. Специализация: высокая кухня, мясные блюда, авторские соусы, техники обжарки и запекания. Работал в ресторанах Москвы и Петербурга.</p>
+        <div class="chef-stats"><span class="chef-stat">&#127860; 42 урока</span><span class="chef-stat">&#11088; 4.9 рейтинг</span><span class="chef-stat">&#128101; 890 учеников</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="glass" style="padding:20px;margin-bottom:24px">
+    <div class="chef-profile">
+      <div class="chef-profile-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div class="chef-profile-info">
+        <h3>Дмитрий Волков</h3>
+        <p>Шеф-повар, специалист по итальянской и средиземноморской кухне. Стажировался в Риме и Барселоне. Мастер пасты, рыбных блюд и морепродуктов.</p>
+        <div class="chef-stats"><span class="chef-stat">&#127860; 38 уроков</span><span class="chef-stat">&#11088; 4.8 рейтинг</span><span class="chef-stat">&#128101; 760 учеников</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lessons-grid">
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-new">Новый</div><div class="lesson-title">Идеальный стейк рибай</div><div class="lesson-meta">Шеф Алексей &bull; 25 мин</div><div class="rating" data-chef="ak"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-popular">Хит</div><div class="lesson-title">Паста карбонара</div><div class="lesson-meta">Шеф Дмитрий &bull; 20 мин</div><div class="rating" data-chef="dv"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Лосось в сливочном соусе</div><div class="lesson-meta">Шеф Дмитрий &bull; 30 мин</div><div class="rating" data-chef="dv"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Говядина Веллингтон</div><div class="lesson-meta">Шеф Алексей &bull; 45 мин</div><div class="rating" data-chef="ak"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+  </div>
+
+  <!-- Рейтинг шефов (обновляется при оценке) -->
+  <div class="glass" style="padding:16px;margin-top:16px">
+    <div style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:10px">Рейтинг шефов (обновляется при вашей оценке):</div>
+    <div style="display:flex;gap:24px">
+      <div>Алексей Козлов: <span class="chef-rating-live" id="rating-ak">4.9</span> &#11088; <span style="font-size:11px;color:var(--text-dim)" id="count-ak">(247 оценок)</span></div>
+      <div>Дмитрий Волков: <span class="chef-rating-live" id="rating-dv">4.8</span> &#11088; <span style="font-size:11px;color:var(--text-dim)" id="count-dv">(198 оценок)</span></div>
+    </div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: PASTRY ==================== -->
+<div class="page" id="page-pastry">
+<div class="section">
+  <div class="section-title">Кондитерская</div>
+  <div class="section-sub">Торты, десерты, выпечка и сладкое искусство</div>
+  <div class="divider"></div>
+
+  <div class="filter-tabs">
+    <a href="#" class="filter-tab" data-page="lessons">Все</a>
+    <a href="#" class="filter-tab" data-page="cooking">Кулинария</a>
+    <a href="#" class="filter-tab active" data-page="pastry">Кондитерская</a>
+  </div>
+
+  <!-- Chef Profiles -->
+  <div class="glass" style="padding:20px;margin-bottom:16px">
+    <div class="chef-profile">
+      <div class="chef-profile-ava role-chef" style="overflow:visible;background:linear-gradient(135deg,#A08060,#7A6045)"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div class="chef-profile-info">
+        <h3>Ирина Белова</h3>
+        <p>Шеф-кондитер, призёр международных конкурсов. Специализация: муссовые торты, шоколадный декор, зеркальная глазурь, авторские десерты ресторанного уровня.</p>
+        <div class="chef-stats"><span class="chef-stat">&#127856; 36 уроков</span><span class="chef-stat">&#11088; 4.9 рейтинг</span><span class="chef-stat">&#128101; 720 учеников</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="glass" style="padding:20px;margin-bottom:24px">
+    <div class="chef-profile">
+      <div class="chef-profile-ava role-chef" style="overflow:visible;background:linear-gradient(135deg,#C9845A,#96643A)"><img class="ava-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div class="chef-profile-info">
+        <h3>Мария Соколова</h3>
+        <p>Шеф-кондитер, автор кулинарного блога с 200К подписчиков. Специализация: классическая выпечка, эклеры, круассаны, слоёное и песочное тесто.</p>
+        <div class="chef-stats"><span class="chef-stat">&#127856; 34 урока</span><span class="chef-stat">&#11088; 4.8 рейтинг</span><span class="chef-stat">&#128101; 680 учеников</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lessons-grid">
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-new">Новый</div><div class="lesson-title">Шоколадный мусс</div><div class="lesson-meta">Шеф Ирина &bull; 30 мин</div><div class="rating" data-chef="ib"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-popular">Хит</div><div class="lesson-title">Эклеры с кремом</div><div class="lesson-meta">Шеф Мария &bull; 35 мин</div><div class="rating" data-chef="ms"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-title">Чизкейк Нью-Йорк</div><div class="lesson-meta">Шеф Ирина &bull; 40 мин</div><div class="rating" data-chef="ib"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+    <div class="glass lesson-card"><div class="lesson-thumb"><img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=300" style="width:100%;height:100%;object-fit:cover" alt=""></div><div class="lesson-badge badge-soon">Скоро</div><div class="lesson-title">Круассаны</div><div class="lesson-meta">Шеф Мария &bull; 50 мин</div><div class="rating" data-chef="ms"><span class="rating-star" data-v="1">&#9733;</span><span class="rating-star" data-v="2">&#9733;</span><span class="rating-star" data-v="3">&#9733;</span><span class="rating-star" data-v="4">&#9733;</span><span class="rating-star" data-v="5">&#9733;</span><span class="rating-label">Оцените урок</span><span class="rating-thanks">Спасибо!</span></div></div>
+  </div>
+
+  <div class="glass" style="padding:16px;margin-top:16px">
+    <div style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:10px">Рейтинг шефов-кондитеров:</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div>Ирина Белова: <span class="chef-rating-live" id="rating-ib">4.9</span> &#11088; <span style="font-size:11px;color:var(--text-dim)" id="count-ib">(215 оценок)</span></div>
+      <div>Мария Соколова: <span class="chef-rating-live" id="rating-ms">4.8</span> &#11088; <span style="font-size:11px;color:var(--text-dim)" id="count-ms">(183 оценки)</span></div>
+    </div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: ALL CHEFS ==================== -->
+<div class="page" id="page-chefs">
+<div class="section">
+  <div class="section-title">Команда Планеты X</div>
+  <div class="section-sub">10 профессиональных шефов &mdash; ваши проводники в мир кулинарного искусства</div>
+  <div class="divider"></div>
+
+  <!-- Шефы клуба — постоянный состав -->
+  <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:16px;text-align:center">Шефы клуба &mdash; постоянный состав</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px">
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava role-chef" style="width:60px;height:60px;min-width:60px;overflow:visible;font-size:20px;margin:0"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Алексей Козлов</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Шеф-повар &bull; Кулинария</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Высокая кухня, мясо, соусы</div>
+        <div style="font-size:10px;color:var(--text-dim)">42 урока &bull; 4.9 рейтинг &bull; 890 учеников</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#D4A052,#B8862D);color:#fff;padding:2px 8px;border-radius:8px">В КЛУБЕ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava role-chef" style="width:60px;height:60px;min-width:60px;overflow:visible;font-size:20px;margin:0"><img class="ava-img" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Дмитрий Волков</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Шеф-повар &bull; Кулинария</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Итальянская кухня, паста, рыба</div>
+        <div style="font-size:10px;color:var(--text-dim)">38 уроков &bull; 4.8 рейтинг &bull; 760 учеников</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#D4A052,#B8862D);color:#fff;padding:2px 8px;border-radius:8px">В КЛУБЕ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava role-chef" style="width:60px;height:60px;min-width:60px;overflow:visible;font-size:20px;margin:0"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Ирина Белова</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Шеф-кондитер</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Торты, муссы, шоколад</div>
+        <div style="font-size:10px;color:var(--text-dim)">36 уроков &bull; 4.9 рейтинг &bull; 720 учеников</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#D4A052,#B8862D);color:#fff;padding:2px 8px;border-radius:8px">В КЛУБЕ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava role-chef" style="width:60px;height:60px;min-width:60px;overflow:visible;font-size:20px;margin:0"><img class="ava-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Мария Соколова</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Шеф-кондитер</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Выпечка, эклеры, круассаны</div>
+        <div style="font-size:10px;color:var(--text-dim)">34 урока &bull; 4.8 рейтинг &bull; 680 учеников</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#D4A052,#B8862D);color:#fff;padding:2px 8px;border-radius:8px">В КЛУБЕ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шефы интенсивов -->
+  <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:16px;text-align:center">Шефы интенсивов</div>
+  <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#E67E22">СО</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Сергей Орлов</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Мастер мясных деликатесов</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Колбасы, копчёности, вяленое мясо</div>
+        <div style="font-size:10px;color:var(--text-dim)">24 урока &bull; 4.9 рейтинг</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#E67E22,#D35400);color:#fff;padding:2px 8px;border-radius:8px">ИНТЕНСИВЫ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#A08060">АК</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Анна Краснова</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Мастер национальной кухни</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Грузинская, азиатская, мексиканская кухня</div>
+        <div style="font-size:10px;color:var(--text-dim)">18 уроков &bull; 4.7 рейтинг</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#A08060,#7A6045);color:#fff;padding:2px 8px;border-radius:8px">ИНТЕНСИВЫ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#B8956A">ПМ</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Павел Морозов</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Шеф-кондитер</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Шоколад, конфеты, пралине</div>
+        <div style="font-size:10px;color:var(--text-dim)">20 уроков &bull; 4.8 рейтинг</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#B8956A,#8B7355);color:#fff;padding:2px 8px;border-radius:8px">ИНТЕНСИВЫ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Приглашённые шефы -->
+  <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:16px;text-align:center">Приглашённые шефы</div>
+  <div class="mobile-stack" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#C9845A">ЕЖ</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Елена Жукова</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Мастер здорового питания</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">ПП-рецепты, суперфуды, детокс</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#C9845A,#96643A);color:#fff;padding:2px 8px;border-radius:8px">МАСТЕР-КЛАССЫ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#14B8A6">ВН</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Виктор Новиков</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Мастер гриля и BBQ</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Стейки, бургеры, копчение</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#14B8A6,#0D9488);color:#fff;padding:2px 8px;border-radius:8px">МАРАФОНЫ</span></div>
+      </div>
+    </div>
+    <div class="glass" style="padding:20px;display:flex;gap:14px;align-items:flex-start">
+      <div class="chef-ava" style="width:60px;height:60px;min-width:60px;font-size:20px;margin:0;background:#F43F5E">ОС</div>
+      <div>
+        <div style="font-weight:700;color:var(--dark);font-size:14px;margin-bottom:2px">Олег Смирнов</div>
+        <div style="color:var(--gold);font-size:11px;margin-bottom:4px">Фуд-стилист</div>
+        <div style="font-size:11px;color:var(--text-dim);line-height:1.4;margin-bottom:6px">Подача блюд, фото еды, сервировка</div>
+        <div style="margin-top:6px"><span style="font-size:9px;font-weight:700;background:linear-gradient(135deg,#F43F5E,#E11D48);color:#fff;padding:2px 8px;border-radius:8px">КОНТЕНТ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ротация шефов -->
+  <div class="glass" style="padding:24px;text-align:center">
+    <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);margin-bottom:10px">Ротация шефов</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:20px;max-width:600px;margin-left:auto;margin-right:auto">Каждые 3 месяца мы обновляем состав клуба. Шефы из клуба переходят на интенсивы, а шефы интенсивов встают в клуб. Так вы получаете разнообразие, а шефы не выгорают.</div>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:500px;margin:0 auto">
+      <div class="glass-sm" style="padding:10px 16px;font-size:12px;color:var(--text)"><b style="color:var(--gold)">Январь&ndash;Июнь:</b> Алексей + Дмитрий + Ирина + Мария</div>
+      <div class="glass-sm" style="padding:10px 16px;font-size:12px;color:var(--text)"><b style="color:var(--gold)">Июль&ndash;Декабрь:</b> Сергей + Анна + Ирина + Павел</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">И так далее &mdash; новый состав каждые полгода</div>
+    </div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: INTENSIVE ==================== -->
+<div class="page" id="page-intensive">
+<div class="section">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;margin-bottom:8px">ИНТЕНСИВ</div>
+    <div class="section-title">Домашние колбасы и деликатесы</div>
+    <div class="section-sub">8 уроков • Шеф Сергей Орлов • Старт 15 апреля</div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Chef -->
+  <div class="glass" style="padding:20px;margin-bottom:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div style="width:70px;height:70px;border-radius:50%;background:#E67E22;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 15px rgba(230,126,34,.3)">СО</div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark)">Сергей Орлов</div>
+      <div style="font-size:11px;color:var(--gold);margin-bottom:4px">Мастер мясных деликатесов • 24 урока • ★ 4.9</div>
+      <div style="font-size:12px;color:var(--text)">Специалист по колбасам, копчёностям и вяленому мясу. 12 лет опыта. Работал на мясоперерабатывающих предприятиях Германии.</div>
+    </div>
+  </div>
+
+  <!-- Что научитесь -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Что вы научитесь делать:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • Сыровяленая колбаса — без сушильного шкафа, на обычной кухне<br>
+      • Варёная колбаса — докторская, молочная, с сыром<br>
+      • Копчёная колбаса — горячее и холодное копчение дома<br>
+      • Сальчичон — испанский деликатес своими руками<br>
+      • Суджук — сухая колбаса с пряностями<br>
+      • Домашние сосиски — натуральные, без добавок<br>
+      • Бастурма — вяленая говядина в специях<br>
+      • Паштеты — печёночный и мясной
+    </div>
+  </div>
+
+  <!-- Программа -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Программа (8 уроков):</div>
+    <div style="font-size:12px;color:var(--text);line-height:2.2">
+      <b style="color:var(--gold)">Урок 1.</b> Основы: оболочки, специи, оборудование. Первая варёная колбаса.<br>
+      <b style="color:var(--gold)">Урок 2.</b> Докторская и молочная — классика советской кухни.<br>
+      <b style="color:var(--gold)">Урок 3.</b> Домашние сосиски и купаты на гриле.<br>
+      <b style="color:var(--gold)">Урок 4.</b> Сыровяленая колбаса — технология сушки дома.<br>
+      <b style="color:var(--gold)">Урок 5.</b> Суджук и сальчичон — восточные и европейские рецепты.<br>
+      <b style="color:var(--gold)">Урок 6.</b> Горячее копчение — колбасы и грудинка.<br>
+      <b style="color:var(--gold)">Урок 7.</b> Бастурма — от засолки до нарезки.<br>
+      <b style="color:var(--gold)">Урок 8.</b> Паштеты и рийеты — праздничный стол.
+    </div>
+  </div>
+
+  <!-- Для кого -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Для кого:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • Хотите делать натуральные продукты без магазинной химии<br>
+      • Любите мясные деликатесы, но не хотите переплачивать<br>
+      • Хотите удивить близких домашней колбасой<br>
+      • Думаете о домашнем бизнесе на мясных изделиях
+    </div>
+  </div>
+
+  <!-- Цена -->
+  <div class="glass" style="padding:24px;text-align:center">
+    <div style="font-size:24px;font-weight:700;color:var(--gold);margin-bottom:4px">1 350 ₽</div>
+    <div style="font-size:13px;color:var(--text-dim);text-decoration:line-through;margin-bottom:4px">1 500 ₽</div>
+    <div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:16px">Скидка 10% для участников клуба</div>
+    <button data-modal style="background:linear-gradient(135deg,#F07A5A,#E85D3A,#C94B2A);color:#fff;border:none;padding:14px 48px;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(232,93,58,.35)">Записаться на интенсив</button>
+    <div style="font-size:10px;color:var(--text-dim);margin-top:10px">Старт 15 апреля • 8 уроков за 6 недель</div>
+  </div>
+</div>
+<div class="footer">© 2026 <span>Планета X</span></div>
+</div>
+
+<!-- ==================== PAGE: MASTERCLASS ==================== -->
+<div class="page" id="page-masterclass">
+<div class="section">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:10px;font-weight:600;color:var(--gold);letter-spacing:2px;margin-bottom:8px">МАСТЕР-КЛАСС</div>
+    <div class="section-title">Пасхальная выпечка</div>
+    <div class="section-sub">Шеф Мария Соколова • 5 апреля, 18:00 • 1.5 часа • Онлайн</div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Chef -->
+  <div class="glass" style="padding:20px;margin-bottom:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div class="chef-profile-ava role-chef" style="overflow:visible;width:70px;height:70px;font-size:24px"><img class="ava-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark)">Мария Соколова</div>
+      <div style="font-size:11px;color:var(--gold);margin-bottom:4px">Шеф-кондитер • 34 урока • ★ 4.8</div>
+      <div style="font-size:12px;color:var(--text)">Автор блога с 200К подписчиков. Специалист по выпечке, эклерам, круассанам.</div>
+    </div>
+  </div>
+
+  <!-- Что приготовим -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Что приготовим за 1.5 часа:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • Кулич классический — пышный, ароматный, с цукатами<br>
+      • Кейк-попсы пасхальные — яйца и зайчики на палочках<br>
+      • Пряники с глазурью — роспись в прямом эфире
+    </div>
+  </div>
+
+  <!-- Формат -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Формат:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • Прямой эфир — готовим вместе с шефом в реальном времени<br>
+      • Можно задавать вопросы прямо во время готовки<br>
+      • Запись будет доступна 30 дней после эфира<br>
+      • PDF с рецептами — скачаете перед мастер-классом
+    </div>
+  </div>
+
+  <!-- Что понадобится -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Что подготовить заранее:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • Мука, яйца, сливочное масло, сахар, дрожжи<br>
+      • Цукаты, изюм, ванильный сахар<br>
+      • Сахарная пудра для глазури<br>
+      • Палочки для кейк-попсов (или шпажки)<br>
+      <span style="color:var(--text-dim)">Полный список ингредиентов пришлём за 3 дня до МК</span>
+    </div>
+  </div>
+
+  <!-- Цена -->
+  <div class="glass" style="padding:24px;text-align:center">
+    <div style="font-size:24px;font-weight:700;color:var(--gold);margin-bottom:4px">990 ₽</div>
+    <div style="font-size:10px;color:var(--text-dim);margin-bottom:16px">5 апреля, суббота, 18:00 МСК</div>
+    <button data-modal style="background:linear-gradient(135deg,#F07A5A,#E85D3A,#C94B2A);color:#fff;border:none;padding:14px 48px;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(232,93,58,.35)">Забронировать место</button>
+    <div style="font-size:10px;color:var(--text-dim);margin-top:10px">Осталось 18 мест из 50</div>
+  </div>
+</div>
+<div class="footer">© 2026 <span>Планета X</span></div>
+</div>
+
+<!-- ==================== PAGE: MARATHON ==================== -->
+<div class="page" id="page-marathon">
+<div class="section">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-size:10px;font-weight:600;color:var(--green);letter-spacing:2px;margin-bottom:8px">БЕСПЛАТНЫЙ МАРАФОН</div>
+    <div class="section-title">Бар заготовок</div>
+    <div class="section-sub">5 дней — 7 баров — морозилка мечты • Старт 20 апреля</div>
+  </div>
+  <div class="divider"></div>
+
+  <!-- Chef -->
+  <div class="glass" style="padding:20px;margin-bottom:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <div style="width:70px;height:70px;border-radius:50%;background:#14B8A6;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 4px 15px rgba(20,184,166,.3)">ВН</div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:16px;font-weight:700;color:var(--dark)">Виктор Новиков</div>
+      <div style="font-size:11px;color:var(--gold);margin-bottom:4px">Мастер гриля и BBQ • Ведущий марафонов</div>
+      <div style="font-size:12px;color:var(--text)">Научит заготавливать еду на месяц за одни выходные. Просто, быстро, вкусно.</div>
+    </div>
+  </div>
+
+  <!-- Программа по дням -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Программа по дням:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2.2">
+      <b style="color:var(--green)">День 1.</b> Ревизия холодильника, правила заморозки, список покупок<br>
+      <b style="color:var(--green)">День 2.</b> Бар супов — бульоны-концентраты, крем-супы, борщевая заправка<br>
+      <b style="color:var(--green)">День 3.</b> Бар мясных заготовок — маринады, котлеты, фрикадельки<br>
+      <b style="color:var(--green)">День 4.</b> Бар гарниров + соусов — рис, овощные смеси, томатный, грибной<br>
+      <b style="color:var(--green)">День 5.</b> Бар десертов + СЕКРЕТНЫЙ БАР (завтраки!)
+    </div>
+  </div>
+
+  <!-- Что получите бесплатно -->
+  <div class="glass" style="padding:20px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px">Что получите бесплатно:</div>
+    <div style="font-size:12px;color:var(--text);line-height:2">
+      • 5 видеоуроков с пошаговыми рецептами<br>
+      • PDF-чек-лист покупок — распечатай и в магазин<br>
+      • Чат с участниками и шефом<br>
+      • Розыгрыши призов каждый день<br>
+      • 100+ порций заготовок к концу марафона
+    </div>
+  </div>
+
+  <!-- Бонус -->
+  <div class="glass" style="padding:20px;margin-bottom:20px;border-color:rgba(212,160,82,.2) !important">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px">Бонус для участников марафона:</div>
+    <div style="font-size:12px;color:var(--text)">Скидка 20% на вступление в клуб «Планета X» — действует 7 дней после окончания марафона.</div>
+  </div>
+
+  <!-- Кнопка -->
+  <div class="glass" style="padding:24px;text-align:center">
+    <div style="font-size:28px;font-weight:700;color:var(--green);margin-bottom:4px">Бесплатно</div>
+    <div style="font-size:10px;color:var(--text-dim);margin-bottom:16px">Старт 20 апреля • 5 дней</div>
+    <button data-modal style="background:linear-gradient(135deg,#34D399,#10B981,#059669);color:#fff;border:none;padding:14px 48px;border-radius:24px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(139,115,85,.35)">Зарегистрироваться бесплатно</button>
+    <div style="font-size:10px;color:var(--text-dim);margin-top:10px">Уже записались: 247 человек</div>
+  </div>
+</div>
+<div class="footer">© 2026 <span>Планета X</span></div>
+</div>
+
+<!-- ==================== PAGE: CHAT ==================== -->
+<div class="page" id="page-chat">
+<div class="chat-layout">
+  <div class="chat-sidebar" id="chat-sidebar">
+    <div class="sidebar-title">Каналы</div>
+    <a href="#" class="chat-channel active" data-cc="0"><span class="ch-icon">&#9749;</span> Болталка</a>
+    <a href="#" class="chat-channel" data-cc="1"><span class="ch-icon">&#127860;</span> С шефами</a>
+    <a href="#" class="chat-channel" data-cc="2"><span class="ch-icon">&#127856;</span> Кондитерская</a>
+    <a href="#" class="chat-channel" data-cc="3"><span class="ch-icon">&#127942;</span> Розыгрыши</a>
+    <a href="#" class="chat-channel" data-cc="4"><span class="ch-icon">&#11088;</span> VIP</a>
+  </div>
+  <div class="chat-main">
+    <!-- Channel 0: General -->
+    <div class="chat-container active" id="chat-ch-0">
+      <div class="chat-header">&#9749; Болталка</div>
+      <div class="chat-messages">
+        <div class="chat-message"><div class="chat-m-ava role-curator" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Куратор Наталья <span>09:00</span></div><div class="chat-m-text">Доброе утро, экипаж! Сегодня выходят два новых урока. Не забывайте выкладывать фото для розыгрыша!</div><div class="chat-reactions"><span class="chat-react reacted">&#128293;<span class="chat-react-count">12</span></span><span class="chat-react">&#128079;<span class="chat-react-count">8</span></span><span class="chat-react">&#10084;&#65039;<span class="chat-react-count">23</span></span><span class="chat-react-add" data-react>+</span></div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Елена <span>09:15</span></div><div class="chat-m-text">Доброе утро! Жду урок по стейку, вчера купила рибай специально.</div><div class="chat-reactions"><span class="chat-react">&#128077;<span class="chat-react-count">5</span></span><span class="chat-react-add" data-react>+</span></div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Алексей <span>09:20</span></div><div class="chat-m-text">Елена, отличный выбор! Главное &mdash; достаньте мясо из холодильника за час до готовки. Урок будет через 2 часа.</div><div class="chat-reactions"><span class="chat-react reacted">&#10084;&#65039;<span class="chat-react-count">31</span></span><span class="chat-react">&#128588;<span class="chat-react-count">14</span></span><span class="chat-react">&#128293;<span class="chat-react-count">9</span></span><span class="chat-react-add" data-react>+</span></div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Ольга <span>09:30</span></div><div class="chat-m-text">Я вчера попробовала карбонару по уроку Дмитрия &mdash; божественно! Желток не свернулся, всё получилось с первого раза.</div><div class="chat-reactions"><span class="chat-react">&#128079;<span class="chat-react-count">18</span></span><span class="chat-react">&#128525;<span class="chat-react-count">7</span></span><span class="chat-react-add" data-react>+</span></div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Татьяна <span>09:45</span></div><div class="chat-m-text">А когда будет розыгрыш ножей? Очень хочу участвовать!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-curator" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Куратор Наталья <span>09:50</span></div><div class="chat-m-text">Татьяна, розыгрыш в пятницу! Выложите фото любого блюда по нашим урокам до четверга включительно.</div></div></div>
+      </div>
+      <div class="chat-input-area"><input type="text" placeholder="Написать сообщение..."><button>Отправить</button></div>
+    </div>
+    <!-- Channel 1: Cooking -->
+    <div class="chat-container" id="chat-ch-1">
+      <div class="chat-header">&#127860; Кулинария</div>
+      <div class="chat-messages">
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Алексей <span>10:30</span></div><div class="chat-m-text">Новый урок опубликован! &laquo;Идеальный стейк рибай&raquo; &mdash; техника обратного обжаривания. Смотрите, готовьте, выкладывайте результат!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Дмитрий <span>10:45</span></div><div class="chat-m-text">Кстати, к стейку идеально подойдёт соус из моего урока &laquo;5 базовых соусов&raquo;. Попробуйте беарнез!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Андрей <span>11:00</span></div><div class="chat-m-text">Шеф, а какой степени прожарки лучше для рибая? Я люблю medium rare.</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Алексей <span>11:05</span></div><div class="chat-m-text">Андрей, для рибая medium rare &mdash; идеально! 54-57 градусов внутри. Термометр &mdash; ваш лучший друг.</div></div></div>
+      </div>
+      <div class="chat-input-area"><input type="text" placeholder="Написать сообщение..."><button>Отправить</button></div>
+    </div>
+    <!-- Channel 2: Pastry -->
+    <div class="chat-container" id="chat-ch-2">
+      <div class="chat-header">&#127856; Кондитерская</div>
+      <div class="chat-messages">
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Ирина <span>11:00</span></div><div class="chat-m-text">Девочки (и мальчики!), новый урок по шоколадному муссу уже доступен. Ключевой момент &mdash; температура шоколада при смешивании: строго 45 градусов.</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Мария <span>11:15</span></div><div class="chat-m-text">А я готовлю урок по круассанам! Слоёное тесто с нуля &mdash; это проще, чем кажется. Выйдет на следующей неделе.</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Ольга <span>11:30</span></div><div class="chat-m-text">Ирина, а можно использовать молочный шоколад вместо тёмного для мусса?</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Ирина <span>11:35</span></div><div class="chat-m-text">Ольга, можно, но тогда уменьшите сахар в рецепте на 30%. Молочный шоколад сам по себе сладкий.</div></div></div>
+      </div>
+      <div class="chat-input-area"><input type="text" placeholder="Написать сообщение..."><button>Отправить</button></div>
+    </div>
+    <!-- Channel 3: Prizes -->
+    <div class="chat-container" id="chat-ch-3">
+      <div class="chat-header">&#127942; Розыгрыши</div>
+      <div class="chat-messages">
+        <div class="chat-message"><div class="chat-m-ava role-curator" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Куратор Наталья <span>12:00</span></div><div class="chat-m-text">&#127881; Итоги прошлого розыгрыша: набор кондитерских насадок Wilton выиграла Ольга П.! Поздравляем!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Ольга <span>12:05</span></div><div class="chat-m-text">Ура!!! Не верю! Спасибо огромное! Теперь буду делать ещё красивее!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-curator" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Куратор Наталья <span>12:10</span></div><div class="chat-m-text">Новый розыгрыш: набор ножей Tramontina (4 500 &#8381;). Условия: выложите фото блюда по любому уроку до пятницы. Победителя выберем случайно!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Татьяна <span>12:20</span></div><div class="chat-m-text">Обязательно участвую! Сегодня буду готовить стейк по новому уроку.</div></div></div>
+      </div>
+      <div class="chat-input-area"><input type="text" placeholder="Написать сообщение..."><button>Отправить</button></div>
+    </div>
+    <!-- Channel 4: VIP -->
+    <div class="chat-container" id="chat-ch-4">
+      <div class="chat-header">&#11088; VIP-канал</div>
+      <div class="chat-messages">
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Алексей <span>14:00</span></div><div class="chat-m-text">VIP-участники, напоминаю: в субботу в 15:00 &mdash; персональный Zoom-разбор ваших блюд. Присылайте фото заранее!</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava role-chef" style="overflow:visible"><img class="ava-img" src="https://images.unsplash.com/photo-1594744803329-e58b31de8bf5?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""><span class="rank-bars"><span class="rank-bar"></span><span class="rank-bar"></span><span class="rank-bar"></span></span></div><div class="chat-m-body"><div class="chat-m-name">Шеф Ирина <span>14:15</span></div><div class="chat-m-text">Также в воскресенье &mdash; эксклюзивный урок только для VIP: &laquo;Зеркальная глазурь. Секреты идеального блеска&raquo;.</div></div></div>
+        <div class="chat-message"><div class="chat-m-ava" style="overflow:hidden"><img class="ava-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&amp;h=80&amp;fit=crop&amp;crop=face" alt=""></div><div class="chat-m-body"><div class="chat-m-name">Андрей <span>14:30</span></div><div class="chat-m-text">Отлично! Буду на Zoom. Хочу показать свой стейк и получить обратную связь.</div></div></div>
+      </div>
+      <div class="chat-input-area"><input type="text" placeholder="Написать сообщение..."><button>Отправить</button></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== PAGE: PRIZES ==================== -->
+<div class="page" id="page-prizes">
+<div class="section">
+  <div class="section-title">Звёздные награды</div>
+  <div class="section-sub">Каждую неделю разыгрываем подарки — ножи, посуду, технику. Выложи фото блюда и участвуй!</div>
+  <div class="divider"></div>
+
+  <!-- Current Prize -->
+  <div class="glass prize-preview" style="margin-bottom:32px">
+    <div style="font-size:10px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:3px;margin-bottom:14px">Текущий розыгрыш</div>
+    <div class="prize-icon">&#128298;</div>
+    <div class="prize-name">Набор ножей Tramontina</div>
+    <div class="prize-val">4 500 &#8381;</div>
+    <div class="timer">
+      <div class="t-block"><div class="t-num">2</div><div class="t-label">дня</div></div>
+      <div class="t-block"><div class="t-num">14</div><div class="t-label">часов</div></div>
+      <div class="t-block"><div class="t-num">37</div><div class="t-label">мин</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-dim)">Выложите фото блюда по любому уроку до пятницы</div>
+  </div>
+
+  <!-- How to Participate -->
+  <div class="section-title" style="font-size:20px">Как участвовать</div>
+  <div class="prizes-how">
+    <div class="glass prizes-how-item">
+      <div class="prizes-how-num">1</div>
+      <div class="prizes-how-title">Приготовьте блюдо</div>
+      <div class="prizes-how-text">Выберите любой урок из библиотеки и приготовьте блюдо по рецепту шефа</div>
+    </div>
+    <div class="glass prizes-how-item">
+      <div class="prizes-how-num">2</div>
+      <div class="prizes-how-title">Сфотографируйте</div>
+      <div class="prizes-how-text">Сделайте красивое фото готового блюда и выложите в чат &laquo;Розыгрыши&raquo;</div>
+    </div>
+    <div class="glass prizes-how-item">
+      <div class="prizes-how-num">3</div>
+      <div class="prizes-how-title">Ждите результат</div>
+      <div class="prizes-how-text">В пятницу куратор случайным образом выберет победителя среди участников</div>
+    </div>
+  </div>
+
+  <!-- Past Winners -->
+  <div class="section-title" style="font-size:20px;margin-top:32px">Прошлые победители</div>
+  <div class="section-sub">Призы, которые уже нашли своих хозяев</div>
+  <div class="winners-grid">
+    <div class="glass winner-card"><div class="winner-icon">&#127859;</div><div class="winner-prize">Сковорода WOK</div><div class="winner-name">Елена С.</div><div class="winner-date">15 марта 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#128218;</div><div class="winner-prize">Кулинарная книга</div><div class="winner-name">Ольга П.</div><div class="winner-date">8 марта 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#129474;</div><div class="winner-prize">Набор специй</div><div class="winner-name">Татьяна Н.</div><div class="winner-date">1 марта 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#9878;&#65039;</div><div class="winner-prize">Кухонные весы</div><div class="winner-name">Анна Д.</div><div class="winner-date">22 февраля 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#129481;</div><div class="winner-prize">Миксер Bosch</div><div class="winner-name">Марина К.</div><div class="winner-date">15 февраля 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#127858;</div><div class="winner-prize">Форма для торта</div><div class="winner-name">Светлана В.</div><div class="winner-date">8 февраля 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#129482;</div><div class="winner-prize">Блендер</div><div class="winner-name">Ирина Г.</div><div class="winner-date">1 февраля 2026</div></div>
+    <div class="glass winner-card"><div class="winner-icon">&#128293;</div><div class="winner-prize">Горелка кулинарная</div><div class="winner-name">Алексей М.</div><div class="winner-date">25 января 2026</div></div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ==================== PAGE: VIP ==================== -->
+<div class="page" id="page-vip">
+<div class="section">
+  <!-- VIP Banner -->
+  <div class="glass vip-banner">
+    <div class="vip-badge-icon">&#11088;</div>
+    <div class="vip-title">VIP-зона Планеты X</div>
+    <div class="vip-sub">Эксклюзивный доступ для самых преданных членов экипажа</div>
+  </div>
+
+  <div class="vip-grid">
+    <!-- Personal Review -->
+    <div class="glass" style="padding:24px">
+      <h4 style="font-size:16px;font-weight:600;color:var(--dark);margin-bottom:12px">&#128221; Персональный разбор</h4>
+      <p style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:12px">Отправьте фото вашего блюда &mdash; шеф-повар лично прокомментирует, укажет на ошибки и подскажет, как улучшить технику. Разбор в течение 24 часов.</p>
+      <div style="font-size:12px;color:var(--gold);font-weight:600">До 4 разборов в месяц</div>
+    </div>
+
+    <!-- Zoom Card -->
+    <div class="glass" style="padding:24px">
+      <h4 style="font-size:16px;font-weight:600;color:var(--dark);margin-bottom:12px">&#128247; Zoom с шефами</h4>
+      <p style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:12px">Каждую субботу в 15:00 &mdash; живой Zoom-звонок с шеф-поварами. Задавайте вопросы, показывайте блюда, получайте мгновенную обратную связь.</p>
+      <div style="font-size:12px;color:var(--gold);font-weight:600">Каждую субботу, 15:00 МСК</div>
+    </div>
+  </div>
+
+  <!-- Privileges -->
+  <div class="glass vip-priv" style="margin-bottom:24px">
+    <h4>&#128081; Привилегии VIP-участника</h4>
+    <ul class="vip-priv-list">
+      <li>Персональный разбор блюд от шефов (до 4 в месяц)</li>
+      <li>Еженедельные Zoom-сессии с шеф-поварами</li>
+      <li>Эксклюзивные уроки, недоступные в базовой подписке</li>
+      <li>Приоритетные ответы в чате (в течение 1 часа)</li>
+      <li>Доступ к VIP-каналу с закулисьем и секретами</li>
+      <li>Двойные шансы в розыгрышах призов</li>
+      <li>Ранний доступ к новым урокам (на 2 дня раньше)</li>
+      <li>Персональные рекомендации по меню на неделю</li>
+      <li>Бейдж VIP в чате и профиле</li>
+      <li>Скидка 20% на мастер-классы партнёров</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn-join" data-modal>Оформить VIP-подписку &mdash; 2 490 &#8381;/мес</button>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:12px">Или перейдите на VIP из базовой подписки в личном кабинете</div>
+  </div>
+</div>
+<div class="footer">&#169; 2026 <span>Планета X</span> &mdash; Кулинарный клуб</div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+(function(){
+  var isClubMember = false;
+  var currentPage = 'landing';
+  var currentChat = 0;
+
+  // NAV CONFIGS
+  var publicNav = [
+    {page:'landing', label:'Главная'},
+  ];
+  var clubNav = [
+    {page:'feed', label:'Лента'},
+    {page:'afisha', label:'Афиша'},
+    {page:'lessons', label:'Уроки'},
+    {page:'cooking', label:'Кулинария'},
+    {page:'pastry', label:'Кондитерская'},
+    {page:'chefs', label:'Все шефы'},
+    {page:'chat', label:'Чаты', chat:'0'},
+    {page:'prizes', label:'Розыгрыши'},
+    {page:'vip', label:'VIP'},
+  ];
+
+  function buildNav() {
+    var links = document.getElementById('nav-links');
+    var mobile = document.getElementById('mobile-menu');
+    var joinBtn = document.getElementById('nav-join-btn');
+    var items = isClubMember ? clubNav : publicNav;
+
+    // Desktop nav
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var cls = items[i].page === currentPage ? ' active' : '';
+      var chatAttr = items[i].chat !== undefined ? ' data-chat="' + items[i].chat + '"' : '';
+      html += '<a href="#" class="nav-link' + cls + '" data-page="' + items[i].page + '"' + chatAttr + '>' + items[i].label + '</a>';
+    }
+    links.innerHTML = html;
+
+    // Mobile nav
+    var mhtml = '';
+    for (var j = 0; j < items.length; j++) {
+      var mcls = items[j].page === currentPage ? ' active' : '';
+      var mChatAttr = items[j].chat !== undefined ? ' data-chat="' + items[j].chat + '"' : '';
+      mhtml += '<a href="#" class="nav-link' + mcls + '" data-page="' + items[j].page + '"' + mChatAttr + '>' + items[j].label + '</a>';
+    }
+    mobile.innerHTML = mhtml;
+
+    // Show/hide join button
+    if (isClubMember) {
+      joinBtn.style.display = 'none';
+    } else {
+      joinBtn.style.display = '';
+    }
+  }
+
+  function showPage(page, chatId) {
+    currentPage = page;
+    var pages = document.querySelectorAll('.page');
+    for (var i = 0; i < pages.length; i++) {
+      pages[i].classList.remove('active');
+    }
+    var target = document.getElementById('page-' + page);
+    if (target) target.classList.add('active');
+    buildNav();
+    window.scrollTo(0, 0);
+
+    // Show planet only on landing, feed, prizes
+    var planetPages = ['landing', 'feed', 'prizes'];
+    var planet = document.getElementById('big-planet');
+    if (planet) {
+      if (planetPages.indexOf(page) >= 0) {
+        planet.classList.remove('hidden');
+      } else {
+        planet.classList.add('hidden');
+      }
+    }
+
+    if (page === 'chat' && chatId !== undefined && chatId !== null) {
+      switchChat(parseInt(chatId));
+    }
+  }
+
+  function openModal() {
+    document.getElementById('modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('show');
+  }
+
+  function enterClub() {
+    isClubMember = true;
+    document.body.classList.add('dark-mode');
+    showPage('feed');
+  }
+
+  function switchChat(idx) {
+    currentChat = idx;
+    var containers = document.querySelectorAll('.chat-container');
+    for (var i = 0; i < containers.length; i++) {
+      containers[i].classList.remove('active');
+    }
+    var ch = document.getElementById('chat-ch-' + idx);
+    if (ch) ch.classList.add('active');
+
+    var channels = document.querySelectorAll('.chat-channel');
+    for (var j = 0; j < channels.length; j++) {
+      channels[j].classList.remove('active');
+      if (parseInt(channels[j].dataset.cc) === idx) {
+        channels[j].classList.add('active');
+      }
+    }
+  }
+
+  // EVENT DELEGATION - single listener for all clicks
+  document.addEventListener('click', function(e) {
+    var t = e.target.closest('[data-page]');
+    if (t) { showPage(t.dataset.page, t.dataset.chat); e.preventDefault(); }
+    if (e.target.closest('[data-modal]')) openModal();
+    if (e.target.closest('[data-close]')) closeModal();
+    if (e.target.closest('[data-enter]')) { closeModal(); enterClub(); }
+    if (e.target.closest('[data-cc]')) { switchChat(parseInt(e.target.closest('[data-cc]').dataset.cc)); e.preventDefault(); }
+
+    // Реакции в чате
+    var react = e.target.closest('.chat-react:not(.chat-react-add)');
+    if (react) {
+      react.classList.toggle('reacted');
+      var cnt = react.querySelector('.chat-react-count');
+      if (cnt) { var n = parseInt(cnt.textContent); cnt.textContent = react.classList.contains('reacted') ? n+1 : n-1; }
+    }
+    var reactAdd = e.target.closest('.chat-react-add');
+    if (reactAdd) {
+      var emojis = ['❤️','👍','🔥','👏','😍','🙏','😂','🎉'];
+      var emoji = emojis[Math.floor(Math.random()*emojis.length)];
+      var newReact = document.createElement('span');
+      newReact.className = 'chat-react reacted';
+      newReact.innerHTML = emoji + '<span class="chat-react-count">1</span>';
+      reactAdd.parentNode.insertBefore(newReact, reactAdd);
+    }
+
+    // Рейтинг звёзды
+    var star = e.target.closest('.rating-star');
+    if (star) {
+      var rating = star.closest('.rating');
+      if (rating.classList.contains('rated')) return;
+      var val = parseInt(star.dataset.v);
+      var chef = rating.dataset.chef;
+      // Подсветить звёзды
+      var stars = rating.querySelectorAll('.rating-star');
+      for (var s = 0; s < stars.length; s++) {
+        if (s < val) stars[s].classList.add('lit');
+        else stars[s].classList.remove('lit');
+      }
+      rating.classList.add('rated');
+      // Обновить рейтинг шефа
+      var ratingEl = document.getElementById('rating-' + chef);
+      var countEl = document.getElementById('count-' + chef);
+      if (ratingEl && countEl) {
+        var oldCount = parseInt(countEl.textContent.match(/\d+/)[0]);
+        var oldRating = parseFloat(ratingEl.textContent);
+        var newCount = oldCount + 1;
+        var newRating = ((oldRating * oldCount + val) / newCount).toFixed(1);
+        ratingEl.textContent = newRating;
+        countEl.textContent = '(' + newCount + ' оценок)';
+        ratingEl.classList.add('updated');
+        setTimeout(function(){ratingEl.classList.remove('updated')}, 600);
+      }
+    }
+
+    // Подсветка при наведении (hover эффект для звёзд)
+    var hoverStar = e.target.closest('.rating-star');
+    if (hoverStar) {
+      var r = hoverStar.closest('.rating');
+      if (!r.classList.contains('rated')) {
+        var v = parseInt(hoverStar.dataset.v);
+        var ss = r.querySelectorAll('.rating-star');
+        for (var i = 0; i < ss.length; i++) {
+          ss[i].style.color = i < v ? '#D4A052' : '';
+        }
+      }
+    }
+  });
+
+  // Close modal on background click
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Initialize
+  buildNav();
+
+  // Timer countdown
+  var totalSec = 2 * 86400 + 14 * 3600 + 37 * 60;
+  setInterval(function() {
+    totalSec--;
+    if (totalSec < 0) totalSec = 7 * 86400;
+    var d = Math.floor(totalSec / 86400);
+    var h = Math.floor((totalSec % 86400) / 3600);
+    var m = Math.floor((totalSec % 3600) / 60);
+    var dEl = document.getElementById('timer-d');
+    var hEl = document.getElementById('timer-h');
+    var mEl = document.getElementById('timer-m');
+    if (dEl) dEl.textContent = d;
+    if (hEl) hEl.textContent = h;
+    if (mEl) mEl.textContent = m;
+  }, 1000);
+
+})();
+</script>
+</div><!-- /app -->
+</body>
+</html>
