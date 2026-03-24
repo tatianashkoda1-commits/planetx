@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Планета X — Журнал #1 | Май 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#FDF8F3;color:#5C5550;line-height:1.7}
+.journal{max-width:680px;margin:0 auto;padding:0 20px}
+
+/* Cover */
+.cover{background:linear-gradient(135deg,#2D2A26,#3D3530);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 30px;position:relative;overflow:hidden;margin:0 -20px}
+.cover::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(232,93,58,.15) 0%,transparent 70%)}
+.cover::after{content:'';position:absolute;bottom:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(212,160,82,.1) 0%,transparent 70%)}
+.cover-issue{font-size:12px;color:#D4A052;letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;position:relative}
+.cover-title{font-family:'Playfair Display',serif;font-size:52px;color:#fff;margin-bottom:8px;line-height:1.1;position:relative}
+.cover-subtitle{font-family:'Playfair Display',serif;font-size:28px;color:#E85D3A;margin-bottom:24px;position:relative}
+.cover-desc{font-size:14px;color:#B0A898;max-width:400px;margin-bottom:32px;position:relative}
+.cover-meta{font-size:11px;color:#8A8580;position:relative}
+.cover-logo{width:120px;margin-bottom:20px;position:relative}
+.cover-badge{display:inline-block;background:#E85D3A;color:#fff;font-size:10px;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:1px;margin-bottom:24px;position:relative}
+
+/* Section */
+.j-section{padding:50px 0;border-bottom:1px solid rgba(45,42,38,.06)}
+.j-section:last-child{border-bottom:none}
+.j-label{font-size:11px;color:#E85D3A;letter-spacing:3px;text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.j-title{font-family:'Playfair Display',serif;font-size:30px;color:#2D2A26;margin-bottom:16px;line-height:1.2}
+.j-text{font-size:15px;color:#5C5550;line-height:1.8;margin-bottom:16px}
+.j-text b{color:#2D2A26}
+.j-img{width:100%;border-radius:16px;margin:20px 0;box-shadow:0 4px 20px rgba(45,42,38,.06)}
+.j-quote{font-family:'Playfair Display',serif;font-size:20px;color:#2D2A26;font-style:italic;border-left:3px solid #E85D3A;padding-left:20px;margin:24px 0;line-height:1.5}
+.j-author{font-size:12px;color:#8A8580;margin-top:8px;font-style:normal;font-family:'Inter',sans-serif}
+
+/* TOC */
+.toc{background:#fff;border-radius:16px;padding:28px;box-shadow:0 4px 20px rgba(45,42,38,.04);margin:20px 0}
+.toc-title{font-size:18px;font-weight:800;color:#2D2A26;margin-bottom:16px}
+.toc-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(45,42,38,.04);font-size:13px}
+.toc-item:last-child{border-bottom:none}
+.toc-item .name{color:#2D2A26;font-weight:500}
+.toc-item .tag{font-size:10px;padding:2px 10px;border-radius:10px;font-weight:600}
+.tag-open{background:#E8F5E9;color:#2D8B4E}
+.tag-club{background:rgba(232,93,58,.08);color:#E85D3A}
+
+/* Recipe card */
+.recipe-card{background:#fff;border-radius:16px;padding:24px;margin:20px 0;box-shadow:0 4px 20px rgba(45,42,38,.04)}
+.recipe-card h3{font-size:20px;font-weight:700;color:#2D2A26;margin-bottom:4px}
+.recipe-meta{font-size:12px;color:#8A8580;margin-bottom:16px}
+.recipe-steps{list-style:none;counter-reset:step}
+.recipe-steps li{counter-increment:step;padding:8px 0;font-size:14px;color:#5C5550;border-bottom:1px solid rgba(45,42,38,.04);display:flex;gap:10px;align-items:baseline}
+.recipe-steps li::before{content:counter(step);font-size:11px;font-weight:700;color:#fff;background:#E85D3A;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.recipe-steps li:last-child{border-bottom:none}
+.ingredients{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.ingredients span{background:#FDF8F3;border:1px solid rgba(45,42,38,.06);padding:4px 12px;border-radius:20px;font-size:12px;color:#5C5550}
+
+/* Top dishes */
+.dish-card{background:#fff;border-radius:16px;padding:20px;margin:12px 0;box-shadow:0 2px 12px rgba(45,42,38,.03);display:flex;gap:16px;align-items:center}
+.dish-place{font-size:28px;font-weight:800;color:#E85D3A;width:40px;flex-shrink:0;text-align:center}
+.dish-info h4{font-size:15px;font-weight:600;color:#2D2A26;margin-bottom:2px}
+.dish-info p{font-size:12px;color:#8A8580}
+.dish-likes{font-size:12px;color:#E85D3A;font-weight:600;flex-shrink:0}
+
+/* Paywall */
+.paywall{background:linear-gradient(135deg,#FFF5EE,#FEF0E5);border-radius:20px;padding:40px;text-align:center;margin:30px 0}
+.paywall-icon{font-size:48px;margin-bottom:16px}
+.paywall h3{font-size:22px;font-weight:800;color:#2D2A26;margin-bottom:8px}
+.paywall p{font-size:14px;color:#8A8580;margin-bottom:20px;max-width:400px;margin-left:auto;margin-right:auto}
+.paywall-btn{background:#2D2A26;color:#fff;border:none;padding:14px 40px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:inline-block;text-decoration:none;transition:all .3s}
+.paywall-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,42,38,.15)}
+.paywall-note{font-size:11px;color:#8A8580;margin-top:12px}
+
+/* Rating */
+.rating-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(45,42,38,.04)}
+.rating-num{font-size:14px;font-weight:800;color:#E85D3A;width:24px;text-align:center}
+.rating-ava{width:36px;height:36px;border-radius:20%;background:#D4A052;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+.rating-name{font-size:13px;font-weight:600;color:#2D2A26;flex:1}
+.rating-pts{font-size:12px;color:#8A8580}
+
+/* Interview */
+.interview-q{font-size:14px;font-weight:700;color:#E85D3A;margin-top:20px;margin-bottom:6px}
+.interview-a{font-size:14px;color:#5C5550;line-height:1.7;margin-bottom:8px}
+
+/* Footer */
+.j-footer{text-align:center;padding:40px 0;color:#8A8580;font-size:12px}
+.j-footer a{color:#E85D3A;text-decoration:none;font-weight:600}
+
+/* Mobile */
+@media(max-width:600px){
+  .cover-title{font-size:36px}
+  .cover-subtitle{font-size:22px}
+  .j-title{font-size:24px}
+  .j-quote{font-size:17px}
+  .cover{padding:30px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="journal">
+
+<!-- ============ ОБЛОЖКА ============ -->
+<div class="cover">
+  <img class="cover-logo" src="chef_nobg.png" alt="Планета X">
+  <div class="cover-issue">Выпуск #1 • Май 2026</div>
+  <div class="cover-title">Сезон огня</div>
+  <div class="cover-subtitle">Гриль, мангал и открытый огонь</div>
+  <div class="cover-desc">4 эксклюзивных рецепта от шефов клуба, секреты идеального гриля, результаты майского челленджа и рейтинг самых активных участников</div>
+  <div class="cover-badge">ПЕРВЫЙ ВЫПУСК</div>
+  <div class="cover-meta">Планета X • Кулинарный клуб • 1 290 ₽/мес</div>
+</div>
+
+<!-- ============ СОДЕРЖАНИЕ ============ -->
+<div class="j-section">
+  <div class="j-label">Содержание</div>
+  <div class="toc">
+    <div class="toc-title">Что в этом выпуске</div>
+    <div class="toc-item"><span class="name">Слово от шефа: Алексей Козлов о сезоне гриля</span><span class="tag tag-open">Открыто</span></div>
+    <div class="toc-item"><span class="name">Лайфхак: Как определить температуру гриля рукой</span><span class="tag tag-open">Открыто</span></div>
+    <div class="toc-item"><span class="name">Рецепт: Стейк рибай с зелёным маслом</span><span class="tag tag-open">Открыто</span></div>
+    <div class="toc-item"><span class="name">Рецепт: Томагавк на кости с дымком</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Рецепт: Овощи-гриль с соусом чимичурри</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Рецепт: Тирамису с кофейным ликёром (от шефа Беловой)</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Топ-3 блюда участников мая</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Интервью: Дмитрий Волков о стажировке в Риме</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Результаты челленджа «Бургер мечты»</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Рейтинг: Топ-10 участников мая</span><span class="tag tag-club">Для участников</span></div>
+    <div class="toc-item"><span class="name">Анонсы: Что ждёт в июне</span><span class="tag tag-club">Для участников</span></div>
+  </div>
+</div>
+
+<!-- ============ СЛОВО ОТ ШЕФА (ОТКРЫТО) ============ -->
+<div class="j-section">
+  <div class="j-label">Слово от шефа</div>
+  <div class="j-title">«Май — это когда кухня переезжает на улицу»</div>
+  <div class="j-text">Друзья, наступил мой любимый месяц. Тот самый, когда можно достать мангал, разжечь угли и почувствовать этот запах — дым, раскалённый металл, мясо. Для меня сезон гриля — это не про шашлык из магазина. Это про <b>уважение к огню и продукту</b>.</div>
+  <div class="j-text">За 15 лет на профессиональной кухне я понял одну вещь: огонь не прощает торопливости. Раскалённая решётка, правильная температура, терпение. Три минуты с одной стороны, три с другой. И никаких вилок — <b>только щипцы</b>. Проколол мясо — потерял соки.</div>
+  <div class="j-quote">Хороший стейк — это 20% техника и 80% терпение. Не трогай мясо, пока оно не будет готово тебя отпустить от решётки.<div class="j-author">— Шеф Алексей Козлов</div></div>
+  <div class="j-text">В этом выпуске я делюсь своим фирменным рецептом рибая с зелёным маслом. Это блюдо, которое я готовлю дома для семьи каждые выходные. Простое, но идеальное.</div>
+  <div class="j-text">Хорошего вам мая. И помните — <b>лучший ресторан — это ваш двор</b>.</div>
+</div>
+
+<!-- ============ ЛАЙФХАК (ОТКРЫТО) ============ -->
+<div class="j-section">
+  <div class="j-label">Лайфхак месяца</div>
+  <div class="j-title">Как определить температуру гриля рукой</div>
+  <div class="j-text">Не нужен термометр. Держите ладонь на высоте 10 см над решёткой и считайте секунды:</div>
+  <div class="recipe-card">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:24px">🔥</span><div><b style="color:#2D2A26">1-2 секунды</b> — высокий жар (260°C+). Стейки, бургеры.</div></div>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:24px">🔥</span><div><b style="color:#2D2A26">3-4 секунды</b> — средний жар (200°C). Курица, рыба.</div></div>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:24px">🔥</span><div><b style="color:#2D2A26">5-6 секунд</b> — низкий жар (150°C). Овощи, медленная готовка.</div></div>
+    </div>
+  </div>
+  <div class="j-text">Если можете держать руку 7+ секунд — угли остыли, пора подбросить.</div>
+</div>
+
+<!-- ============ РЕЦЕПТ ОТКРЫТЫЙ ============ -->
+<div class="j-section">
+  <div class="j-label">Рецепт месяца</div>
+  <div class="j-title">Стейк рибай с зелёным маслом</div>
+  <div class="recipe-meta">Шеф Алексей Козлов • 30 мин • 2 порции</div>
+  <div class="recipe-card">
+    <h3>Ингредиенты</h3>
+    <div class="ingredients">
+      <span>Рибай — 2 стейка (300 г каждый)</span>
+      <span>Масло сливочное — 100 г</span>
+      <span>Петрушка — пучок</span>
+      <span>Чеснок — 3 зубчика</span>
+      <span>Лимон — 1/2</span>
+      <span>Соль крупная</span>
+      <span>Перец чёрный</span>
+    </div>
+    <h3 style="margin-top:16px">Приготовление</h3>
+    <ol class="recipe-steps">
+      <li>Зелёное масло: размягчённое масло + мелко нарубленная петрушка + тёртый чеснок + цедра лимона + щепотка соли. Скатать в колбаску в пищевой плёнке, убрать в морозилку на 20 мин.</li>
+      <li>Стейки достать из холодильника за 40 минут. Промокнуть бумажным полотенцем. Обильно посолить и поперчить.</li>
+      <li>Гриль на максимальный жар (рука выдерживает 1-2 секунды). Решётку смазать маслом.</li>
+      <li>Стейк на решётку — 3 минуты, не трогать! Перевернуть — ещё 3 минуты для medium rare.</li>
+      <li>Снять, положить на доску. Шайба зелёного масла сверху. Накрыть фольгой. Отдых 5 минут.</li>
+    </ol>
+  </div>
+  <div class="j-quote">Секрет: масло тает на горячем стейке и создаёт натуральный соус. Никакого кетчупа, никогда.<div class="j-author">— Шеф Алексей Козлов</div></div>
+</div>
+
+<!-- ============ PAYWALL ============ -->
+<div class="paywall">
+  <div class="paywall-icon">🔒</div>
+  <h3>Дальше — только для участников клуба</h3>
+  <p>Ещё 4 рецепта, интервью с шефом Волковым, результаты челленджа «Бургер мечты», рейтинг топ-10 и анонсы июня</p>
+  <a href="v3.html" class="paywall-btn">Вступить в клуб — 1 290 ₽/мес</a>
+  <div class="paywall-note">Первый месяц можно отменить в любой момент</div>
+</div>
+
+<!-- ============ ЗАКРЫТАЯ ЧАСТЬ (симуляция — показываем) ============ -->
+
+<!-- Рецепт: Томагавк -->
+<div class="j-section">
+  <div class="j-label">Рецепт для участников</div>
+  <div class="j-title">Томагавк на кости с дымком</div>
+  <div class="recipe-meta">Шеф Алексей Козлов • 45 мин • 3-4 порции</div>
+  <div class="recipe-card">
+    <h3>Ингредиенты</h3>
+    <div class="ingredients">
+      <span>Томагавк — 1 кг</span>
+      <span>Щепа для копчения (вишня)</span>
+      <span>Розмарин — 3 веточки</span>
+      <span>Чеснок — 1 головка</span>
+      <span>Масло оливковое</span>
+      <span>Соль, перец</span>
+    </div>
+    <h3 style="margin-top:16px">Приготовление</h3>
+    <ol class="recipe-steps">
+      <li>Томагавк — комнатная температура 1 час. Натереть маслом, солью, перцем.</li>
+      <li>Щепу замочить на 30 мин. Положить на угли — создаст дым.</li>
+      <li>Стейк на решётку, закрыть крышку. Средний жар, 20 мин на каждой стороне.</li>
+      <li>Внутренняя температура 52°C = medium rare. Снять, отдых 10 мин.</li>
+      <li>Нарезать вдоль кости. Подавать с запечённым чесноком и розмарином.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Рецепт: Овощи-гриль -->
+<div class="j-section">
+  <div class="j-label">Рецепт для участников</div>
+  <div class="j-title">Овощи-гриль с соусом чимичурри</div>
+  <div class="recipe-meta">Шеф Дмитрий Волков • 25 мин • 4 порции</div>
+  <div class="recipe-card">
+    <h3>Ингредиенты</h3>
+    <div class="ingredients">
+      <span>Кабачок — 2</span>
+      <span>Баклажан — 1</span>
+      <span>Перец болгарский — 3</span>
+      <span>Кукуруза — 2 початка</span>
+      <span>Петрушка — пучок</span>
+      <span>Орегано — 1 ст.л.</span>
+      <span>Чеснок — 4 зубчика</span>
+      <span>Масло оливковое — 100 мл</span>
+      <span>Уксус — 2 ст.л.</span>
+      <span>Перец чили — 1 ч.л.</span>
+    </div>
+    <h3 style="margin-top:16px">Приготовление</h3>
+    <ol class="recipe-steps">
+      <li>Чимичурри: мелко нарубить петрушку + чеснок + орегано + масло + уксус + чили. Настоять 20 мин.</li>
+      <li>Овощи нарезать крупно (кабачок и баклажан — вдоль, перец — четвертинками). Смазать маслом, посолить.</li>
+      <li>Гриль средний жар. Овощи — по 3-4 мин с каждой стороны. Кукурузу — 10 мин, поворачивая.</li>
+      <li>Выложить на блюдо, щедро полить чимичурри. Подавать тёплыми.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Рецепт: Тирамису -->
+<div class="j-section">
+  <div class="j-label">Десерт месяца</div>
+  <div class="j-title">Тирамису с кофейным ликёром</div>
+  <div class="recipe-meta">Шеф-кондитер Ирина Белова • 40 мин + охлаждение • 6 порций</div>
+  <div class="recipe-card">
+    <h3>Ингредиенты</h3>
+    <div class="ingredients">
+      <span>Маскарпоне — 500 г</span>
+      <span>Яйца — 4</span>
+      <span>Сахар — 100 г</span>
+      <span>Савоярди — 200 г</span>
+      <span>Эспрессо — 300 мл</span>
+      <span>Кофейный ликёр — 3 ст.л.</span>
+      <span>Какао-порошок</span>
+    </div>
+    <h3 style="margin-top:16px">Приготовление</h3>
+    <ol class="recipe-steps">
+      <li>Желтки + сахар взбить до белой массы. Добавить маскарпоне, аккуратно перемешать.</li>
+      <li>Белки взбить в пену. Ввести в маскарпоне-массу лопаткой снизу вверх.</li>
+      <li>Эспрессо остудить, добавить ликёр. Быстро обмакнуть савоярди (не размачивать!).</li>
+      <li>Слой савоярди — слой крема — слой савоярди — слой крема.</li>
+      <li>Холодильник минимум 6 часов (лучше ночь). Перед подачей — щедро какао через сито.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Топ-3 -->
+<div class="j-section">
+  <div class="j-label">Топ-3 блюда участников</div>
+  <div class="j-title">Лучшие фото-отчёты мая</div>
+  <div class="dish-card">
+    <div class="dish-place">1</div>
+    <div class="dish-info"><h4>Елена Смирнова — Ягнёнок с розмарином на гриле</h4><p>«Первый раз готовила ягнёнка! Муж не поверил что это дома, а не в ресторане»</p></div>
+    <div class="dish-likes">❤️ 127</div>
+  </div>
+  <div class="dish-card">
+    <div class="dish-place">2</div>
+    <div class="dish-info"><h4>Андрей Петров — Бургер с голубым сыром</h4><p>«Рецепт из урока шефа Козлова, но добавил свой соус — дорблю + мёд»</p></div>
+    <div class="dish-likes">❤️ 98</div>
+  </div>
+  <div class="dish-card">
+    <div class="dish-place">3</div>
+    <div class="dish-info"><h4>Ольга Ким — Наполеон (3 дня работы!)</h4><p>«Шеф Соколова сказала что тесто идеальное. Я плакала от счастья 😭»</p></div>
+    <div class="dish-likes">❤️ 89</div>
+  </div>
+</div>
+
+<!-- Интервью -->
+<div class="j-section">
+  <div class="j-label">Интервью</div>
+  <div class="j-title">Дмитрий Волков: «В Риме я понял, что паста — это философия»</div>
+  <div class="interview-q">Как вы попали на стажировку в Рим?</div>
+  <div class="interview-a">Случайно. Друг сказал, что в траттории на Трастевере ищут помощника. Я купил билет на следующий день. Итальянского не знал — общались жестами и через еду. Через месяц уже делал карбонару лучше половины римских поваров. Шучу. Но паренёк из России их удивил.</div>
+  <div class="interview-q">Что главное вы вынесли из Италии?</div>
+  <div class="interview-a">Уважение к продукту. В Италии не маскируют вкус — усиливают. Три ингредиента, но идеальных. Хороший помидор, хорошее масло, хорошая соль — и это уже блюдо. Мы в России часто перегружаем тарелку, а нужно наоборот — убирать лишнее.</div>
+  <div class="interview-q">Что готовите дома чаще всего?</div>
+  <div class="interview-a">Карбонару. Каждую пятницу. Жена говорит «опять?», но потом съедает двойную порцию. Это моя медитация — 20 минут, 5 ингредиентов, абсолютное спокойствие.</div>
+</div>
+
+<!-- Челлендж -->
+<div class="j-section">
+  <div class="j-label">Челлендж мая</div>
+  <div class="j-title">Результаты: «Бургер мечты»</div>
+  <div class="j-text">247 участников прислали свои бургеры. Голосование шло 3 дня. Вот победители:</div>
+  <div class="dish-card">
+    <div class="dish-place">🥇</div>
+    <div class="dish-info"><h4>Максим Орлов — «Дымный Джек»</h4><p>Копчёная котлета, карамелизированный лук, соус BBQ с виски, бриошь</p></div>
+    <div class="dish-likes">342 голоса</div>
+  </div>
+  <div class="dish-card">
+    <div class="dish-place">🥈</div>
+    <div class="dish-info"><h4>Наталья Фёдорова — «Итальянский»</h4><p>Моцарелла, вяленые томаты, песто, руккола, фокачча</p></div>
+    <div class="dish-likes">289 голосов</div>
+  </div>
+  <div class="dish-card">
+    <div class="dish-place">🥉</div>
+    <div class="dish-info"><h4>Дмитрий Сон — «Азиатский фьюжн»</h4><p>Котлета с кимчи, соус терияки, маринованный огурец, булочка бао</p></div>
+    <div class="dish-likes">256 голосов</div>
+  </div>
+  <div class="j-text" style="margin-top:16px">Челлендж июня: <b>«Идеальный завтрак»</b>. Приём работ — до 25 июня.</div>
+</div>
+
+<!-- Рейтинг -->
+<div class="j-section">
+  <div class="j-label">Рейтинг</div>
+  <div class="j-title">Топ-10 участников мая</div>
+  <div style="margin-top:16px">
+    <div class="rating-item"><div class="rating-num">1</div><div class="rating-ava" style="background:#E85D3A">ЕС</div><div class="rating-name">Елена Смирнова</div><div class="rating-pts">★★★★ • 347 очков</div></div>
+    <div class="rating-item"><div class="rating-num">2</div><div class="rating-ava" style="background:#D4A052">МО</div><div class="rating-name">Максим Орлов</div><div class="rating-pts">★★★★ • 312 очков</div></div>
+    <div class="rating-item"><div class="rating-num">3</div><div class="rating-ava" style="background:#B8956A">АП</div><div class="rating-name">Андрей Петров</div><div class="rating-pts">★★★ • 289 очков</div></div>
+    <div class="rating-item"><div class="rating-num">4</div><div class="rating-ava" style="background:#8B7355">НФ</div><div class="rating-name">Наталья Фёдорова</div><div class="rating-pts">★★★ • 267 очков</div></div>
+    <div class="rating-item"><div class="rating-num">5</div><div class="rating-ava" style="background:#A08060">ОК</div><div class="rating-name">Ольга Ким</div><div class="rating-pts">★★★ • 245 очков</div></div>
+    <div class="rating-item"><div class="rating-num">6</div><div class="rating-ava" style="background:#C9845A">ДС</div><div class="rating-name">Дмитрий Сон</div><div class="rating-pts">★★ • 231 очко</div></div>
+    <div class="rating-item"><div class="rating-num">7</div><div class="rating-ava" style="background:#8B7355">ИВ</div><div class="rating-name">Ирина Васильева</div><div class="rating-pts">★★ • 218 очков</div></div>
+    <div class="rating-item"><div class="rating-num">8</div><div class="rating-ava" style="background:#A08060">ТМ</div><div class="rating-name">Тимур Махмудов</div><div class="rating-pts">★★ • 204 очка</div></div>
+    <div class="rating-item"><div class="rating-num">9</div><div class="rating-ava" style="background:#B8956A">АК</div><div class="rating-name">Анна Козлова</div><div class="rating-pts">★★ • 198 очков</div></div>
+    <div class="rating-item"><div class="rating-num">10</div><div class="rating-ava" style="background:#C8BEAA">ПД</div><div class="rating-name">Пётр Данилов</div><div class="rating-pts">★ • 187 очков</div></div>
+  </div>
+</div>
+
+<!-- Анонсы -->
+<div class="j-section">
+  <div class="j-label">Анонсы</div>
+  <div class="j-title">Что ждёт в июне</div>
+  <div class="recipe-card">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div><b style="color:#E85D3A">4 новых урока:</b> Паста карбонара (Волков), Круассаны (Соколова), Стейк из тунца (Козлов), Чизкейк Нью-Йорк (Белова)</div>
+      <div><b style="color:#D4A052">Челлендж:</b> «Идеальный завтрак» — покажи свой лучший завтрак, голосование + призы</div>
+      <div><b style="color:#2D2A26">Live мастер-класс:</b> Шеф Козлов, 14 июня, 18:00 — «Рыба на гриле без ошибок»</div>
+      <div><b style="color:#8B7355">Ротация шефов:</b> В июле к нам присоединяются Сергей Орлов и Анна Краснова!</div>
+    </div>
+  </div>
+</div>
+
+<!-- Юмор -->
+<div class="j-section" style="text-align:center">
+  <div class="j-label">И напоследок</div>
+  <div style="font-size:48px;margin:20px 0">🥩🔥😅</div>
+  <div class="j-quote" style="border:none;padding:0;text-align:center">«Стейк well done — это не степень прожарки, это преступление»<div class="j-author">— Каждый шеф на Планете X</div></div>
+</div>
+
+<!-- Футер -->
+<div class="j-footer">
+  <p>Планета X • Кулинарный клуб • Выпуск #1, Май 2026</p>
+  <p style="margin-top:8px"><a href="v3.html">Вступить в клуб</a> • 1 290 ₽/мес • Отмена в любой момент</p>
+</div>
+
+</div>
+</body>
+</html>
