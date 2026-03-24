@@ -356,7 +356,12 @@ const FAIL_PHRASES = [
   'Так не готовят!','Кастрюля взорвалась!','Попробуй ещё раз!'
 ];
 
+function vibrate(pattern) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
 function spawnMonster(isFunny) {
+  vibrate([100, 50, 100, 50, 200]); // тройная вибрация
   // Взрыв/дым
   const expl = document.createElement('div');
   expl.className = 'explosion';
