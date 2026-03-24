@@ -7,7 +7,9 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-body{font-family:'Inter',sans-serif;background:#FDF8F3;overflow:hidden;height:100vh;width:100vw}
+body{font-family:'Inter',sans-serif;background:#FDF8F3;overflow:hidden;height:100vh;width:100vw;background-image:url('https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&q=80');background-size:cover;background-position:center}
+body::after{content:'';position:fixed;inset:0;background:rgba(253,248,243,.82);z-index:0}
+body>*{position:relative;z-index:1}
 
 /* Экран */
 .screen{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;width:100vw;padding:20px;text-align:center}
