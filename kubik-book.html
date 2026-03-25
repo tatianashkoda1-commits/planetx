@@ -21,9 +21,11 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 .bg-party{background:linear-gradient(180deg,#FFF5EB 0%,#FFE8D6 100%)}
 
 /* Персонаж Кубик */
-.kubik{font-size:80px;margin-bottom:16px;animation:kubikBounce 2s infinite;position:relative}
+.kubik{margin-bottom:16px;animation:kubikBounce 2s infinite;position:relative}
+.kubik img{width:150px;height:auto}
 @keyframes kubikBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.kubik-small{font-size:50px;position:fixed;bottom:16px;right:16px;z-index:50;animation:kubikFloat 3s infinite}
+.kubik-small{position:fixed;bottom:12px;right:12px;z-index:50;animation:kubikFloat 3s infinite}
+.kubik-small img{width:70px;height:auto}
 @keyframes kubikFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-6px) rotate(5deg)}}
 
 /* Речь Кубика */
@@ -137,7 +139,7 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 @media(max-width:380px){
   .speech{font-size:18px;padding:12px 16px}
   .book-title{font-size:26px}
-  .kubik{font-size:60px}
+  .kubik img{width:120px}
   .fridge{width:170px;height:220px}
   .plate{width:160px;height:160px}
 }
@@ -149,11 +151,11 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 <div class="nav-dots" id="nav-dots"></div>
 
 <!-- Кубик-компаньон -->
-<div class="kubik-small" id="companion" style="display:none">🧊</div>
+<div class="kubik-small" id="companion" style="display:none"><img src="kubik_happy.png" alt="Кубик" id="companion-img"></div>
 
 <!-- ===== ОБЛОЖКА ===== -->
 <div class="page active bg-kitchen" id="p0">
-  <div class="kubik">🧊</div>
+  <div class="kubik"><img src="kubik_portrait.png" alt="Кубик" style="width:200px;border-radius:20px"></div>
   <div class="book-title">Кубик-Книжка</div>
   <div class="chapter">Глава 1</div>
   <div class="book-sub">Моя первая тарелка</div>
@@ -225,7 +227,7 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 <!-- ===== ФИНАЛ ===== -->
 <div class="page bg-party" id="p5">
   <div class="confetti-container" id="confetti"></div>
-  <div class="kubik">🧊</div>
+  <div class="kubik"><img src="kubik_happy.png" alt="Кубик радуется"></div>
   <div class="stars" id="stars">
     <span class="star" style="animation-delay:.2s">⭐</span>
     <span class="star" style="animation-delay:.5s">⭐</span>
@@ -261,6 +263,9 @@ function goPage(n){
   document.getElementById('p'+n).classList.add('active');
   updateDots();
   document.getElementById('companion').style.display=n>0&&n<5?'block':'none';
+  // Смена эмоции компаньона
+  const emotions={1:'kubik_talking.png',2:'kubik_surprised.png',3:'kubik_happy.png',4:'kubik_waving.png'};
+  if(emotions[n]) document.getElementById('companion-img').src=emotions[n];
   playSound('tap');
   if(n===3)setupMicrowave();
   if(n===4)setupPlate();
