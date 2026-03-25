@@ -11,14 +11,15 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 
 .page{display:none;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:20px;text-align:center;position:relative;overflow:hidden}
 .page.active{display:flex}
+.bg-kitchen::before,.bg-plate::before,.bg-party::before{content:'';position:absolute;inset:0;background:rgba(255,245,235,.75);pointer-events:none}
 
 /* Фоны страниц */
-.bg-kitchen{background:linear-gradient(180deg,#FFF5EB 0%,#FFE8D6 100%)}
+.bg-kitchen{background:url('bg_kitchen.png') center/cover no-repeat}
 .bg-water{background:linear-gradient(180deg,#E8F4FD 0%,#D1ECFD 100%)}
 .bg-fridge{background:linear-gradient(180deg,#E8F0FF 0%,#D6E5FF 100%)}
 .bg-warm{background:linear-gradient(180deg,#FFF5EB 0%,#FFE0C0 100%)}
-.bg-plate{background:linear-gradient(180deg,#FFF8F0 0%,#FFEDD5 100%)}
-.bg-party{background:linear-gradient(180deg,#FFF5EB 0%,#FFE8D6 100%)}
+.bg-plate{background:url('bg_kitchen.png') center/cover no-repeat}
+.bg-party{background:url('bg_kitchen.png') center/cover no-repeat}
 
 /* Персонаж Кубик */
 .kubik{margin-bottom:16px;animation:kubikBounce 2s infinite;position:relative}
