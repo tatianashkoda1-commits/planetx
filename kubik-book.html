@@ -64,7 +64,7 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
 .fridge-door.open{transform:perspective(600px) rotateY(-80deg);opacity:.3}
 .fridge-handle{width:8px;height:40px;background:#94A3B8;border-radius:4px;position:absolute;right:16px}
 .fridge-inside{display:flex;flex-wrap:wrap;gap:8px;padding:16px;justify-content:center;align-items:center;height:100%}
-.fridge-cube{font-size:48px;cursor:pointer;transition:all .3s;animation:cubeGlow 2s infinite}
+.fridge-cube{cursor:pointer;transition:all .3s;animation:cubeGlow 2s infinite;border-radius:12px;overflow:hidden}
 @keyframes cubeGlow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.1)}}
 .fridge-cube:active{transform:scale(.8)}
 .fridge-cube.picked{animation:cubePick .5s forwards}
@@ -182,9 +182,9 @@ body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:10
   <div class="speech">А теперь открой морозилку! Там живут вкусные кубики! Тапни на дверцу!</div>
   <div class="fridge" id="fridge">
     <div class="fridge-inside">
-      <div class="fridge-cube" id="fc1" onclick="pickCube(this,'🥣','Кашка')" style="display:none">🟡</div>
-      <div class="fridge-cube" id="fc2" onclick="pickCube(this,'🍳','Яичница')" style="display:none">🟠</div>
-      <div class="fridge-cube" id="fc3" onclick="pickCube(this,'🥛','Йогурт')" style="display:none">⚪</div>
+      <div class="fridge-cube" id="fc1" onclick="pickCube(this,'🥣','Кашка','food_porridge.png')" style="display:none"><img src="food_porridge.png" style="width:80px;height:80px;object-fit:contain"></div>
+      <div class="fridge-cube" id="fc2" onclick="pickCube(this,'🍳','Яичница','food_egg.png')" style="display:none"><img src="food_egg.png" style="width:80px;height:80px;object-fit:contain"></div>
+      <div class="fridge-cube" id="fc3" onclick="pickCube(this,'🥛','Йогурт','food_yogurt.png')" style="display:none"><img src="food_yogurt.png" style="width:80px;height:80px;object-fit:contain"></div>
     </div>
     <div class="fridge-door" id="fridge-door" onclick="openFridge()">
       <div class="fridge-handle"></div>
@@ -318,17 +318,21 @@ function openFridge(){
   },400);
 }
 
-function pickCube(el,foodEmoji,foodName){
+function pickCube(el,foodEmoji,foodName,cubeImg){
   el.classList.add('picked');
   playSound('success');
-  chosenFood={emoji:foodEmoji,name:foodName,cube:el.textContent};
+  chosenFood={emoji:foodEmoji,name:foodName,cube:el.textContent,img:cubeImg};
   document.getElementById('pick-label').innerHTML='<b>'+foodName+'</b> — отличный выбор! 😋';
   setTimeout(()=>goPage(3),800);
 }
 
 // === Микроволновка ===
 function setupMicrowave(){
-  document.getElementById('mw-food').textContent=chosenFood.cube;
+  if(chosenFood.img){
+    document.getElementById('mw-food').innerHTML='<img src="'+chosenFood.img+'" style="width:50px;height:50px;object-fit:contain">';
+  } else {
+    document.getElementById('mw-food').textContent=chosenFood.cube;
+  }
   document.getElementById('mw-food').className='mw-food';
   document.getElementById('mw-light').classList.remove('on');
   document.getElementById('mw-timer').textContent='';
