@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Кубик-Книжка | Моя первая тарелка</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Caveat:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+body{font-family:'Inter',sans-serif;background:#FFF5EB;overflow:hidden;height:100vh;width:100vw}
+
+/* ===== СТРАНИЦЫ ===== */
+.page{display:none;flex-direction:column;align-items:center;justify-content:center;
+  height:100vh;padding:16px;text-align:center;position:absolute;inset:0;overflow:hidden;
+  opacity:0;transition:opacity .6s ease}
+.page.active{display:flex;opacity:1}
+
+.bg-overlay::before{content:'';position:absolute;inset:0;background:rgba(255,245,235,.5);pointer-events:none;z-index:0}
+.bg-overlay>*{position:relative;z-index:1}
+
+.bg-kitchen{background:url('bg_kitchen.png') center/cover no-repeat}
+.bg-sink{background:url('bg_sink.png') center/cover no-repeat}
+.bg-freezer{background:url('bg_freezer.png') center/cover no-repeat}
+.bg-microwave{background:url('bg_microwave.png') center/cover no-repeat}
+.bg-plate{background:url('bg_kitchen.png') center/cover no-repeat}
+.bg-party{background:url('bg_kitchen.png') center/cover no-repeat}
+
+/* ===== КУБИК-ВИДЕО ===== */
+.kubik-zone{position:relative;width:220px;height:220px;margin:0 auto 10px;display:flex;align-items:center;justify-content:center}
+.kubik-zone video{height:220px;width:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.15));opacity:0.92}
+.kubik-zone img{height:180px;width:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.15))}
+
+/* ===== ЗАГОЛОВКИ ===== */
+.book-title{font-size:30px;font-weight:800;color:#E85D3A;margin-bottom:6px;text-shadow:0 2px 8px rgba(232,93,58,.12)}
+.book-sub{font-size:15px;color:#8A8580;margin-bottom:12px}
+.chapter{font-family:'Caveat',cursive;font-size:17px;color:#D4A052;margin-bottom:6px}
+
+/* ===== КНОПКИ ===== */
+.btn{background:#E85D3A;color:#fff;border:none;padding:14px 40px;border-radius:50px;
+  font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;
+  box-shadow:0 6px 20px rgba(232,93,58,.3);transition:all .2s;position:relative;z-index:10}
+.btn:active{transform:scale(.95)}
+.btn-small{padding:12px 30px;font-size:15px}
+.btn-green{background:#10B981;box-shadow:0 6px 20px rgba(16,185,129,.3)}
+.hint-pulse{animation:hintPulse 1.5s infinite}
+@keyframes hintPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,58,.4)}50%{box-shadow:0 0 0 14px rgba(232,93,58,0)}}
+.hint-text{font-size:14px;color:#D4A052;margin-top:6px;font-family:'Caveat',cursive;font-size:16px;
+  animation:hintFade 2s infinite}
+@keyframes hintFade{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ===== РАКОВИНА (интерактивная сцена) ===== */
+.sink-scene{position:absolute;inset:0;overflow:hidden}
+.sink-scene .sink-bg{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Невидимая кликабельная зона */
+.hotspot{position:absolute;cursor:pointer;z-index:5;border-radius:12px;transition:all .3s}
+.hotspot::after{content:'';position:absolute;inset:-4px;border-radius:16px;border:3px solid transparent;transition:all .3s;pointer-events:none}
+.hotspot.hint::after{border-color:rgba(232,93,58,.6);animation:hotspotPulse 1.5s infinite}
+@keyframes hotspotPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,93,58,.4)}50%{box-shadow:0 0 0 12px rgba(232,93,58,0)}}
+.hotspot.clicked::after{border-color:rgba(16,185,129,.5);box-shadow:0 0 20px rgba(16,185,129,.3)}
+.hotspot:active{transform:scale(.93)}
+
+/* Кран: на фоне */
+.hs-faucet{left:56%;top:32%;width:16%;height:20%}
+/* Мишка-мыло: на фоне */
+.hs-soap{left:43%;top:16%;width:10%;height:32%;border-radius:50%}
+/* Полотенце: слева */
+.hs-towel{left:6%;top:45%;width:13%;height:30%}
+/* Ручки в раковине */
+.hs-hands{left:38%;top:58%;width:20%;height:16%;border-radius:50%}
+
+/* Свечение при активации */
+.hotspot.glow{animation:hotspotGlow 1s infinite}
+@keyframes hotspotGlow{0%,100%{box-shadow:0 0 15px 5px rgba(232,93,58,.3)}50%{box-shadow:0 0 30px 10px rgba(232,93,58,.5)}}
+.hotspot.glow-green{animation:hotspotGlowGreen 1s infinite}
+@keyframes hotspotGlowGreen{0%,100%{box-shadow:0 0 15px 5px rgba(16,185,129,.3)}50%{box-shadow:0 0 30px 10px rgba(16,185,129,.5)}}
+
+/* Вода из крана */
+.sink-water{position:absolute;left:62.5%;top:47%;width:8px;height:0;
+  background:linear-gradient(180deg,rgba(147,197,253,.8),rgba(96,165,250,.4));
+  border-radius:0 0 6px 6px;transition:height .6s ease-out;z-index:3}
+.sink-water.flowing{height:15%;animation:waterFlow .4s infinite alternate}
+@keyframes waterFlow{0%{width:6px;opacity:.7}100%{width:13px;opacity:1}}
+
+/* Всплеск воды */
+.sink-splash{position:absolute;left:60.5%;top:64%;z-index:3;opacity:0;pointer-events:none}
+.sink-splash.show{opacity:1}
+.splash-drop{position:absolute;width:4px;height:4px;border-radius:50%;
+  background:rgba(147,197,253,.7);animation:splashDrop 1s infinite}
+.splash-drop:nth-child(1){left:0;animation-delay:0s}
+.splash-drop:nth-child(2){left:8px;animation-delay:.2s}
+.splash-drop:nth-child(3){left:-6px;animation-delay:.4s}
+.splash-drop:nth-child(4){left:14px;animation-delay:.6s}
+.splash-drop:nth-child(5){left:4px;animation-delay:.8s}
+@keyframes splashDrop{0%{transform:translateY(0) scale(1);opacity:.8}50%{transform:translateY(-15px) scale(.6);opacity:.5}100%{transform:translateY(0) scale(.3);opacity:0}}
+
+/* Пузыри мыла */
+.sink-bubbles{position:absolute;left:48%;top:40%;z-index:4;opacity:0;transition:all .3s;pointer-events:none}
+.sink-bubbles.show{opacity:1}
+.sink-bubble{position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.9),rgba(147,197,253,.3));
+  border:1px solid rgba(255,255,255,.5);animation:bubbleRise 2.5s infinite}
+.sink-bubble:nth-child(1){width:16px;height:16px;left:0;animation-delay:0s}
+.sink-bubble:nth-child(2){width:11px;height:11px;left:20px;animation-delay:.4s}
+.sink-bubble:nth-child(3){width:18px;height:18px;left:-15px;animation-delay:.7s}
+.sink-bubble:nth-child(4){width:9px;height:9px;left:30px;animation-delay:1s}
+.sink-bubble:nth-child(5){width:13px;height:13px;left:8px;animation-delay:1.3s}
+.sink-bubble:nth-child(6){width:20px;height:20px;left:-25px;animation-delay:.2s}
+.sink-bubble:nth-child(7){width:8px;height:8px;left:35px;animation-delay:1.6s}
+@keyframes bubbleRise{0%{transform:translateY(0) scale(1);opacity:.9}
+  60%{opacity:.6}100%{transform:translateY(-80px) scale(.3);opacity:0}}
+
+/* Блестки чистых ручек */
+.sparkles{position:absolute;left:42%;top:55%;z-index:4;opacity:0;pointer-events:none}
+.sparkles.show{opacity:1}
+.sparkle{position:absolute;font-size:18px;animation:sparklePop 1.5s infinite}
+.sparkle:nth-child(1){left:0;top:0;animation-delay:0s}
+.sparkle:nth-child(2){left:30px;top:-10px;animation-delay:.5s}
+.sparkle:nth-child(3){left:60px;top:5px;animation-delay:1s}
+@keyframes sparklePop{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1.2)}}
+
+/* ===== МОРОЗИЛКА (интерактивная сцена) ===== */
+.freezer-scene{position:absolute;inset:0;overflow:hidden}
+.freezer-scene .freezer-bg{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Кубики еды — хотспоты (3 ряда по 3) */
+.hs-cube{border-radius:8px}
+/* Полка 1 */
+.hs-cube1{left:16.8%;top:23.4%;width:8%;height:17%}
+.hs-cube2{left:27.0%;top:23.5%;width:8%;height:17%}
+.hs-cube3{left:37.2%;top:23.5%;width:8%;height:17%}
+/* Полка 2 */
+.hs-cube4{left:16.8%;top:50.5%;width:8%;height:17%}
+.hs-cube5{left:27.0%;top:50.5%;width:8%;height:17%}
+.hs-cube6{left:37.2%;top:50.5%;width:8%;height:17%}
+/* Полка 3 */
+.hs-cube7{left:16.8%;top:77%;width:8%;height:17%}
+.hs-cube8{left:27.0%;top:77%;width:8%;height:17%}
+.hs-cube9{left:37.2%;top:77%;width:8%;height:17%}
+/* Продукты справа */
+.hs-peas{left:47.6%;top:17.4%;width:12%;height:22%;border-radius:6px}
+.hs-soup{left:58.8%;top:21.7%;width:10%;height:18%;border-radius:50%}
+.hs-pizza{left:50.8%;top:46.8%;width:17%;height:22%;border-radius:6px}
+.hs-icecream{left:52.4%;top:73.4%;width:13%;height:24%;border-radius:8px}
+/* Пингвин */
+.hs-penguin{left:72.9%;top:10.5%;width:10%;height:24%;border-radius:50%}
+
+/* Выбранный кубик — зелёная рамка */
+.hotspot.cube-selected::after{border-color:rgba(16,185,129,.8);box-shadow:0 0 15px rgba(16,185,129,.5);animation:none}
+/* Выбранный кубик — подпрыгивает и исчезает */
+.hotspot.cube-picked{animation:cubeBounce .8s forwards}
+@keyframes cubeBounce{
+  0%{transform:scale(1);box-shadow:0 0 20px rgba(59,130,246,.5)}
+  30%{transform:scale(1.2) translateY(-15px);box-shadow:0 0 30px rgba(59,130,246,.7)}
+  60%{transform:scale(1.1) translateY(-8px)}
+  100%{transform:scale(0);opacity:0}
+}
+/* Пингвин машет */
+.hotspot.penguin-wave{animation:penguinWave .5s ease 3}
+@keyframes penguinWave{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+
+/* ===== МИКРОВОЛНОВКА (интерактивная сцена) ===== */
+.mw-scene{position:absolute;inset:0;overflow:hidden}
+.mw-scene .mw-bg{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Еда внутри микроволновки (за стеклом) */
+.mw-food-zone{position:absolute;left:20%;top:30%;width:25%;height:30%;z-index:2;text-align:center}
+.mw-food{font-size:160px;transition:all .5s;opacity:0;line-height:1}
+.mw-food.visible{opacity:1}
+.mw-food.spinning{animation:mwSpin 1.2s linear infinite}
+@keyframes mwSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.mw-food.melted{animation:mwMelt 1s forwards}
+@keyframes mwMelt{0%{transform:scale(1);filter:blur(0)}50%{transform:scale(1.3);filter:blur(2px)}100%{transform:scale(1);filter:blur(0)}}
+
+/* Кнопка START — хотспот */
+.hs-start{left:59%;top:73%;width:8%;height:14%;border-radius:50%}
+/* Крутилки */
+.hs-dial1{left:59%;top:28%;width:8%;height:14%;border-radius:50%}
+.hs-dial2{left:59.2%;top:54.5%;width:8%;height:14%;border-radius:50%}
+/* Прихватка-мишка */
+.hs-mitt{left:71.3%;top:57.3%;width:8%;height:24%;border-radius:12px}
+/* Тарелки */
+.hs-plates{left:81.7%;top:52.9%;width:10%;height:30%;border-radius:12px}
+/* Таймер */
+.hs-timer{left:76%;top:76%;width:7%;height:12%;border-radius:50%}
+
+/* Свечение микроволновки при работе */
+.mw-glow{position:absolute;left:5%;top:12%;width:50%;height:80%;
+  background:radial-gradient(ellipse,rgba(255,220,80,.25),transparent);
+  opacity:0;transition:all .3s;pointer-events:none;border-radius:12px;z-index:1}
+.mw-glow.on{opacity:1;animation:mwGlow 1.5s infinite}
+@keyframes mwGlow{0%,100%{opacity:.2}50%{opacity:.45}}
+
+/* Таймер-обратный отсчёт */
+.mw-countdown{position:absolute;left:59%;top:28%;font-size:28px;font-weight:800;
+  color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);z-index:3;opacity:0;pointer-events:none}
+.mw-countdown.visible{opacity:1}
+
+/* ===== ТАРЕЛКА ===== */
+.plate{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,#fff,#F5F0EB);
+  border:4px solid #E8E0D6;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.06);font-size:55px}
+.plate-empty{font-size:13px;color:#C8BEAA}
+.plate.has-food{animation:plateAppear .5s}
+@keyframes plateAppear{0%{transform:scale(.8)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+.utensils{display:flex;gap:28px;justify-content:center;margin:8px 0}
+.utensil{font-size:36px;cursor:pointer;opacity:.3;transition:all .3s}
+.utensil.placed{opacity:1;animation:utensilPlace .4s}
+@keyframes utensilPlace{0%{transform:scale(.5) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
+
+/* ===== КОНФЕТТИ & ЗВЁЗДЫ ===== */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:100}
+.confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 3s forwards}
+@keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.stars{font-size:44px;letter-spacing:8px;margin:12px 0}
+.star{display:inline-block;opacity:0;transform:scale(0);animation:starPop .5s forwards}
+@keyframes starPop{0%{opacity:0;transform:scale(0) rotate(-30deg)}60%{opacity:1;transform:scale(1.3) rotate(10deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+
+/* ===== НАВИГАЦИЯ ===== */
+.nav-dots{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:50}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(212,196,176,.5);transition:all .3s}
+.dot.active{background:#E85D3A;width:22px;border-radius:4px}
+.status-text{font-size:14px;color:#5a5550;font-weight:600;height:22px;margin:4px 0}
+
+/* Режим редактора */
+body.editor-mode .hotspot{background:rgba(232,93,58,.25) !important;border:2px dashed #E85D3A !important}
+body.editor-mode .hotspot::before{content:attr(class);position:absolute;top:-18px;left:0;font-size:9px;color:#fff;background:#E85D3A;padding:1px 4px;border-radius:3px;white-space:nowrap;pointer-events:none}
+body.editor-mode .kubik-zone{outline:2px dashed #3B82F6 !important;background:rgba(59,130,246,.15) !important}
+body.editor-mode .mw-food-zone{outline:2px dashed #F59E0B !important;background:rgba(245,158,11,.15) !important;cursor:move}
+body.editor-mode .kubik-zone::before{content:'kubik';position:absolute;top:-18px;left:0;font-size:9px;color:#fff;background:#3B82F6;padding:1px 4px;border-radius:3px;pointer-events:none}
+
+@media(max-width:380px){
+  .book-title{font-size:24px}
+  .kubik-zone{width:180px;height:180px}
+  .kubik-zone video{height:180px}
+  .kubik-zone img{height:150px}
+  .freezer-scene{width:220px;height:170px}
+  .mw-scene{width:220px;height:160px}
+  .plate{width:150px;height:150px}
+}
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="nav-dots"></div>
+
+<!-- ===== 0. ОБЛОЖКА ===== -->
+<div class="page active bg-kitchen bg-overlay" id="p0">
+  <div class="kubik-zone" id="kz0"></div>
+  <div class="book-title">Кубик-Книжка</div>
+  <div class="chapter">Глава 1</div>
+  <div class="book-sub">Моя первая тарелка</div>
+  <button class="btn hint-pulse" onclick="goPage(1)">Начнём!</button>
+</div>
+
+<!-- ===== 1. ПОМОЙ РУЧКИ ===== -->
+<div class="page" id="p1" style="padding:0">
+  <div class="sink-scene">
+    <img class="sink-bg" src="bg_sink.png" alt="Раковина">
+
+    <!-- Невидимые кликабельные зоны поверх предметов на фоне -->
+    <div class="hotspot hs-faucet hint" id="faucet" onclick="startWater()"></div>
+    <div class="hotspot hs-soap" id="soap" onclick="useSoap()" style="display:none"></div>
+    <div class="hotspot hs-towel" id="towel" style="pointer-events:none" onclick="useTowel()"></div>
+
+    <!-- Эффекты -->
+    <div class="sink-water" id="water"></div>
+    <div class="sink-splash" id="splash">
+      <div class="splash-drop"></div><div class="splash-drop"></div><div class="splash-drop"></div>
+      <div class="splash-drop"></div><div class="splash-drop"></div>
+    </div>
+    <div class="sink-bubbles" id="bubbles">
+      <div class="sink-bubble"></div><div class="sink-bubble"></div><div class="sink-bubble"></div>
+      <div class="sink-bubble"></div><div class="sink-bubble"></div>
+      <div class="sink-bubble"></div><div class="sink-bubble"></div>
+    </div>
+    <div class="sparkles" id="sparkles">
+      <div class="sparkle">✨</div><div class="sparkle">✨</div><div class="sparkle">✨</div>
+    </div>
+
+    <!-- Кубик поверх сцены -->
+    <div class="kubik-zone" id="kz1" style="position:absolute;bottom:40%;left:30%;z-index:10"></div>
+    <div style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;width:90%">
+      <div class="status-text" id="wash-status" style="color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)"></div>
+      <button class="btn btn-small" id="btn-wash" style="display:none" onclick="goPage(2)">Ручки чистые! →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 2. МОРОЗИЛКА ===== -->
+<div class="page" id="p2" style="padding:0">
+  <div class="freezer-scene">
+    <img class="freezer-bg" src="bg_freezer_new.png" alt="Морозилка">
+
+    <!-- Кубики еды (9 штук) -->
+    <div class="hotspot hs-cube hs-cube1 hint" onclick="pickFreezerCube(this,'🥣','Кашка')"></div>
+    <div class="hotspot hs-cube hs-cube2 hint" onclick="pickFreezerCube(this,'🍳','Яичница')"></div>
+    <div class="hotspot hs-cube hs-cube3 hint" onclick="pickFreezerCube(this,'🫐','Йогурт с ягодами')"></div>
+    <div class="hotspot hs-cube hs-cube4 hint" onclick="pickFreezerCube(this,'🥕','Овощной суп')"></div>
+    <div class="hotspot hs-cube hs-cube5 hint" onclick="pickFreezerCube(this,'🍗','Курочка')"></div>
+    <div class="hotspot hs-cube hs-cube6 hint" onclick="pickFreezerCube(this,'🥔','Пюре')"></div>
+    <div class="hotspot hs-cube hs-cube7 hint" onclick="pickFreezerCube(this,'🍚','Рис')"></div>
+    <div class="hotspot hs-cube hs-cube8 hint" onclick="pickFreezerCube(this,'🍝','Макароны')"></div>
+    <div class="hotspot hs-cube hs-cube9 hint" onclick="pickFreezerCube(this,'🍑','Фруктовое пюре')"></div>
+
+    <!-- Продукты (не кубики — просто реагируют) -->
+    <div class="hotspot hs-peas" onclick="tapProduct(this,'Замороженный горошек!')"></div>
+    <div class="hotspot hs-soup" onclick="tapProduct(this,'Суп — вкусняшка!')"></div>
+    <div class="hotspot hs-pizza" onclick="tapProduct(this,'Пицца! Но сегодня — кубики 😉')"></div>
+    <div class="hotspot hs-icecream" onclick="tapProduct(this,'Мороженое! Потом... 🍦')"></div>
+    <div class="hotspot hs-penguin" id="penguin" onclick="tapPenguin()"></div>
+
+    <!-- Кубик поверх сцены -->
+    <div class="kubik-zone" id="kz2" style="position:absolute;top:53.6%;left:70.8%;z-index:10;transform:scaleX(-1)"></div>
+    <div style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;width:90%">
+      <div class="status-text" id="pick-label" style="color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3. МИКРОВОЛНОВКА ===== -->
+<div class="page" id="p3" style="padding:0">
+  <div class="mw-scene">
+    <img class="mw-bg" src="bg_microwave_new.png" alt="Микроволновка">
+
+    <!-- Еда внутри (за стеклом) -->
+    <div class="mw-food-zone"><div class="mw-food" id="mw-food"></div></div>
+    <div class="mw-glow" id="mw-glow"></div>
+    <div class="mw-countdown" id="mw-countdown"></div>
+
+    <!-- Хотспоты -->
+    <div class="hotspot hs-start hint" id="mw-btn" onclick="startMicrowave()"></div>
+    <div class="hotspot hs-dial1" onclick="tapProduct(this,'Крутилка — выбираем мощность!')"></div>
+    <div class="hotspot hs-dial2" onclick="tapProduct(this,'Крутилка — выбираем время!')"></div>
+    <div class="hotspot hs-mitt" onclick="tapProduct(this,'Прихватка-мишка! Осторожно, горячо! 🧸')"></div>
+    <div class="hotspot hs-plates" onclick="tapProduct(this,'Тарелочки ждут еду! 🍽')"></div>
+    <div class="hotspot hs-timer" onclick="tapProduct(this,'Тик-так! ⏱')"></div>
+
+    <!-- Кубик -->
+    <div class="kubik-zone" id="kz3" style="position:absolute;top:40%;left:2%;z-index:10"></div>
+    <div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;width:90%">
+      <div class="status-text" id="mw-status" style="color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.5)"></div>
+      <button class="btn btn-small" id="btn-mw" style="display:none" onclick="goPage(4)">Готово! →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 4. ТАРЕЛКА ===== -->
+<div class="page bg-plate bg-overlay" id="p4">
+  <div class="kubik-zone" id="kz4"></div>
+  <div style="margin-bottom:8px">
+    <span class="hint-pulse" id="food-drag" style="font-size:46px;cursor:pointer" onclick="putOnPlate()">🥣</span>
+  </div>
+  <div class="plate" id="plate"><span class="plate-empty">Нажми на блюдо!</span></div>
+  <div class="utensils">
+    <span class="utensil" id="spoon" onclick="placeUtensil('spoon')">🥄</span>
+    <span class="utensil" id="napkin" onclick="placeUtensil('napkin')">🧻</span>
+  </div>
+  <button class="btn btn-small btn-green" id="btn-eat" style="display:none" onclick="goPage(5)">Приятного аппетита!</button>
+</div>
+
+<!-- ===== 5. ФИНАЛ ===== -->
+<div class="page bg-party bg-overlay" id="p5">
+  <div class="confetti-container" id="confetti"></div>
+  <div class="kubik-zone" id="kz5"></div>
+  <div class="stars"><span class="star" style="animation-delay:.2s">⭐</span><span class="star" style="animation-delay:.5s">⭐</span><span class="star" style="animation-delay:.8s">⭐</span></div>
+  <div class="book-title" style="font-size:24px">Ты сам собрал завтрак!</div>
+  <div style="margin-top:10px;font-size:13px;color:#D4A052">Глава 1 пройдена!</div>
+  <button class="btn btn-small" style="margin-top:16px" onclick="restart()">Сначала!</button>
+</div>
+
+<script>
+// ===== ВИДЕО-КУБИК =====
+// Воспроизводит webm видео в нужной зоне
+function playKubik(zoneId, videoFile, onEnd) {
+  const zone = document.getElementById(zoneId);
+  zone.innerHTML = '';
+  const v = document.createElement('video');
+  v.src = videoFile;
+  v.playsInline = true;
+  v.autoplay = true;
+  v.style.height = '220px';
+  v.style.width = 'auto';
+  v.style.filter = 'drop-shadow(0 6px 20px rgba(0,0,0,.15))';
+  v.style.opacity = '0.92';
+  zone.appendChild(v);
+  v.play().catch(()=>{});
+  v.onended = () => {
+    // Показать статичную картинку после видео
+    zone.innerHTML = '<img src="kubik_mouth_closed_nobg.png" style="height:180px;width:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.15))">';
+    if (onEnd) onEnd();
+  };
+}
+
+function showStaticKubik(zoneId, img) {
+  const zone = document.getElementById(zoneId);
+  zone.innerHTML = '<img src="' + (img || 'kubik_mouth_closed_nobg.png') + '" style="height:180px;width:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.15))">';
+}
+
+// ===== СОСТОЯНИЕ =====
+let currentPage = 0;
+const totalPages = 6;
+let chosenFood = {emoji:'🥣', name:'Кашка', img:'food_porridge.png'};
+let plateState = {food:false, spoon:false, napkin:false};
+
+// ===== НАВИГАЦИЯ =====
+function goPage(n) {
+  const prev = document.getElementById('p' + currentPage);
+  if (prev && currentPage !== n) {
+    prev.style.opacity = '0';
+    setTimeout(() => { prev.classList.remove('active'); prev.style.opacity = ''; }, 500);
+  }
+  currentPage = n;
+  setTimeout(() => {
+    const next = document.getElementById('p' + n);
+    next.classList.add('active');
+    next.offsetHeight;
+    next.style.opacity = '1';
+  }, 300);
+  updateDots();
+
+  // Сценарии страниц
+  if (n === 0) playKubik('kz0', 'kubik_ch1_01.webm');
+  if (n === 1) playKubik('kz1', 'kubik_ch1_02.webm');
+  if (n === 2) { playKubik('kz2', 'kubik_ch1_06.webm'); document.getElementById('pick-label').textContent = 'Выбери кубик с едой!'; }
+  if (n === 3) setupMicrowave();
+  if (n === 4) setupPlate();
+  if (n === 5) { spawnConfetti(); playKubik('kz5', 'kubik_ch1_16.webm'); }
+}
+
+function updateDots() {
+  const d = document.getElementById('nav-dots'); d.innerHTML = '';
+  for (let i = 0; i < totalPages; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === currentPage ? ' active' : '');
+    d.appendChild(dot);
+  }
+}
+updateDots();
+
+// Запуск обложки
+setTimeout(() => playKubik('kz0', 'kubik_ch1_01.webm'), 500);
+
+// ===== ПОМОЙ РУЧКИ =====
+let washStep = 0;
+function startWater() {
+  if (washStep > 0) return;
+  washStep = 1;
+  const faucet = document.getElementById('faucet');
+  faucet.classList.remove('hint');
+  faucet.classList.add('clicked');
+  document.getElementById('water').classList.add('flowing');
+  document.getElementById('splash').classList.add('show');
+  // Показать мишку-мыло
+  const soap = document.getElementById('soap');
+  soap.style.display = 'block';
+  soap.classList.add('hint', 'glow');
+  document.getElementById('wash-status').textContent = 'Нажми на мишку с мылом!';
+  playKubik('kz1', 'kubik_ch1_03.webm');
+}
+
+function useSoap() {
+  if (washStep !== 1) return;
+  washStep = 2;
+  const soap = document.getElementById('soap');
+  soap.classList.remove('hint', 'glow');
+  soap.classList.add('clicked');
+  document.getElementById('bubbles').classList.add('show');
+  document.getElementById('wash-status').textContent = 'Моем-моем ручки!';
+  playKubik('kz1', 'kubik_ch1_04.webm');
+  setTimeout(() => {
+    washStep = 3;
+    document.getElementById('water').classList.remove('flowing');
+    document.getElementById('splash').classList.remove('show');
+    document.getElementById('bubbles').classList.remove('show');
+    // Ручки мокрые — нужно вытереть полотенцем!
+    const towel = document.getElementById('towel');
+    towel.style.pointerEvents = 'auto';
+    towel.classList.add('hint', 'glow-green');
+    document.getElementById('wash-status').textContent = 'Вытри ручки полотенцем!';
+    playKubik('kz1', 'kubik_ch1_05.webm');
+  }, 3000);
+}
+
+function useTowel() {
+  if (washStep !== 3) return;
+  washStep = 4;
+  const towel = document.getElementById('towel');
+  towel.classList.remove('hint', 'glow-green');
+  towel.classList.add('clicked');
+  towel.style.pointerEvents = 'none';
+  document.getElementById('sparkles').classList.add('show');
+  document.getElementById('wash-status').textContent = 'Ручки чистые и сухие!';
+  document.getElementById('btn-wash').style.display = 'inline-block';
+  document.getElementById('btn-wash').classList.add('hint-pulse');
+}
+
+// ===== МОРОЗИЛКА =====
+let freezerPicked = [];
+const MAX_CUBES = 3;
+
+function pickFreezerCube(el, emoji, name) {
+  if (editorMode) return;
+  if (freezerPicked.length >= MAX_CUBES) return;
+  if (el.classList.contains('cube-selected')) return;
+
+  el.classList.remove('hint');
+  el.classList.add('cube-selected');
+  freezerPicked.push({emoji, name, el});
+
+  // Обновить статус
+  const names = freezerPicked.map(f => f.emoji).join(' ');
+  const count = freezerPicked.length;
+  document.getElementById('pick-label').innerHTML = names + ' <b>(' + count + '/' + MAX_CUBES + ')</b>';
+
+  // Показать кнопку "Готово" после первого выбора
+  let btn = document.getElementById('btn-freezer-done');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'btn-freezer-done';
+    btn.className = 'btn btn-small hint-pulse';
+    btn.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:10';
+    btn.textContent = 'Готово! →';
+    btn.onclick = () => freezerDone();
+    el.closest('.freezer-scene').appendChild(btn);
+  }
+
+  if (count >= MAX_CUBES) {
+    // Убрать hint с остальных
+    document.querySelectorAll('.hs-cube').forEach(c => c.classList.remove('hint'));
+    document.getElementById('pick-label').innerHTML = names + ' <b>Все выбраны!</b>';
+  }
+
+  playKubik('kz2', 'kubik_ch1_08.webm');
+}
+
+function freezerDone() {
+  // Анимация выбранных — подпрыгивают и исчезают
+  freezerPicked.forEach((f, i) => {
+    setTimeout(() => f.el.classList.add('cube-picked'), i * 200);
+  });
+  // Сохраняем первый выбранный как основное блюдо, остальные — гарнир
+  chosenFood = {
+    emoji: freezerPicked.map(f => f.emoji).join(''),
+    name: freezerPicked.map(f => f.name).join(' + '),
+    img: ''
+  };
+  setTimeout(() => goPage(3), freezerPicked.length * 200 + 800);
+}
+
+function tapProduct(el, msg) {
+  if (freezerPicked) return;
+  el.classList.add('clicked');
+  document.getElementById('pick-label').textContent = msg;
+  setTimeout(() => { el.classList.remove('clicked'); }, 1000);
+}
+
+function tapPenguin() {
+  const p = document.getElementById('penguin');
+  p.classList.remove('penguin-wave');
+  void p.offsetWidth;
+  p.classList.add('penguin-wave');
+  document.getElementById('pick-label').textContent = 'Привет! Выбери кубик! 🐧';
+}
+
+// ===== МИКРОВОЛНОВКА =====
+function setupMicrowave() {
+  const food = document.getElementById('mw-food');
+  // Показываем тарелку/пиалу с выбранной едой
+  food.textContent = '🥣';
+  food.className = 'mw-food visible';
+  document.getElementById('mw-glow').classList.remove('on');
+  document.getElementById('mw-countdown').classList.remove('visible');
+  document.getElementById('mw-countdown').textContent = '';
+  document.getElementById('mw-status').textContent = 'Нажми START!';
+  document.getElementById('btn-mw').style.display = 'none';
+  document.getElementById('mw-btn').classList.add('hint');
+  playKubik('kz3', 'kubik_ch1_09.webm');
+}
+
+function startMicrowave() {
+  if (editorMode) return;
+  document.getElementById('mw-btn').classList.remove('hint');
+  document.getElementById('mw-btn').classList.add('clicked');
+  document.getElementById('mw-glow').classList.add('on');
+  document.getElementById('mw-food').classList.add('spinning');
+  const countdown = document.getElementById('mw-countdown');
+  countdown.classList.add('visible');
+  playKubik('kz3', 'kubik_ch1_10.webm');
+  let sec = 5;
+  countdown.textContent = sec;
+  document.getElementById('mw-status').textContent = 'Разогреваем...';
+  const iv = setInterval(() => {
+    sec--;
+    countdown.textContent = sec > 0 ? sec : '';
+    if (sec === 3) playKubik('kz3', 'kubik_ch1_11.webm');
+    if (sec <= 0) {
+      clearInterval(iv);
+      document.getElementById('mw-food').classList.remove('spinning');
+      document.getElementById('mw-food').classList.add('melted');
+      document.getElementById('mw-glow').classList.remove('on');
+      countdown.classList.remove('visible');
+      setTimeout(() => {
+        const food = document.getElementById('mw-food');
+        food.textContent = '🍲';
+        food.className = 'mw-food visible';
+        food.style.fontSize = '42px';
+        document.getElementById('mw-status').textContent = chosenFood.name + ' — готово!';
+        document.getElementById('btn-mw').style.display = 'inline-block';
+        document.getElementById('btn-mw').classList.add('hint-pulse');
+        playKubik('kz3', 'kubik_ch1_12.webm');
+      }, 500);
+    }
+  }, 1000);
+}
+
+// ===== ТАРЕЛКА =====
+function setupPlate() {
+  plateState = {food:false, spoon:false, napkin:false};
+  document.getElementById('food-drag').textContent = chosenFood.emoji;
+  document.getElementById('food-drag').style.opacity = '1';
+  document.getElementById('food-drag').style.pointerEvents = 'auto';
+  document.getElementById('plate').innerHTML = '<span class="plate-empty">Нажми на блюдо!</span>';
+  document.getElementById('spoon').classList.remove('placed');
+  document.getElementById('napkin').classList.remove('placed');
+  document.getElementById('btn-eat').style.display = 'none';
+  playKubik('kz4', 'kubik_ch1_13.webm');
+}
+
+function putOnPlate() {
+  if (plateState.food) return;
+  plateState.food = true;
+  document.getElementById('food-drag').style.opacity = '.3';
+  document.getElementById('food-drag').style.pointerEvents = 'none';
+  document.getElementById('food-drag').classList.remove('hint-pulse');
+  document.getElementById('plate').innerHTML = chosenFood.emoji;
+  document.getElementById('plate').classList.add('has-food');
+  playKubik('kz4', 'kubik_ch1_14.webm');
+  checkPlateReady();
+}
+
+function placeUtensil(id) {
+  if (plateState[id]) return;
+  plateState[id] = true;
+  document.getElementById(id).classList.add('placed');
+  checkPlateReady();
+}
+
+function checkPlateReady() {
+  if (plateState.food && plateState.spoon && plateState.napkin) {
+    document.getElementById('btn-eat').style.display = 'inline-block';
+    document.getElementById('btn-eat').classList.add('hint-pulse');
+    playKubik('kz4', 'kubik_ch1_15.webm');
+  }
+}
+
+// ===== КОНФЕТТИ =====
+function spawnConfetti() {
+  const c = document.getElementById('confetti'); c.innerHTML = '';
+  const colors = ['#E85D3A','#D4A052','#10B981','#3B82F6','#F59E0B','#EC4899'];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div'); p.className = 'confetti';
+    p.style.left = Math.random()*100+'%';
+    p.style.background = colors[Math.random()*colors.length|0];
+    p.style.animationDelay = Math.random()*2+'s';
+    p.style.animationDuration = (2+Math.random()*2)+'s';
+    p.style.width = (6+Math.random()*10)+'px';
+    p.style.height = (6+Math.random()*10)+'px';
+    c.appendChild(p);
+  }
+}
+
+// ===== РЕЖИМ РЕДАКТОРА =====
+// Нажми Ctrl+E чтобы включить/выключить
+let editorMode = false;
+let justDragged = false;
+
+// Блокируем все клики в режиме редактора
+document.addEventListener('click', e => {
+  if (editorMode) { e.stopPropagation(); e.preventDefault(); }
+}, true);
+
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'e') {
+    e.preventDefault();
+    editorMode = !editorMode;
+    document.body.classList.toggle('editor-mode', editorMode);
+    if (editorMode) {
+      document.querySelectorAll('.hotspot, .kubik-zone, .mw-food-zone').forEach(el => {
+        el.style.cursor = 'move';
+        makeDraggable(el);
+      });
+      showEditorPanel();
+    } else {
+      document.querySelectorAll('.hotspot, .kubik-zone').forEach(el => {
+        el.style.cursor = '';
+      });
+      const panel = document.getElementById('editor-panel');
+      if (panel) panel.remove();
+    }
+  }
+});
+
+function makeDraggable(el) {
+  let startX, startY, startLeft, startTop;
+  const parent = el.parentElement;
+
+  function onStart(e) {
+    if (!editorMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const touch = e.touches ? e.touches[0] : e;
+    startX = touch.clientX;
+    startY = touch.clientY;
+    const rect = el.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect();
+    startLeft = (rect.left - parentRect.left) / parentRect.width * 100;
+    startTop = (rect.top - parentRect.top) / parentRect.height * 100;
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchmove', onMove, {passive:false});
+    document.addEventListener('touchend', onEnd);
+  }
+
+  function onMove(e) {
+    e.preventDefault();
+    const touch = e.touches ? e.touches[0] : e;
+    const parentRect = parent.getBoundingClientRect();
+    const dx = (touch.clientX - startX) / parentRect.width * 100;
+    const dy = (touch.clientY - startY) / parentRect.height * 100;
+    el.style.setProperty('left', (startLeft + dx) + '%', 'important');
+    el.style.setProperty('top', (startTop + dy) + '%', 'important');
+    el.style.setProperty('right', 'auto', 'important');
+    el.style.setProperty('bottom', 'auto', 'important');
+    updateEditorPanel();
+  }
+
+  function onEnd() {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onEnd);
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+    updateEditorPanel();
+  }
+
+  el.addEventListener('mousedown', onStart);
+  el.addEventListener('touchstart', onStart, {passive:false});
+}
+
+function showEditorPanel() {
+  let panel = document.getElementById('editor-panel');
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.id = 'editor-panel';
+    panel.style.cssText = 'position:fixed;bottom:8px;right:8px;z-index:9999;background:rgba(0,0,0,.9);color:#0f0;font-family:monospace;font-size:14px;padding:14px;border-radius:8px;max-height:60vh;overflow-y:auto;pointer-events:auto;min-width:340px;line-height:1.6';
+    document.body.appendChild(panel);
+  }
+  updateEditorPanel();
+}
+
+function updateEditorPanel() {
+  const panel = document.getElementById('editor-panel');
+  if (!panel) return;
+  let html = '<div style="color:#ff0;margin-bottom:6px;font-size:12px">🔧 РЕДАКТОР (Ctrl+E — выкл)</div>';
+  html += '<div style="color:#aaa;margin-bottom:6px">Перетаскивай элементы мышкой</div>';
+  const page = document.getElementById('p' + currentPage);
+  if (!page) return;
+  const items = page.querySelectorAll('.hotspot, .kubik-zone, .mw-food-zone');
+  items.forEach(el => {
+    const cls = el.className.replace('hotspot ','').replace('hint','').replace('clicked','').replace('glow','').trim();
+    const id = el.id || cls;
+    const l = parseFloat(el.style.left) || 0;
+    const t = parseFloat(el.style.top) || 0;
+    html += '<div style="margin:2px 0;color:#0f0">' + id + ': left:' + l.toFixed(1) + '% top:' + t.toFixed(1) + '%</div>';
+  });
+  html += '<div style="margin-top:8px;color:#ff0;cursor:pointer" onclick="copyEditorCSS()">📋 Копировать CSS</div>';
+  panel.innerHTML = html;
+}
+
+function copyEditorCSS() {
+  const page = document.getElementById('p' + currentPage);
+  let css = '';
+  page.querySelectorAll('.hotspot, .kubik-zone').forEach(el => {
+    const cls = el.className.replace('hotspot ','').replace(' hint','').replace(' clicked','').replace(' glow','').replace(' cube-picked','').trim();
+    const id = el.id || cls.split(' ')[0];
+    const l = parseFloat(el.style.left);
+    const t = parseFloat(el.style.top);
+    if (!isNaN(l) && !isNaN(t)) {
+      css += id + ': left:' + l.toFixed(1) + '%; top:' + t.toFixed(1) + '%\n';
+    }
+  });
+  // Показать в текстовом поле для ручного копирования
+  let ta = document.getElementById('editor-textarea');
+  if (!ta) {
+    ta = document.createElement('textarea');
+    ta.id = 'editor-textarea';
+    ta.style.cssText = 'position:fixed;bottom:10px;left:10px;z-index:9999;width:300px;height:150px;font-family:monospace;font-size:11px;background:#111;color:#0f0;border:1px solid #0f0;border-radius:6px;padding:8px';
+    document.body.appendChild(ta);
+  }
+  ta.value = css;
+  ta.select();
+  document.getElementById('editor-panel').innerHTML += '<div style="color:#0f0;margin-top:4px">⬇️ Выдели текст внизу и Ctrl+C</div>';
+}
+
+function restart() {
+  washStep = 0;
+  document.getElementById('faucet').classList.add('hint');
+  document.getElementById('faucet').classList.remove('clicked');
+  document.getElementById('water').classList.remove('flowing');
+  document.getElementById('splash').classList.remove('show');
+  document.getElementById('bubbles').classList.remove('show');
+  document.getElementById('sparkles').classList.remove('show');
+  document.getElementById('towel').classList.remove('glow-green','hint','clicked');
+  document.getElementById('towel').style.pointerEvents='none';
+  document.getElementById('wash-status').textContent = '';
+  document.getElementById('btn-wash').style.display = 'none';
+  document.getElementById('soap').style.display = 'none';
+  document.getElementById('soap').classList.remove('hint','glow','clicked');
+  freezerPicked = [];
+  document.querySelectorAll('.hs-cube').forEach(c => { c.classList.remove('cube-picked','clicked','cube-selected'); c.classList.add('hint'); });
+  const fbtn = document.getElementById('btn-freezer-done'); if (fbtn) fbtn.remove();
+  document.querySelectorAll('.hs-peas,.hs-soup,.hs-pizza,.hs-icecream').forEach(c => c.classList.remove('clicked'));
+  document.getElementById('penguin').classList.remove('penguin-wave');
+  document.getElementById('pick-label').textContent = '';
+  goPage(0);
+}
+</script>
+</body>
+</html>
