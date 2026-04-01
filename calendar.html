@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Планета X — Календарь активностей</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#FDF8F3;padding:30px;color:#2D2A26}
+h1{text-align:center;font-size:28px;color:#E85D3A;margin-bottom:6px}
+.subtitle{text-align:center;color:#8A8580;font-size:14px;margin-bottom:24px}
+
+.grid{display:grid;grid-template-columns:80px repeat(31,1fr);gap:1px;background:#E0DBD5;border-radius:12px;overflow:hidden;margin-bottom:20px}
+.grid-header{background:#2D2A26;color:#fff;font-size:9px;font-weight:700;text-align:center;padding:6px 2px}
+.month-label{background:#2D2A26;color:#fff;font-size:11px;font-weight:700;padding:6px 8px;display:flex;align-items:center}
+.day-cell{background:#fff;min-height:32px;position:relative;font-size:7px}
+.day-cell.empty{background:#F8F6F3}
+
+/* Activity blocks */
+.block{position:absolute;top:2px;left:0;right:0;bottom:2px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:600;color:#fff;text-align:center;line-height:1.2;padding:1px 2px;z-index:2;cursor:default}
+.block.intensive{background:linear-gradient(135deg,#E85D3A,#D44A28)}
+.block.marathon{background:linear-gradient(135deg,#10B981,#059669)}
+.block.mk{background:linear-gradient(135deg,#8B5CF6,#7C3AED)}
+.block.flagship{background:linear-gradient(135deg,#F59E0B,#D97706);opacity:0.7}
+.block.season{background:linear-gradient(135deg,#D4A052,#C4903A);opacity:0.15;color:#2D2A26;font-weight:400;font-size:6px}
+.block.video{background:linear-gradient(135deg,#3B82F6,#2563EB);opacity:0.5}
+
+/* Multi-day blocks */
+.span-start{border-radius:4px 0 0 4px;right:-1px}
+.span-mid{border-radius:0;left:-1px;right:-1px}
+.span-end{border-radius:0 4px 4px 0;left:-1px}
+
+/* Tooltip */
+.block:hover{opacity:1!important;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.3);transform:scale(1.05)}
+.block[title]:hover::after{content:attr(title);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#2D2A26;color:#fff;padding:4px 8px;border-radius:4px;font-size:9px;white-space:nowrap;z-index:100;font-weight:400}
+
+/* Legend */
+.legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px}
+.legend-dot{width:16px;height:16px;border-radius:4px}
+.legend-dot.i{background:#E85D3A}
+.legend-dot.m{background:#10B981}
+.legend-dot.mk{background:#8B5CF6}
+.legend-dot.f{background:#F59E0B}
+.legend-dot.s{background:#D4A052;opacity:.3}
+.legend-dot.v{background:#3B82F6;opacity:.6}
+
+/* Quarter labels */
+.quarter{text-align:center;font-size:13px;font-weight:800;color:#E85D3A;padding:10px 0 4px;grid-column:1/-1;background:#FDF8F3}
+
+/* Print */
+@media print{body{padding:10px}h1{font-size:22px}.grid{gap:0}}
+</style>
+</head>
+<body>
+
+<h1>Планета X — Календарь активностей</h1>
+<p class="subtitle">Май 2026 — Апрель 2027 | Все активности клуба по числам месяца</p>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot i"></div>Интенсив (1 нед)</div>
+  <div class="legend-item"><div class="legend-dot m"></div>Марафон (3 дня)</div>
+  <div class="legend-item"><div class="legend-dot mk"></div>Мастер-класс</div>
+  <div class="legend-item"><div class="legend-dot f"></div>Флагман (месяц)</div>
+  <div class="legend-item"><div class="legend-dot s"></div>Сезон</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const data = [
+  { month: 'Май', q: 'Q1 — Сезоны: Группа A', days: 31, events: [
+    { start:1, end:7, type:'intensive', label:'И', chef:'Семенюк' },
+    { start:19, end:21, type:'marathon', label:'М', chef:'Натали Ви' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Июнь', days: 30, events: [
+    { start:2, end:2, type:'mk', label:'МК', chef:'Натали Ви' },
+    { start:15, end:21, type:'intensive', label:'И', chef:'Жарков' },
+    { start:26, end:28, type:'marathon', label:'М', chef:'Волкова' },
+    { start:1, end:30, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Июль', days: 31, events: [
+    { start:5, end:5, type:'mk', label:'МК', chef:'Волкова' },
+    { start:1, end:31, type:'flagship', label:'Ф', chef:'Флагман (пригл. шеф)' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Авг', q: 'Q2 — Сезоны: Группа B', days: 31, events: [
+    { start:1, end:7, type:'intensive', label:'И', chef:'Аветисов' },
+    { start:18, end:20, type:'marathon', label:'М', chef:'Андреева' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+  { month: 'Сен', days: 30, events: [
+    { start:1, end:1, type:'mk', label:'МК', chef:'Андреева' },
+    { start:15, end:21, type:'intensive', label:'И', chef:'Травникова' },
+    { start:25, end:27, type:'marathon', label:'М', chef:'Бускина' },
+    { start:1, end:30, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+  { month: 'Окт', days: 31, events: [
+    { start:4, end:4, type:'mk', label:'МК', chef:'Бускина' },
+    { start:1, end:31, type:'flagship', label:'Ф', chef:'Флагман (пригл. шеф)' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+  { month: 'Ноя', q: 'Q3 — Сезоны: Группа A', days: 30, events: [
+    { start:1, end:7, type:'intensive', label:'И', chef:'Натали Ви' },
+    { start:17, end:19, type:'marathon', label:'М', chef:'Семенюк' },
+    { start:1, end:30, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Дек', days: 31, events: [
+    { start:1, end:1, type:'mk', label:'МК', chef:'Семенюк' },
+    { start:15, end:21, type:'intensive', label:'И', chef:'Волкова' },
+    { start:26, end:28, type:'marathon', label:'М', chef:'Жарков' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Янв', days: 31, events: [
+    { start:5, end:5, type:'mk', label:'МК', chef:'Жарков' },
+    { start:1, end:31, type:'flagship', label:'Ф', chef:'Флагман (пригл. шеф)' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа A)' },
+  ]},
+  { month: 'Фев', q: 'Q4 — Сезоны: Группа B', days: 28, events: [
+    { start:1, end:7, type:'intensive', label:'И', chef:'Андреева' },
+    { start:17, end:19, type:'marathon', label:'М', chef:'Аветисов' },
+    { start:1, end:28, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+  { month: 'Мар', days: 31, events: [
+    { start:1, end:1, type:'mk', label:'МК', chef:'Аветисов' },
+    { start:15, end:21, type:'intensive', label:'И', chef:'Бускина' },
+    { start:26, end:28, type:'marathon', label:'М', chef:'Травникова' },
+    { start:1, end:31, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+  { month: 'Апр', days: 30, events: [
+    { start:5, end:5, type:'mk', label:'МК', chef:'Травникова' },
+    { start:1, end:30, type:'flagship', label:'Ф', chef:'Флагман (пригл. шеф)' },
+    { start:1, end:30, type:'season', label:'', chef:'Сезон (Группа B)' },
+  ]},
+];
+
+const grid = document.getElementById('grid');
+
+// Header row: empty + days 1-31
+const hEmpty = document.createElement('div');
+hEmpty.className = 'grid-header';
+hEmpty.textContent = '';
+grid.appendChild(hEmpty);
+for (let d = 1; d <= 31; d++) {
+  const h = document.createElement('div');
+  h.className = 'grid-header';
+  h.textContent = d;
+  grid.appendChild(h);
+}
+
+// Month rows
+data.forEach(m => {
+  if (m.q) {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'quarter';
+    qDiv.textContent = m.q;
+    grid.appendChild(qDiv);
+  }
+
+  const ml = document.createElement('div');
+  ml.className = 'month-label';
+  ml.textContent = m.month;
+  grid.appendChild(ml);
+
+  for (let d = 1; d <= 31; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'day-cell' + (d > m.days ? ' empty' : '');
+
+    if (d <= m.days) {
+      const sorted = [...m.events].sort((a, b) => {
+        if (a.type === 'season') return -1;
+        if (b.type === 'season') return 1;
+        if (a.type === 'flagship') return -1;
+        if (b.type === 'flagship') return 1;
+        return 0;
+      });
+
+      sorted.forEach(ev => {
+        if (d >= ev.start && d <= ev.end) {
+          const block = document.createElement('div');
+          block.className = 'block ' + ev.type;
+
+          if (ev.end - ev.start > 0) {
+            if (d === ev.start) block.classList.add('span-start');
+            else if (d === ev.end) block.classList.add('span-end');
+            else block.classList.add('span-mid');
+          }
+
+          if (d === ev.start || (ev.type === 'flagship' && d === Math.floor((ev.start + ev.end) / 2))) {
+            block.textContent = ev.label;
+          }
+
+          block.title = ev.chef + (ev.start !== ev.end ? ' (' + ev.start + '\u2013' + ev.end + ')' : ' (' + ev.start + ')');
+          cell.appendChild(block);
+        }
+      });
+    }
+
+    grid.appendChild(cell);
+  }
+});
+</script>
+</body>
+</html>
