@@ -412,9 +412,6 @@ const MEAL_GROUPS = [
   { group:'Ужин', emoji:'🌙', slots:[
     { key:'dinner-main', label:'Основное', suggestCat:'protein' },
     { key:'dinner-side', label:'Гарнир',   suggestCat:'side' }
-  ]},
-  { group:'Перекус', emoji:'🍎', slots:[
-    { key:'snack', label:'Перекус' }
   ]}
 ];
 
@@ -469,8 +466,8 @@ function smartPick(id) {
     protein: ['lunch-main','dinner-main'],
     side: ['lunch-side','dinner-side'],
     salad: ['lunch-salad'],
-    dessert: ['snack'],
-    sauce: ['snack'],
+    dessert: ['breakfast'],
+    sauce: ['lunch-main','dinner-main'],
     baking: ['breakfast']
   };
   const preferredSlots = catSlotMap[r.category] || ALL_SLOTS.map(s => s.key);
@@ -628,7 +625,6 @@ function smartFill() {
       let pool = scored;
       if (slot.suggestCat) pool = scored.filter(r => r.category === slot.suggestCat);
       else if (slot.key === 'breakfast') pool = scored.filter(r => r.meal.includes('breakfast') || r.category === 'baking' || r.category === 'dessert');
-      else if (slot.key === 'snack') pool = scored.filter(r => r.meal.includes('snack') || r.category === 'dessert' || r.category === 'sauce');
       if (!pool.length) pool = scored;
 
       // Pick from top matches, with some variety (avoid same dish every day)
@@ -911,7 +907,6 @@ function randomFill() {
     let pool;
     if (s.suggestCat) pool = recipes.filter(r => r.category === s.suggestCat);
     else if (s.key === 'breakfast') pool = recipes.filter(r => r.meal.includes('breakfast') || r.category === 'baking' || r.category === 'dessert');
-    else if (s.key === 'snack') pool = recipes.filter(r => r.meal.includes('snack') || r.category === 'dessert' || r.category === 'sauce');
     else pool = recipes;
     if (!pool.length) pool = recipes;
     week[key] = pool[Math.floor(Math.random() * pool.length)].id;
