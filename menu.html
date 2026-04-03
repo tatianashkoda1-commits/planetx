@@ -61,7 +61,7 @@ h1 span{color:var(--terra)}
 
 .grid-corner{}
 
-.cell{background:var(--card);border:1.5px dashed rgba(0,0,0,.08);border-radius:var(--radius);aspect-ratio:1;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;transition:all .2s;position:relative;overflow:hidden}
+.cell{background:var(--card);border:1.5px dashed rgba(0,0,0,.08);border-radius:var(--radius);height:90px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;transition:all .2s;position:relative;overflow:hidden}
 .cell:hover{border-color:var(--terra);box-shadow:0 2px 12px rgba(232,93,58,.12)}
 .cell.filled{border:1.5px solid rgba(232,93,58,.12);padding:0}
 .cell.filled .cell-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px}
@@ -241,7 +241,7 @@ h1 span{color:var(--terra)}
   .col-group{font-size:9px;padding:6px 2px 3px;letter-spacing:1px}
   .slot-header{font-size:7px;padding:2px 1px}
   .day-label{font-size:10px}
-  .cell{aspect-ratio:1;border-radius:8px}
+  .cell{height:70px;border-radius:8px}
   .cell .cell-name{font-size:7px}
   .cell.empty-hint .hint-plus{font-size:14px}
   .cell.empty-hint .hint-text{font-size:6px}
@@ -353,8 +353,9 @@ h1 span{color:var(--terra)}
 
 <div class="bottom-actions" id="bottom-actions">
   <button class="bottom-btn save" onclick="saveMenu()">Сохранить меню</button>
+  <button class="bottom-btn save" onclick="saveShoppingList()">Сохранить список покупок</button>
   <button class="bottom-btn print" onclick="printAll()">Распечатать всё</button>
-  <button class="bottom-btn print" onclick="printShoppingOnly()">Распечатать только список покупок</button>
+  <button class="bottom-btn print" onclick="printShoppingOnly()">Распечатать список покупок</button>
 </div>
 
 <div class="footer">Конструктор меню · <a href="index.html">Планета X</a></div>
@@ -937,6 +938,38 @@ function renderSaved() {
 
 function printAll() { document.body.classList.remove('print-shopping-only'); window.print(); }
 function printShoppingOnly() { document.body.classList.add('print-shopping-only'); window.print(); document.body.classList.remove('print-shopping-only'); }
+
+function saveShoppingList() {
+  const items = [];
+  visibleEntries().forEach(rid => {
+    const r = recipes.find(x => x.id === rid);
+    if (!r) return;
+    r.ingredients.forEach(ing => {
+      const k = ing.name.toLowerCase();
+      const existing = items.find(x => x.key === k);
+      if (existing) {
+        if (existing.amounts[ing.unit]) existing.amounts[ing.unit] += ing.amount;
+        else existing.amounts[ing.unit] = ing.amount;
+      } else {
+        items.push({ key: k, name: ing.name, amounts: { [ing.unit]: ing.amount } });
+      }
+    });
+  });
+  if (!items.length) return;
+  items.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  let text = 'СПИСОК ПОКУПОК\nПланета X — Конструктор меню\n' + new Date().toLocaleDateString('ru-RU') + '\n\n';
+  items.forEach(it => {
+    const amt = Object.entries(it.amounts).map(([u, a]) => fmtNum(a) + ' ' + u).join(' + ');
+    text += '[ ] ' + it.name + ' — ' + amt + '\n';
+  });
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Список покупок.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 init();
 </script>
