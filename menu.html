@@ -242,6 +242,9 @@ h1 span{color:var(--terra)}
   .slot-header{font-size:7px;padding:2px 1px}
   .day-label{font-size:10px}
   .cell{height:70px;border-radius:8px}
+  .cell.filled .cell-photo{border-radius:7px}
+  .cell.filled .cell-info{padding:10px 3px 3px;border-radius:0 0 7px 7px}
+  .cell .cell-name{font-size:6px}
   .cell .cell-name{font-size:7px}
   .cell.empty-hint .hint-plus{font-size:14px}
   .cell.empty-hint .hint-text{font-size:6px}
@@ -667,11 +670,12 @@ function buildGrid() {
   const isMobile = window.innerWidth < 768;
   const dayW = isMobile ? '32px' : '56px';
   const spacerW = isMobile ? '6px' : '14px';
+  const minCell = isMobile ? '48px' : '70px';
   const colParts = [dayW];
   let isFirst = true;
   for (const mg of MEAL_GROUPS) {
     if (!isFirst) colParts.push(spacerW);
-    for (let i = 0; i < mg.slots.length; i++) colParts.push('1fr');
+    for (let i = 0; i < mg.slots.length; i++) colParts.push(`minmax(${minCell},1fr)`);
     isFirst = false;
   }
   grid.style.gridTemplateColumns = colParts.join(' ');
