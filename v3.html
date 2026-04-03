@@ -1784,6 +1784,7 @@ body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparen
   // NAV CONFIGS
   var publicNav = [
     {page:'landing', label:'Главная'},
+    {page:'menu-link', label:'Конструктор меню'},
   ];
   var clubNav = [
     {page:'feed', label:'Лента'},
@@ -1794,6 +1795,7 @@ body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparen
     {page:'chefs', label:'Все шефы'},
     {page:'chat', label:'Чаты', chat:'0'},
     {page:'prizes', label:'Розыгрыши'},
+    {page:'menu-link', label:'Меню'},
     {page:'vip', label:'VIP'},
   ];
 
@@ -1830,6 +1832,7 @@ body.dark-mode .planet-saturn::after{background:linear-gradient(90deg,transparen
   }
 
   function showPage(page, chatId) {
+    if (page === 'menu-link') { window.location.href = 'menu.html'; return; }
     currentPage = page;
     var pages = document.querySelectorAll('.page');
     for (var i = 0; i < pages.length; i++) {

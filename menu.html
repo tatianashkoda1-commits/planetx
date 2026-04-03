@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Конструктор меню — Планета X</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#FDF8F3;--bg2:#F9F3EB;--card:#fff;--terra:#E85D3A;--terra-light:#F07A5A;--terra-dark:#C94B2A;--ochre:#D4A052;--text:#5C5550;--text-dim:#8A8580;--dark:#2D2A26;--border:rgba(232,93,58,.12);--green:#10B981;--radius:12px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+.header{text-align:center;padding:28px 20px 12px}
+.logo{font-size:13px;font-weight:800;color:var(--terra);letter-spacing:3px;text-transform:uppercase}
+h1{font-size:26px;font-weight:800;color:var(--dark);margin:6px 0 4px}
+h1 span{color:var(--terra)}
+.subtitle{color:var(--text-dim);font-size:13px}
+
+.day-picker{display:flex;gap:6px;justify-content:center;padding:12px 20px;max-width:920px;margin:0 auto}
+.day-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.day-btn:hover{border-color:var(--terra);color:var(--terra)}
+.day-btn.active{background:var(--terra);color:#fff;border-color:var(--terra)}
+
+.toolbar{display:flex;gap:8px;justify-content:center;padding:8px 20px 16px;max-width:920px;margin:0 auto}
+.toolbar button{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.toolbar button:hover{border-color:var(--terra);color:var(--terra)}
+
+.week{margin:0 auto;padding:0 12px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;transition:max-width .3s}
+.grid{display:grid;gap:10px 5px}
+
+/* Group header */
+.col-group{text-align:center;padding:8px 4px 4px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;border-radius:10px 10px 0 0}
+.col-group.breakfast{background:rgba(212,160,82,.18);color:#7C2D12}
+.col-group.lunch{background:rgba(232,93,58,.15);color:#B91C1C}
+.col-group.dinner{background:rgba(99,102,241,.15);color:#3730A3}
+.col-group.snack{background:rgba(16,185,129,.15);color:#065F46}
+
+/* Group spacer between categories */
+.group-spacer{width:1px;background:transparent}
+
+/* Slot header */
+.slot-header{font-size:9px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;text-align:center;padding:4px 2px}
+.slot-header.cat-breakfast{color:#B45309}
+.slot-header.cat-lunch{color:var(--terra)}
+.slot-header.cat-dinner{color:#4F46E5}
+.slot-header.cat-snack{color:#059669}
+
+/* Day label */
+.day-label{font-size:12px;font-weight:700;color:var(--dark);display:flex;align-items:center;justify-content:center;padding:4px}
+.grid-corner{}
+
+/* Cell tint by meal group */
+.cell.cell-breakfast{background:rgba(212,160,82,.08)}
+.cell.cell-lunch{background:rgba(232,93,58,.06)}
+.cell.cell-dinner{background:rgba(99,102,241,.06)}
+.cell.cell-snack{background:rgba(16,185,129,.06)}
+.cell.cell-breakfast:hover{border-color:var(--ochre)}
+.cell.cell-lunch:hover{border-color:var(--terra)}
+.cell.cell-dinner:hover{border-color:#6366F1}
+.cell.cell-snack:hover{border-color:var(--green)}
+
+.grid-corner{}
+
+.cell{background:var(--card);border:1.5px dashed rgba(0,0,0,.08);border-radius:var(--radius);aspect-ratio:1;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;transition:all .2s;position:relative;overflow:hidden}
+.cell:hover{border-color:var(--terra);box-shadow:0 2px 12px rgba(232,93,58,.12)}
+.cell.filled{border:1.5px solid rgba(232,93,58,.12);padding:0}
+.cell.filled .cell-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:10px}
+.cell.filled .cell-info{position:absolute;bottom:0;left:0;right:0;padding:16px 5px 5px;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.6));border-radius:0 0 10px 10px}
+.cell .cell-name{font-size:9px;font-weight:700;line-height:1.2;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.cell .cell-remove{position:absolute;top:3px;right:5px;font-size:15px;color:rgba(255,255,255,.85);cursor:pointer;line-height:1;display:none;text-shadow:0 1px 4px rgba(0,0,0,.6);z-index:2}
+.cell.filled:hover .cell-remove{display:block}
+.cell.empty-hint{cursor:pointer}
+.cell.empty-hint .hint-plus{font-size:18px;color:#ccc;font-weight:300;line-height:1}
+.cell.empty-hint .hint-text{font-size:8px;color:#bbb;margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+.cell.empty-hint:hover .hint-plus{color:var(--terra)}
+.cell.empty-hint:hover .hint-text{color:var(--terra)}
+
+.grid-hint{text-align:center;padding:6px 20px 2px;font-size:13px;color:var(--text-dim);max-width:920px;margin:0 auto}
+.grid-hint b{color:var(--dark)}
+.grid-hint.hidden{display:none}
+
+/* Welcome screen */
+.welcome{max-width:480px;margin:0 auto;padding:20px}
+.welcome.hidden{display:none}
+.welcome-title{font-size:18px;font-weight:800;color:var(--dark);text-align:center;margin-bottom:16px}
+.welcome-cards{display:flex;gap:10px;justify-content:center}
+.welcome-card{position:relative;padding:14px 24px;background:var(--card);border:1.5px solid var(--border);border-radius:24px;cursor:pointer;transition:all .2s}
+.welcome-card:hover{border-color:var(--terra);background:rgba(232,93,58,.04);transform:translateY(-1px);box-shadow:0 4px 14px rgba(232,93,58,.1)}
+.welcome-card .wc-name{font-size:14px;font-weight:700;color:var(--dark);white-space:nowrap}
+.welcome-card:hover .wc-name{color:var(--terra)}
+.welcome-card .wc-desc{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:11px;line-height:1.4;padding:8px 14px;border-radius:10px;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:5}
+.welcome-card .wc-desc::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--dark)}
+.welcome-card:hover .wc-desc{display:block;animation:tooltipIn .2s}
+@keyframes tooltipIn{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+.stats{max-width:920px;margin:0 auto;padding:8px 20px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.stat{font-size:12px;color:var(--text-dim);font-weight:500}
+.stat b{color:var(--dark);font-weight:700}
+
+/* Recipe cards section */
+.recipes-section{max-width:980px;margin:0 auto;padding:20px 12px 20px 66px}
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.rcard{background:var(--card);border-radius:14px;overflow:hidden;border:1.5px solid var(--border);transition:all .2s}
+.rcard:hover{box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.rcard-photo{width:100%;height:160px;object-fit:cover;cursor:pointer}
+.rcard-body{padding:14px}
+.rcard-name{font-size:16px;font-weight:800;color:var(--dark)}
+.rcard-meta{font-size:12px;color:var(--text-dim);margin-top:4px;display:flex;gap:10px}
+.rcard-toggle{display:inline-block;margin-top:10px;font-size:12px;font-weight:600;color:var(--terra);cursor:pointer;border:none;background:none;font-family:inherit;padding:0}
+.rcard-toggle:hover{text-decoration:underline}
+.rcard-detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,.06)}
+.rcard-detail.open{display:block}
+.rcard-detail h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.rcard-detail ul{list-style:none;margin-bottom:12px}
+.rcard-detail ul li{font-size:12px;padding:3px 0;display:flex;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.03)}
+.rcard-detail ul li span{font-weight:600;color:var(--dark)}
+.rcard-detail .rcard-steps{font-size:12px;line-height:1.7;white-space:pre-line;color:var(--text)}
+
+.shopping-section{max-width:980px;margin:0 auto;padding:20px 12px 20px 66px}
+.section-title{font-size:18px;font-weight:800;color:var(--dark);margin-bottom:12px}
+.shopping-list{columns:2;column-gap:20px;list-style:none}
+.shopping-item{font-size:13px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.04);break-inside:avoid;display:flex;align-items:center;gap:8px}
+.shopping-item input[type=checkbox]{accent-color:var(--terra);width:16px;height:16px;cursor:pointer;flex-shrink:0}
+.shopping-item.checked label{text-decoration:line-through;color:#bbb}
+.shopping-item label{cursor:pointer;flex:1}
+.shopping-item .amount{font-weight:700;color:var(--dark);white-space:nowrap}
+.shopping-empty{text-align:center;color:var(--text-dim);font-size:14px;padding:30px 0}
+
+.saved-section{max-width:920px;margin:0 auto;padding:0 20px 20px}
+.saved-list{display:flex;gap:8px;flex-wrap:wrap}
+.saved-chip{padding:6px 14px;border-radius:16px;background:var(--card);border:1.5px solid var(--border);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.saved-chip:hover{border-color:var(--terra);color:var(--terra)}
+.saved-chip .del{font-size:14px;opacity:.5;margin-left:2px}
+.saved-chip .del:hover{opacity:1}
+
+.bottom-actions{display:flex;gap:10px;justify-content:center;padding:20px 20px 8px;max-width:920px;margin:0 auto}
+.bottom-btn{padding:12px 28px;border-radius:12px;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.bottom-btn.save{background:var(--terra);color:#fff}
+.bottom-btn.save:hover{filter:brightness(1.1)}
+.bottom-btn.print{background:var(--card);color:var(--text);border:1.5px solid var(--border)}
+.bottom-btn.print:hover{border-color:var(--terra);color:var(--terra)}
+
+.footer{text-align:center;padding:20px 20px 30px;color:var(--text-dim);font-size:12px}
+.footer a{color:var(--terra);text-decoration:none}
+
+/* Modals */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:slideUp .25s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(min-width:600px){.modal-overlay.open{align-items:center}.modal{border-radius:20px;max-height:82vh}}
+.modal-head{padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between}
+.modal-head h2{font-size:16px;font-weight:800;color:var(--dark)}
+.modal-close{width:32px;height:32px;border:none;background:rgba(0,0,0,.05);border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.modal-search{padding:12px 20px}
+.modal-search input{width:100%;padding:10px 14px;border:1.5px solid rgba(0,0,0,.08);border-radius:10px;font-family:inherit;font-size:14px;outline:none;transition:border .2s;background:var(--card)}
+.modal-search input:focus{border-color:var(--terra)}
+.modal-cats{padding:0 20px 6px;display:flex;gap:6px;flex-wrap:wrap}
+.modal-filters{padding:0 20px 8px;display:flex;gap:6px;flex-wrap:wrap}
+.cat-chip,.filter-chip{padding:5px 12px;border-radius:14px;border:1px solid rgba(0,0,0,.08);background:var(--card);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--text-dim)}
+.cat-chip.active{background:var(--ochre);color:#fff;border-color:var(--ochre)}
+.filter-chip.active{background:var(--terra);color:#fff;border-color:var(--terra)}
+.modal-list{flex:1;overflow-y:auto;padding:8px 12px 20px}
+.recipe-card{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius);cursor:pointer;transition:all .15s;border:1.5px solid transparent}
+.recipe-card:hover{background:rgba(232,93,58,.04);border-color:var(--border)}
+.recipe-photo{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0;background:#f0ebe5}
+.recipe-info{flex:1;min-width:0}
+.recipe-name{font-size:14px;font-weight:700;color:var(--dark)}
+.recipe-meta{font-size:11px;color:var(--text-dim);margin-top:2px;display:flex;gap:8px}
+.recipe-tags{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
+.recipe-tag{font-size:10px;background:rgba(232,93,58,.08);color:var(--terra);padding:2px 7px;border-radius:6px;font-weight:600}
+.recipe-nothing{text-align:center;color:var(--text-dim);padding:40px 20px;font-size:14px}
+
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.detail-overlay.open{display:flex}
+.detail-modal{background:var(--bg);width:100%;max-width:520px;max-height:90vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:slideUp .25s ease-out;position:relative}
+@media(min-width:600px){.detail-overlay.open{align-items:center}.detail-modal{border-radius:20px;max-height:85vh}}
+.detail-photo{width:100%;height:220px;object-fit:cover;border-radius:20px 20px 0 0}
+.detail-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border:none;background:rgba(0,0,0,.4);border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;z-index:2}
+.detail-body{padding:20px;overflow-y:auto;flex:1}
+.detail-title{font-size:22px;font-weight:800;color:var(--dark);margin-bottom:4px}
+.detail-meta{font-size:13px;color:var(--text-dim);margin-bottom:16px;display:flex;gap:12px}
+.detail-meta .green{color:var(--green)}
+.detail-subtitle{font-size:14px;font-weight:700;color:var(--dark);margin:16px 0 8px}
+.detail-ingredients{list-style:none}
+.detail-ingredients li{font-size:13px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.04);display:flex;justify-content:space-between}
+.detail-ingredients li span{font-weight:600;color:var(--dark)}
+.detail-recipe{font-size:13px;line-height:1.7;white-space:pre-line;color:var(--text)}
+
+/* Smart menu modal content */
+.smart-desc{font-size:13px;color:var(--text-dim);margin-bottom:14px;line-height:1.5}
+.smart-input-row{display:flex;gap:8px;margin-bottom:10px;position:relative}
+.smart-input{flex:1;padding:10px 14px;border:1.5px solid rgba(0,0,0,.08);border-radius:10px;font-family:inherit;font-size:14px;outline:none;background:var(--bg);transition:border .2s}
+.smart-input:focus{border-color:var(--green)}
+.smart-add{padding:10px 16px;border-radius:10px;border:none;background:var(--green);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.smart-suggest{position:absolute;top:100%;left:0;right:60px;background:var(--card);border:1px solid rgba(0,0,0,.08);border-radius:0 0 10px 10px;max-height:180px;overflow-y:auto;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.smart-suggest-item{padding:8px 14px;font-size:13px;cursor:pointer}
+.smart-suggest-item:hover{background:rgba(16,185,129,.06)}
+.smart-suggest-item b{color:var(--green)}
+.smart-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.smart-chip{padding:3px 8px;border-radius:10px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.15);font-size:10px;font-weight:600;color:#047857;display:flex;align-items:center;gap:4px;animation:chipIn .2s}
+@keyframes chipIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.smart-chip .x{cursor:pointer;opacity:.5;font-size:14px;line-height:1}
+.smart-chip .x:hover{opacity:1}
+.smart-results{flex:1;overflow-y:auto;padding:0 12px 16px}
+.smart-results-title{font-size:12px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 6px}
+.smart-recipe{display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:var(--radius);cursor:pointer;transition:all .15s;border:1.5px solid transparent}
+.smart-recipe:hover{background:rgba(16,185,129,.04);border-color:rgba(16,185,129,.2)}
+.smart-recipe img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.smart-recipe .sr-info{flex:1;min-width:0}
+.smart-recipe .sr-name{font-size:14px;font-weight:700;color:var(--dark)}
+.smart-recipe .sr-meta{font-size:11px;color:var(--text-dim);margin-top:2px}
+.smart-recipe .sr-bar{height:4px;border-radius:2px;background:rgba(0,0,0,.06);margin-top:4px;overflow:hidden}
+.smart-recipe .sr-bar-fill{height:100%;border-radius:2px;background:var(--green);transition:width .3s}
+.smart-recipe .sr-pct{font-size:11px;font-weight:700;color:#047857;flex-shrink:0;min-width:36px;text-align:right}
+.smart-empty{text-align:center;padding:30px;color:var(--text-dim);font-size:13px}
+
+/* Match badge on recipe cards */
+.recipe-match{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.recipe-match.high{background:rgba(16,185,129,.12);color:#047857}
+.recipe-match.mid{background:rgba(212,160,82,.12);color:#92400E}
+.recipe-match.low{background:rgba(0,0,0,.04);color:var(--text-dim)}
+
+@media print{.toolbar,.modal-overlay,.detail-overlay,.footer,.saved-section,.smart-strip,.bottom-actions,.day-picker,.header,.welcome,.stats,.grid-hint{display:none!important}.cell{border:1px solid #ddd!important}.shopping-item input{display:none}body{background:#fff}}
+@media print{.print-shopping-only .week,.print-shopping-only .recipes-section{display:none!important}}
+@media print{.rcard-detail{display:block!important}.rcard-toggle{display:none!important}.rcard{break-inside:avoid;border:1px solid #ddd}}
+@media(max-width:768px){
+  h1{font-size:22px}
+  .subtitle{font-size:12px}
+  .day-picker{gap:4px;padding:10px 12px}
+  .day-btn{width:36px;height:36px;font-size:13px}
+  .welcome{padding:16px}
+  .welcome-title{font-size:16px;margin-bottom:12px}
+  .welcome-cards{gap:8px}
+  .welcome-card{padding:14px 10px}
+  .welcome-card .wc-name{font-size:13px}
+  .welcome-card .wc-desc{font-size:10px}
+  .toolbar{gap:6px;padding:6px 12px 12px}
+  .toolbar button{padding:6px 12px;font-size:12px}
+  .week{padding:0 6px 16px}
+  .col-group{font-size:9px;padding:6px 2px 3px;letter-spacing:1px}
+  .slot-header{font-size:7px;padding:2px 1px}
+  .day-label{font-size:10px}
+  .cell{aspect-ratio:1;border-radius:8px}
+  .cell .cell-name{font-size:7px}
+  .cell.empty-hint .hint-plus{font-size:14px}
+  .cell.empty-hint .hint-text{font-size:6px}
+  .cell .cell-remove{font-size:12px;top:1px;right:2px}
+  .grid-hint{font-size:12px;padding:4px 12px}
+  .stats{padding:4px 12px;gap:10px}
+  .stat{font-size:11px}
+  .recipes-section{padding:16px 6px 16px 6px!important}
+  .recipe-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .rcard-photo{height:120px}
+  .rcard-body{padding:10px}
+  .rcard-name{font-size:14px}
+  .shopping-section{padding:16px 6px 16px 6px!important}
+  .shopping-list{columns:1}
+  .bottom-actions{flex-wrap:wrap;padding:16px 12px 6px}
+  .bottom-btn{padding:10px 20px;font-size:13px}
+  .detail-photo{height:180px}
+  .footer{padding:16px 12px 24px}
+}
+@media(max-width:480px){
+  .welcome-cards{flex-direction:column;gap:6px}
+  .welcome-card{padding:12px 16px;flex-direction:row;gap:10px;max-width:none}
+  .welcome-card .wc-desc{display:none}
+  .recipe-grid{grid-template-columns:1fr;gap:8px}
+  .rcard-photo{height:140px}
+  .col-group{font-size:8px;letter-spacing:.5px}
+  .bottom-actions{gap:6px}
+  .bottom-btn{width:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Планета X</div>
+  <h1><span>Конструктор</span> меню</h1>
+  <div class="subtitle">Спланируйте питание на любое количество дней</div>
+</div>
+
+<div class="day-picker" id="day-picker"></div>
+
+<!-- Welcome screen -->
+<div class="welcome" id="welcome">
+  <div class="welcome-title">Как собрать меню?</div>
+  <div class="welcome-cards">
+    <div class="welcome-card" onclick="dismissWelcome()">
+      <div class="wc-name">Самостоятельно</div>
+      <div class="wc-desc">Выбирайте блюда, нажимая на ячейки</div>
+    </div>
+    <div class="welcome-card" onclick="dismissWelcome();randomFill()">
+      <div class="wc-name">Случайное</div>
+      <div class="wc-desc">Заполним случайными блюдами</div>
+    </div>
+    <div class="welcome-card" onclick="openSmartModal()">
+      <div class="wc-name">Умное меню</div>
+      <div class="wc-desc">Подберём из ваших продуктов</div>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar" id="toolbar" style="display:none">
+  <button onclick="goManual()">🍽 Самостоятельно</button>
+  <button onclick="randomFill()">🎲 Случайное</button>
+  <button onclick="openSmartModal()">🧊 Умное</button>
+  <button onclick="clearWeek()">Очистить</button>
+</div>
+
+<div class="stats" id="stats"></div>
+<div class="grid-hint" id="grid-hint" style="display:none"><b>Нажмите на ячейку</b>, чтобы выбрать блюдо из рецептов</div>
+
+<!-- Smart menu modal -->
+<div class="modal-overlay" id="smart-modal" onclick="if(event.target===this)closeSmartModal()">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <h2>🧊 Умное меню</h2>
+      <button class="modal-close" onclick="closeSmartModal()">&times;</button>
+    </div>
+    <div style="padding:14px 20px 6px">
+      <div class="smart-desc">Что есть в холодильнике?</div>
+      <div class="smart-input-row">
+        <input class="smart-input" id="fridge-input" type="text" placeholder="Начните вводить продукт..." oninput="onFridgeInput()" onkeydown="if(event.key==='Enter')addFridgeItem()">
+        <button class="smart-add" onclick="addFridgeItem()">+</button>
+        <div class="smart-suggest" id="fridge-suggest" style="display:none"></div>
+      </div>
+      <div class="smart-chips" id="fridge-chips"></div>
+    </div>
+    <div class="smart-results" id="smart-results"></div>
+  </div>
+</div>
+
+<div class="week">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="saved-section" id="saved-section" style="display:none">
+  <div class="section-title">Сохранённые меню</div>
+  <div class="saved-list" id="saved-list"></div>
+</div>
+
+<div class="recipes-section" id="recipes-section" style="display:none">
+  <div class="section-title">Рецепты выбранных блюд</div>
+  <div class="recipe-grid" id="recipes-grid"></div>
+</div>
+
+<div class="shopping-section">
+  <div class="section-title">Список покупок</div>
+  <div id="shopping-content"><div class="shopping-empty">Добавьте блюда в меню, чтобы увидеть список покупок</div></div>
+</div>
+
+<div class="bottom-actions" id="bottom-actions">
+  <button class="bottom-btn save" onclick="saveMenu()">Сохранить меню</button>
+  <button class="bottom-btn print" onclick="printAll()">Распечатать всё</button>
+  <button class="bottom-btn print" onclick="printShoppingOnly()">Распечатать только список покупок</button>
+</div>
+
+<div class="footer">Конструктор меню · <a href="index.html">Планета X</a></div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">Выберите блюдо</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-search"><input type="text" id="search-input" placeholder="Поиск по названию..." oninput="renderRecipeList()"></div>
+    <div class="modal-cats" id="modal-cats"></div>
+    <div class="modal-filters" id="modal-filters"></div>
+    <div class="modal-list" id="recipe-list"></div>
+  </div>
+</div>
+
+<div class="detail-overlay" id="detail" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal">
+    <img class="detail-photo" id="detail-photo" src="" alt="">
+    <button class="detail-close" onclick="closeDetail()">&times;</button>
+    <div class="detail-body">
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-meta" id="detail-meta"></div>
+      <div class="detail-subtitle">Ингредиенты</div>
+      <ul class="detail-ingredients" id="detail-ingredients"></ul>
+      <div class="detail-subtitle">Приготовление</div>
+      <div class="detail-recipe" id="detail-recipe"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const RECIPE_DATA = {"version":2,"categories":[{"key":"protein","name":"Белковые блюда","emoji":"🥩"},{"key":"soup","name":"Супы","emoji":"🍲"},{"key":"salad","name":"Салаты","emoji":"🥗"},{"key":"side","name":"Гарниры","emoji":"🥔"},{"key":"sauce","name":"Соусы","emoji":"🫙"},{"key":"dessert","name":"Десерты","emoji":"🍰"},{"key":"baking","name":"Тесто и выпечка","emoji":"🥞"}],"recipes":[{"id":"kotlety-domashnie","name":"Котлеты домашние","photo":"img/kotlety-domashnie.jpg","category":"protein","meal":["lunch","dinner"],"tags":["мясо","классика","дети","заморозка"],"time":35,"servings":15,"ingredients":[{"name":"Фарш свинина+говядина","amount":500,"unit":"г"},{"name":"Лук репчатый","amount":200,"unit":"г"},{"name":"Хлеб белый","amount":100,"unit":"г"},{"name":"Молоко","amount":100,"unit":"мл"},{"name":"Яйцо","amount":1,"unit":"шт"},{"name":"Чеснок","amount":2,"unit":"зуб."},{"name":"Мука","amount":50,"unit":"г"},{"name":"Масло растительное","amount":50,"unit":"мл"}],"recipe":"1. Хлеб заливаем молоком на 10 мин.\n2. Лук и чеснок мелко рубим.\n3. Соединяем фарш, отжатый хлеб, лук, чеснок, яйцо, соль и перец. Вымешиваем 3-4 мин.\n4. Мокрыми руками формируем котлеты ~60-70 г, обваливаем в муке.\n5. На сильном огне обжариваем по 2-3 мин с каждой стороны.\n6. Убавляем огонь, под крышкой ещё 10-12 мин.\n\n❄️ Заморозка: сырые на доске → 2-3 ч → в пакет. Жарить из морозилки 15-18 мин. Срок: 3 мес."},{"id":"kurica-v-duhovke","name":"Курица в духовке целиком","photo":"img/kurica-v-duhovke.jpg","category":"protein","meal":["dinner"],"tags":["мясо","классика"],"time":80,"servings":6,"ingredients":[{"name":"Курица целая","amount":1.5,"unit":"кг"},{"name":"Чеснок","amount":6,"unit":"зуб."},{"name":"Масло сливочное","amount":50,"unit":"г"},{"name":"Паприка","amount":1,"unit":"ч.л."},{"name":"Розмарин сушёный","amount":1,"unit":"ч.л."},{"name":"Лимон","amount":0.5,"unit":"шт"},{"name":"Картофель","amount":500,"unit":"г"},{"name":"Морковь","amount":2,"unit":"шт"}],"recipe":"1. Курицу обсушиваем.\n2. Масло + чеснок + паприка + соль + перец + розмарин → натираем курицу снаружи и под кожу.\n3. Внутрь — лимон и чеснок.\n4. Картофель и морковь крупно, на дно формы, курицу сверху.\n5. 190°C, 1 ч 10 мин, поливая соком каждые 20 мин.\n\n❄️ Заморозка: мясо без костей порционно. Срок: 3 мес."},{"id":"befstroganov","name":"Бефстроганов","photo":"img/befstroganov.jpg","category":"protein","meal":["dinner"],"tags":["мясо","классика"],"time":40,"servings":4,"ingredients":[{"name":"Говядина (вырезка)","amount":500,"unit":"г"},{"name":"Шампиньоны","amount":200,"unit":"г"},{"name":"Лук репчатый","amount":150,"unit":"г"},{"name":"Сметана 20%","amount":200,"unit":"г"},{"name":"Мука","amount":15,"unit":"г"},{"name":"Масло сливочное","amount":30,"unit":"г"},{"name":"Масло растительное","amount":30,"unit":"мл"}],"recipe":"1. Говядину — полоски 5-6 см поперёк волокон.\n2. Обжариваем мясо порциями на сильном огне по 2-3 мин.\n3. На сливочном масле — лук 3 мин, грибы 5 мин.\n4. Присыпаем мукой, вливаем сметану, тушим 2 мин.\n5. Возвращаем мясо, томим 5 мин на слабом огне.\n\nПодаём с пюре или гречкой.\n\n❄️ Заморозка: готовое блюдо целиком. Срок: 2 мес."},{"id":"losos-v-duhovke","name":"Лосось в духовке","photo":"img/losos-v-duhovke.jpg","category":"protein","meal":["dinner"],"tags":["рыба","быстрое","полезное"],"time":20,"servings":2,"ingredients":[{"name":"Филе лосося","amount":400,"unit":"г"},{"name":"Лимон","amount":0.5,"unit":"шт"},{"name":"Масло оливковое","amount":15,"unit":"мл"},{"name":"Чеснок","amount":2,"unit":"зуб."},{"name":"Укроп","amount":1,"unit":"пучок"},{"name":"Масло сливочное","amount":20,"unit":"г"}],"recipe":"1. Филе обсушиваем, солим, перчим на пергаменте кожей вниз.\n2. Поливаем маслом и лимоном. Сверху — чеснок и укроп.\n3. Кусочек сливочного масла на каждый стейк.\n4. 200°C — 12-15 мин. Лосось должен быть слегка розовым внутри!\n\n❄️ Заморозка: сырое филе в маринаде. Срок: 3 мес."},{"id":"karbonara","name":"Паста Карбонара","photo":"img/karbonara.jpg","category":"protein","meal":["lunch","dinner"],"tags":["итальянская","быстрое"],"time":25,"servings":2,"ingredients":[{"name":"Спагетти","amount":200,"unit":"г"},{"name":"Гуанчиале (или панчетта)","amount":150,"unit":"г"},{"name":"Пекорино Романо","amount":80,"unit":"г"},{"name":"Яичные желтки","amount":4,"unit":"шт"},{"name":"Перец чёрный","amount":1,"unit":"ч.л."}],"recipe":"1. Гуанчиале — на ХОЛОДНУЮ сковороду, средний огонь, 7-8 мин до хруста.\n2. Соус: желтки + пекорино + перец → густая кремовая масса.\n3. Спагетти аль денте, сохраняем стакан воды.\n4. СНИМАЕМ сковороду с огня! Спагетти к гуанчиале, добавляем соус, быстро мешаем.\n\nНикаких сливок!\n\n❄️ Не замораживается. Обжаренный гуанчиале — 2 мес."},{"id":"borsch","name":"Борщ","photo":"img/borsch.jpg","category":"soup","meal":["lunch"],"tags":["суп","классика","заморозка"],"time":120,"servings":6,"ingredients":[{"name":"Говядина на кости","amount":500,"unit":"г"},{"name":"Свёкла","amount":300,"unit":"г"},{"name":"Капуста белокочанная","amount":300,"unit":"г"},{"name":"Картофель","amount":300,"unit":"г"},{"name":"Морковь","amount":150,"unit":"г"},{"name":"Лук репчатый","amount":150,"unit":"г"},{"name":"Помидоры","amount":200,"unit":"г"},{"name":"Чеснок","amount":3,"unit":"зуб."},{"name":"Уксус","amount":1,"unit":"ст.л."},{"name":"Масло растительное","amount":30,"unit":"мл"},{"name":"Сметана","amount":100,"unit":"г"}],"recipe":"1. Мясо варим 1.5 ч, снимая пену.\n2. Свёклу трём, тушим с маслом и уксусом 15 мин.\n3. Лук+морковь обжариваем, добавляем помидоры, тушим 5 мин.\n4. В бульон — картофель 10 мин, затем капусту, свёклу, зажарку — ещё 10 мин.\n5. Чеснок, лавровый лист, настояться 30 мин.\n\n❄️ Заморозка: без сметаны, порционно. Срок: 4 мес."},{"id":"kurinyj-sup","name":"Куриный суп с лапшой","photo":"img/kurinyj-sup.jpg","category":"soup","meal":["lunch"],"tags":["суп","быстрое","дети"],"time":50,"servings":6,"ingredients":[{"name":"Курица (бёдра)","amount":600,"unit":"г"},{"name":"Лапша яичная","amount":150,"unit":"г"},{"name":"Картофель","amount":250,"unit":"г"},{"name":"Морковь","amount":150,"unit":"г"},{"name":"Лук репчатый","amount":150,"unit":"г"},{"name":"Масло сливочное","amount":15,"unit":"г"},{"name":"Укроп","amount":1,"unit":"пучок"}],"recipe":"1. Курицу варим 40 мин, снимая пену.\n2. Лук+морковь обжариваем на сливочном масле 5 мин.\n3. Мясо снимаем, бульон процеживаем.\n4. Картофель кубиками — 10 мин.\n5. Зажарка + лапша — 5-7 мин.\n6. Мясо, чеснок, лавровый лист, настояться 10 мин.\n\n❄️ Заморозка: основу БЕЗ лапши. Лапшу варить свежую. Срок: 3 мес."},{"id":"harcho","name":"Харчо","photo":"img/harcho.jpg","category":"soup","meal":["lunch"],"tags":["суп","грузинская","острое"],"time":120,"servings":6,"ingredients":[{"name":"Говядина (грудинка)","amount":500,"unit":"г"},{"name":"Рис круглозёрный","amount":100,"unit":"г"},{"name":"Лук репчатый","amount":250,"unit":"г"},{"name":"Чеснок","amount":4,"unit":"зуб."},{"name":"Томатная паста","amount":2,"unit":"ст.л."},{"name":"Ткемали","amount":2,"unit":"ст.л."},{"name":"Грецкие орехи","amount":80,"unit":"г"},{"name":"Хмели-сунели","amount":1,"unit":"ст.л."},{"name":"Кинза","amount":1,"unit":"пучок"}],"recipe":"1. Говядину кусками варим 1.5 ч.\n2. Лук обжариваем, добавляем томатную пасту и ткемали — 5 мин.\n3. Орехи измельчаем в крошку.\n4. В бульон — рис 10 мин.\n5. Зажарка, орехи, специи — ещё 10 мин.\n6. Чеснок, настояться 15 мин. Подаём с кинзой.\n\n❄️ Заморозка: порционно. Срок: 3 мес."},{"id":"gribnoj-krem-sup","name":"Грибной крем-суп","photo":"img/gribnoj-krem-sup.jpg","category":"soup","meal":["lunch"],"tags":["суп","грибы"],"time":40,"servings":4,"ingredients":[{"name":"Шампиньоны","amount":500,"unit":"г"},{"name":"Лук репчатый","amount":150,"unit":"г"},{"name":"Картофель","amount":200,"unit":"г"},{"name":"Сливки 20%","amount":200,"unit":"мл"},{"name":"Масло сливочное","amount":30,"unit":"г"},{"name":"Чеснок","amount":2,"unit":"зуб."},{"name":"Тимьян сушёный","amount":1,"unit":"ч.л."}],"recipe":"1. Грибы пластинками, обжариваем на масле 10 мин до выпаривания.\n2. Лук 3 мин, добавляем картофель, заливаем 800 мл воды, тимьян, чеснок — 15 мин.\n3. Пробиваем блендером.\n4. Сливки, мускатный орех, соль — прогреваем, не кипятим.\n\n❄️ Заморозка: БЕЗ сливок. Сливки добавить при разогреве. Срок: 3 мес."},{"id":"tom-yam","name":"Том Ям","photo":"img/tom-yam.jpg","category":"soup","meal":["lunch","dinner"],"tags":["суп","азиатская","острое"],"time":30,"servings":4,"ingredients":[{"name":"Креветки крупные","amount":300,"unit":"г"},{"name":"Кокосовое молоко","amount":200,"unit":"мл"},{"name":"Шампиньоны","amount":150,"unit":"г"},{"name":"Помидоры черри","amount":8,"unit":"шт"},{"name":"Лемонграсс","amount":2,"unit":"стебля"},{"name":"Паста том ям","amount":3,"unit":"ст.л."},{"name":"Рыбный соус","amount":3,"unit":"ст.л."},{"name":"Лайм (сок)","amount":4,"unit":"ст.л."},{"name":"Кинза","amount":1,"unit":"пучок"}],"recipe":"1. Лемонграсс отбить, нарезать. Кипятим 1 л воды с ароматической базой 5-7 мин.\n2. Добавляем пасту том ям, грибы — 3 мин.\n3. Кокосовое молоко, креветки, черри — 3-4 мин.\n4. Снимаем с огня. Рыбный соус + лайм + сахар. Кинза.\n\n❄️ Заморозка: основу БЕЗ креветок и кокосового молока. Срок: 2 мес."},{"id":"salat-cezar","name":"Салат Цезарь","photo":"img/salat-cezar.jpg","category":"salad","meal":["lunch","dinner"],"tags":["салат","классика"],"time":25,"servings":4,"ingredients":[{"name":"Куриная грудка","amount":300,"unit":"г"},{"name":"Салат романо","amount":200,"unit":"г"},{"name":"Хлеб белый","amount":150,"unit":"г"},{"name":"Пармезан","amount":80,"unit":"г"},{"name":"Помидоры черри","amount":8,"unit":"шт"},{"name":"Майонез","amount":100,"unit":"г"},{"name":"Чеснок","amount":1,"unit":"зуб."},{"name":"Лимон","amount":0.5,"unit":"шт"},{"name":"Горчица","amount":1,"unit":"ч.л."}],"recipe":"1. Грудку жарим 6 мин с каждой стороны, нарезаем полосками.\n2. Крутоны: хлеб кубиками, 180°C, 10 мин.\n3. Соус: майонез + пармезан + чеснок + лимон + горчица.\n4. Салат рвём руками, курица, крутоны, черри. Соус, стружка пармезана.\n\n❄️ Не замораживается. Курицу и соус можно заморозить отдельно."},{"id":"olivje","name":"Оливье","photo":"img/olivje.jpg","category":"salad","meal":["lunch","dinner"],"tags":["салат","классика"],"time":40,"servings":6,"ingredients":[{"name":"Картофель","amount":400,"unit":"г"},{"name":"Морковь","amount":200,"unit":"г"},{"name":"Яйцо","amount":4,"unit":"шт"},{"name":"Колбаса варёная","amount":300,"unit":"г"},{"name":"Огурцы маринованные","amount":200,"unit":"г"},{"name":"Горошек консервированный","amount":200,"unit":"г"},{"name":"Майонез","amount":200,"unit":"г"}],"recipe":"1. Картофель и морковь отвариваем в кожуре 25-30 мин. Яйца — 10 мин.\n2. Всё остужаем, чистим, нарезаем мелким кубиком 7-8 мм.\n3. Колбасу и огурцы — таким же кубиком.\n4. Смешиваем, заправляем майонезом, в холодильник на 2 ч.\n\n❄️ Не замораживается. Хранить до 3 дней в холодильнике."},{"id":"grecheskij-salat","name":"Греческий салат","photo":"img/grecheskij-salat.jpg","category":"salad","meal":["lunch","dinner"],"tags":["салат","быстрое","полезное"],"time":15,"servings":4,"ingredients":[{"name":"Помидоры","amount":300,"unit":"г"},{"name":"Огурцы","amount":200,"unit":"г"},{"name":"Перец болгарский","amount":1,"unit":"шт"},{"name":"Лук красный","amount":100,"unit":"г"},{"name":"Маслины каламата","amount":80,"unit":"г"},{"name":"Сыр фета","amount":200,"unit":"г"},{"name":"Масло оливковое","amount":60,"unit":"мл"},{"name":"Орегано","amount":1,"unit":"ч.л."}],"recipe":"1. Овощи крупно: помидоры дольками, огурцы толсто, перец полосками, лук полукольцами.\n2. Маслины целиком.\n3. Фету — цельным куском сверху или кубиками 2 см.\n4. Оливковое масло, орегано, соль, перец.\n\nНе мешать! Подаём сразу.\n\n❄️ Не замораживается."},{"id":"vinegret","name":"Винегрет","photo":"img/vinegret.jpg","category":"salad","meal":["lunch","dinner"],"tags":["салат","классика","полезное"],"time":40,"servings":6,"ingredients":[{"name":"Свёкла","amount":300,"unit":"г"},{"name":"Картофель","amount":200,"unit":"г"},{"name":"Морковь","amount":150,"unit":"г"},{"name":"Огурцы маринованные","amount":150,"unit":"г"},{"name":"Горошек зелёный","amount":150,"unit":"г"},{"name":"Лук репчатый","amount":80,"unit":"г"},{"name":"Масло растительное","amount":45,"unit":"мл"}],"recipe":"1. Свёклу, картофель, морковь отвариваем в кожуре. Остужаем.\n2. Всё кубиком 5-7 мм.\n3. Секрет: свёклу отдельно заправляем маслом — не окрасит остальное.\n4. Огурцы кубиком, горошек слить, лук мелко.\n5. Смешиваем, заправляем маслом, солим.\n\n❄️ Можно заморозить нарезанные отварные овощи. Срок: 2 мес."},{"id":"kapreze","name":"Капрезе","photo":"img/kapreze.jpg","category":"salad","meal":["lunch","dinner","snack"],"tags":["салат","итальянская","быстрое"],"time":5,"servings":4,"ingredients":[{"name":"Моцарелла буфала","amount":250,"unit":"г"},{"name":"Помидоры","amount":300,"unit":"г"},{"name":"Базилик свежий","amount":1,"unit":"пучок"},{"name":"Масло оливковое","amount":45,"unit":"мл"}],"recipe":"1. Помидоры и моцареллу — кружочками 7-8 мм.\n2. Чередуем внахлёст: помидор → моцарелла.\n3. Между ними — листики базилика.\n4. Оливковое масло, соль, перец.\n\nЧетыре ингредиента, две минуты, идеально.\n\n❄️ Не замораживается."},{"id":"kartofelnoe-pure","name":"Картофельное пюре","photo":"img/kartofelnoe-pure.jpg","category":"side","meal":["lunch","dinner"],"tags":["гарнир","классика","дети","быстрое"],"time":30,"servings":4,"ingredients":[{"name":"Картофель","amount":1000,"unit":"г"},{"name":"Молоко","amount":200,"unit":"мл"},{"name":"Масло сливочное","amount":50,"unit":"г"}],"recipe":"1. Картофель чистим, четвертинками, заливаем холодной водой, солим.\n2. Варим 20-25 мин до мягкости.\n3. Сливаем воду полностью.\n4. Разминаем толкушкой. НЕ блендером!\n5. Добавляем ТЁПЛОЕ молоко и масло, мешаем до однородности.\n\n❄️ Заморозка: порционно, добавить больше масла. Срок: 2 мес."},{"id":"kartoshka-derevenski","name":"Картошка по-деревенски","photo":"img/kartoshka-derevenski.jpg","category":"side","meal":["lunch","dinner"],"tags":["гарнир","быстрое","дети"],"time":40,"servings":4,"ingredients":[{"name":"Картофель","amount":1000,"unit":"г"},{"name":"Масло растительное","amount":45,"unit":"мл"},{"name":"Паприка","amount":1,"unit":"ч.л."},{"name":"Чеснок сушёный","amount":1,"unit":"ч.л."},{"name":"Орегано","amount":0.5,"unit":"ч.л."}],"recipe":"1. Картофель моем, НЕ чистим — кожура даёт хруст! Дольками по 6-8 частей.\n2. Масло + все специи → перемешиваем с дольками.\n3. На противень с пергаментом в один слой кожурой вниз.\n4. 200°C — 35-40 мин, перевернуть на середине.\n\n❄️ Заморозка: готовые дольки на доске → в пакет. Срок: 3 мес."},{"id":"rizotto-griby","name":"Ризотто с грибами","photo":"img/rizotto-griby.jpg","category":"side","meal":["dinner"],"tags":["итальянская","грибы"],"time":40,"servings":4,"ingredients":[{"name":"Рис арборио","amount":300,"unit":"г"},{"name":"Шампиньоны","amount":300,"unit":"г"},{"name":"Лук репчатый","amount":100,"unit":"г"},{"name":"Вино белое сухое","amount":100,"unit":"мл"},{"name":"Бульон куриный","amount":800,"unit":"мл"},{"name":"Пармезан","amount":60,"unit":"г"},{"name":"Масло сливочное","amount":40,"unit":"г"},{"name":"Масло оливковое","amount":30,"unit":"мл"}],"recipe":"1. Бульон держим горячим!\n2. Грибы пластинками, обжариваем 5-7 мин, откладываем.\n3. Лук на масле 3 мин, рис — помешивая 2 мин.\n4. Вино — мешаем до впитывания.\n5. Бульон по половнику, 18-20 мин, помешивая.\n6. Грибы, снимаем с огня, пармезан + масло. Накрыть на 2 мин.\n\n❄️ Лучше заморозить грибную заготовку отдельно. Срок: 3 мес."},{"id":"ovoschi-gril","name":"Овощи на гриле","photo":"img/ovoschi-gril.jpg","category":"side","meal":["lunch","dinner"],"tags":["гарнир","полезное","гриль"],"time":25,"servings":4,"ingredients":[{"name":"Кабачок","amount":1,"unit":"шт"},{"name":"Баклажан","amount":1,"unit":"шт"},{"name":"Перец болгарский","amount":2,"unit":"шт"},{"name":"Помидоры","amount":2,"unit":"шт"},{"name":"Лук красный","amount":1,"unit":"шт"},{"name":"Масло оливковое","amount":45,"unit":"мл"},{"name":"Бальзамический уксус","amount":15,"unit":"мл"},{"name":"Базилик свежий","amount":1,"unit":"пучок"}],"recipe":"1. Овощи крупно: кабачок/баклажан кружочками, перцы четвертинками, помидоры пополам, лук кольцами.\n2. Масло + чеснок + соль → смазываем овощи.\n3. Гриль на сильном огне, не двигаем 3-4 мин → переворачиваем.\n4. Сбрызгиваем бальзамиком, базилик.\n\n❄️ Заморозка: порционно. Срок: 2 мес."},{"id":"ris-otvarnoj","name":"Рис отварной рассыпчатый","photo":"img/ris-otvarnoj.jpg","category":"side","meal":["lunch","dinner"],"tags":["гарнир","быстрое","базовое"],"time":25,"servings":4,"ingredients":[{"name":"Рис длиннозёрный","amount":300,"unit":"г"},{"name":"Масло сливочное","amount":20,"unit":"г"}],"recipe":"1. Рис промываем 5-6 раз до прозрачной воды.\n2. 450 мл воды, солим, кипятим.\n3. Засыпаем рис, мешаем один раз.\n4. Минимум огня, крышка плотно — 15 мин. НЕ открываем!\n5. Снимаем с огня, 10 мин под крышкой.\n6. Масло, рыхлим вилкой.\n\n❄️ Заморозка: плоские порции в пакетах. В микроволновке с ложкой воды. Срок: 3 мес."},{"id":"sous-alfredo","name":"Соус Альфредо","photo":"img/sous-alfredo.jpg","category":"sauce","meal":["lunch","dinner"],"tags":["соус","итальянская","быстрое"],"time":15,"servings":4,"ingredients":[{"name":"Сливки 33%","amount":300,"unit":"мл"},{"name":"Пармезан","amount":100,"unit":"г"},{"name":"Масло сливочное","amount":50,"unit":"г"},{"name":"Чеснок","amount":2,"unit":"зуб."}],"recipe":"1. Масло растапливаем, чеснок — 30 сек.\n2. Сливки, доводим до лёгкого кипения.\n3. Пармезан порциями, помешивая — 3-4 мин.\n4. Мускатный орех, соль, перец.\n\nСразу смешиваем с горячей пастой.\n\n❄️ Заморозка: в контейнерах. При разогреве добавить ложку сливок. Срок: 2 мес."},{"id":"chimichurri","name":"Чимичурри","photo":"img/chimichurri.jpg","category":"sauce","meal":["lunch","dinner"],"tags":["соус","аргентинская","быстрое"],"time":10,"servings":6,"ingredients":[{"name":"Петрушка свежая","amount":50,"unit":"г"},{"name":"Орегано свежий","amount":10,"unit":"г"},{"name":"Чеснок","amount":4,"unit":"зуб."},{"name":"Перец чили","amount":1,"unit":"шт"},{"name":"Масло оливковое","amount":100,"unit":"мл"},{"name":"Уксус красный винный","amount":30,"unit":"мл"}],"recipe":"1. Петрушку и орегано мелко рубим НОЖОМ, не блендером!\n2. Чеснок и чили мелко.\n3. Смешиваем, заливаем маслом и уксусом, солим.\n4. Настояться мин. 30 мин, лучше 2 ч.\n\nАргентинский соус к мясу на гриле.\n\n❄️ Заморозка: в формочках для льда. Кубик на горячий стейк! Срок: 3 мес."},{"id":"adzhika","name":"Аджика домашняя","photo":"img/adzhika.jpg","category":"sauce","meal":["lunch","dinner"],"tags":["соус","грузинская","острое","заморозка"],"time":40,"servings":10,"ingredients":[{"name":"Перец болгарский красный","amount":500,"unit":"г"},{"name":"Перец чили","amount":2,"unit":"шт"},{"name":"Помидоры","amount":500,"unit":"г"},{"name":"Чеснок","amount":100,"unit":"г"},{"name":"Уксус 9%","amount":2,"unit":"ст.л."},{"name":"Хмели-сунели","amount":1,"unit":"ст.л."}],"recipe":"1. У перцев удаляем семена.\n2. Всё через мясорубку.\n3. В кастрюлю + соль + сахар + специи, средний огонь.\n4. Кипятим 20 мин, помешивая.\n5. Уксус в конце. Разливаем по стерилизованным банкам.\n\n❄️ Заморозка: в формочках или контейнерах. В банках — 12 мес, в морозилке — 6 мес."},{"id":"pesto","name":"Песто","photo":"img/pesto.jpg","category":"sauce","meal":["lunch","dinner"],"tags":["соус","итальянская","быстрое"],"time":10,"servings":4,"ingredients":[{"name":"Базилик свежий","amount":50,"unit":"г"},{"name":"Кедровые орехи","amount":30,"unit":"г"},{"name":"Пармезан","amount":50,"unit":"г"},{"name":"Чеснок","amount":1,"unit":"зуб."},{"name":"Масло оливковое","amount":100,"unit":"мл"},{"name":"Лимон (сок)","amount":1,"unit":"ч.л."}],"recipe":"1. Орехи подсушиваем на сухой сковороде 2-3 мин. Следите — горят мгновенно!\n2. Блендер: базилик, орехи, пармезан, чеснок — 15 сек.\n3. Масло тонкой струёй, не до гладкости.\n4. Лимонный сок, соль.\n\nК пасте, на брускетту, в салат.\n\n❄️ Заморозка: в формочках для льда. 1 кубик = 1 порция пасты. Срок: 4 мес."},{"id":"guakamole","name":"Гуакамоле","photo":"img/guakamole.jpg","category":"sauce","meal":["snack"],"tags":["соус","мексиканская","быстрое","полезное"],"time":10,"servings":4,"ingredients":[{"name":"Авокадо","amount":3,"unit":"шт"},{"name":"Лайм (сок)","amount":1,"unit":"шт"},{"name":"Помидор","amount":1,"unit":"шт"},{"name":"Лук красный","amount":50,"unit":"г"},{"name":"Кинза","amount":1,"unit":"пучок"},{"name":"Перец чили","amount":0.5,"unit":"шт"},{"name":"Чеснок","amount":1,"unit":"зуб."}],"recipe":"1. Авокадо в миску, сразу поливаем лаймом.\n2. Разминаем вилкой — оставляем кусочки!\n3. Помидор мелко (без семян), лук мелко, кинзу рубим, чили без семян.\n4. Смешиваем с чесноком, солим.\n\nПодаём с начос или тако.\n\n❄️ Заморозка: в пакетах без воздуха. Добавить свежий лайм при разморозке. Срок: 2 мес."},{"id":"bananovyj-hleb","name":"Банановый хлеб","photo":"img/bananovyj-hleb.jpg","category":"dessert","meal":["breakfast","snack"],"tags":["десерт","выпечка","дети"],"time":70,"servings":8,"ingredients":[{"name":"Бананы перезрелые","amount":3,"unit":"шт"},{"name":"Масло сливочное","amount":80,"unit":"г"},{"name":"Сахар","amount":150,"unit":"г"},{"name":"Яйцо","amount":1,"unit":"шт"},{"name":"Мука","amount":200,"unit":"г"},{"name":"Разрыхлитель","amount":1,"unit":"ч.л."},{"name":"Грецкие орехи","amount":60,"unit":"г"}],"recipe":"1. 175°C. Форму 23x13 см смазать или пергамент.\n2. Бананы разминаем вилкой.\n3. Масло + сахар + яйцо + ваниль, перемешиваем.\n4. Разрыхлитель, соль, мука — мешаем аккуратно, с комочками ОК. Орехи.\n5. В форму, 55-65 мин. Зубочистка сухая = готово.\n\n❄️ Заморозка: порционно в плёнке. Срок: 3 мес."},{"id":"sharlotka","name":"Шарлотка","photo":"img/sharlotka.jpg","category":"dessert","meal":["snack"],"tags":["десерт","выпечка","классика","дети"],"time":55,"servings":8,"ingredients":[{"name":"Яйцо","amount":4,"unit":"шт"},{"name":"Сахар","amount":180,"unit":"г"},{"name":"Мука","amount":160,"unit":"г"},{"name":"Яблоки кисло-сладкие","amount":4,"unit":"шт"},{"name":"Корица","amount":1,"unit":"ч.л."},{"name":"Масло сливочное","amount":20,"unit":"г"}],"recipe":"1. 180°C. Форму смазать, присыпать мукой.\n2. Яблоки — тонкие дольки.\n3. Яйца + сахар взбиваем 5-7 мин до белой пышной массы.\n4. Мука лопаткой в 2-3 приёма, движения снизу вверх.\n5. Яблоки + корица в форму, залить тестом.\n6. 35-45 мин. Не открывать первые 25 мин!\n\n❄️ Заморозка: порционно в плёнке. Срок: 2 мес."},{"id":"syrniki","name":"Сырники","photo":"img/syrniki.jpg","category":"dessert","meal":["breakfast"],"tags":["десерт","классика","дети","быстрое"],"time":25,"servings":10,"ingredients":[{"name":"Творог 9%","amount":400,"unit":"г"},{"name":"Яйцо","amount":1,"unit":"шт"},{"name":"Сахар","amount":30,"unit":"г"},{"name":"Мука","amount":45,"unit":"г"},{"name":"Масло растительное","amount":30,"unit":"мл"},{"name":"Сметана","amount":50,"unit":"г"}],"recipe":"1. Главное — сухой творог! Влажный откинуть на сито.\n2. Разминаем, добавляем яйцо, сахар, ваниль, соль.\n3. Мука 3 ст.л. — тесто мягкое, чуть липкое.\n4. Колбаска → 10 шайбочек 1.5 см, обваливаем в муке.\n5. Средний огонь, 3-4 мин с каждой стороны.\n\nСо сметаной или мёдом.\n\n❄️ Заморозка: сырые или обжаренные. Сырые жарить из морозилки! Срок: 2 мес."},{"id":"chizkejk","name":"Чизкейк","photo":"img/chizkejk.jpg","category":"dessert","meal":["snack"],"tags":["десерт","классика"],"time":90,"servings":10,"ingredients":[{"name":"Песочное печенье","amount":250,"unit":"г"},{"name":"Масло сливочное","amount":100,"unit":"г"},{"name":"Сливочный сыр","amount":600,"unit":"г"},{"name":"Сахар","amount":150,"unit":"г"},{"name":"Сметана 20%","amount":200,"unit":"г"},{"name":"Яйцо","amount":3,"unit":"шт"},{"name":"Мука","amount":30,"unit":"г"},{"name":"Лимон (сок)","amount":1,"unit":"ст.л."}],"recipe":"1. 160°C. Форму 20-22 см оборачиваем фольгой.\n2. Печенье в крошку + масло → на дно, в морозилку на 15 мин.\n3. Сыр комнатной температуры + сахар, взбиваем 2-3 мин.\n4. Сметана, ваниль, лимон, мука. Яйца по одному на низкой скорости.\n5. На водяной бане 60-70 мин. Центр покачивается = готово.\n6. Остужаем в духовке 1 ч, затем в холодильник на 4+ ч.\n\n❄️ Заморозка: без декора. Срок: 3 мес."},{"id":"chia-puding","name":"Чиа-пудинг","photo":"img/chia-puding.jpg","category":"dessert","meal":["breakfast","snack"],"tags":["десерт","полезное","быстрое"],"time":10,"servings":4,"ingredients":[{"name":"Семена чиа","amount":60,"unit":"г"},{"name":"Кокосовое молоко","amount":400,"unit":"мл"},{"name":"Мёд","amount":2,"unit":"ст.л."},{"name":"Ягоды свежие","amount":150,"unit":"г"},{"name":"Гранола","amount":60,"unit":"г"}],"recipe":"1. Кокосовое молоко + мёд + ваниль, перемешать.\n2. Всыпать чиа, перемешать. Через 5 мин ещё раз. Через 10 мин ещё раз.\n3. В холодильник мин. 4 ч, лучше на ночь.\n4. Сверху — ягоды, гранола, кокосовая стружка.\n\n❄️ Заморозка: базовый пудинг без топпинга. Срок: 2 мес."},{"id":"bliny","name":"Блины на молоке","photo":"img/bliny.jpg","category":"baking","meal":["breakfast"],"tags":["выпечка","классика","дети"],"time":40,"servings":16,"ingredients":[{"name":"Молоко","amount":500,"unit":"мл"},{"name":"Яйцо","amount":2,"unit":"шт"},{"name":"Мука","amount":200,"unit":"г"},{"name":"Сахар","amount":30,"unit":"г"},{"name":"Масло растительное","amount":45,"unit":"мл"},{"name":"Масло сливочное","amount":30,"unit":"г"}],"recipe":"1. Яйца + сахар + соль. Треть тёплого молока, мука → густое тесто.\n2. Остальное молоко, перемешивая. Масло прямо в тесто.\n3. Тесто отдыхает 15-20 мин.\n4. Сковороду на средний огонь, первый раз смазать.\n5. Тонко, 1-1.5 мин, переворачиваем — 30-40 сек.\n6. Смазываем сливочным маслом.\n\n❄️ Заморозка: стопкой по 5-6 шт с плёнкой между. Срок: 2 мес."},{"id":"pizza","name":"Пицца домашняя","photo":"img/pizza.jpg","category":"baking","meal":["lunch","dinner"],"tags":["выпечка","итальянская","дети"],"time":90,"servings":8,"ingredients":[{"name":"Мука","amount":400,"unit":"г"},{"name":"Дрожжи сухие","amount":7,"unit":"г"},{"name":"Масло оливковое","amount":45,"unit":"мл"},{"name":"Томатная паста","amount":3,"unit":"ст.л."},{"name":"Моцарелла","amount":250,"unit":"г"},{"name":"Ветчина","amount":150,"unit":"г"},{"name":"Помидоры","amount":2,"unit":"шт"},{"name":"Чеснок","amount":2,"unit":"зуб."},{"name":"Базилик свежий","amount":1,"unit":"пучок"}],"recipe":"1. Дрожжи + сахар в тёплой воде 10 мин.\n2. Мука + соль + дрожжевая вода + масло, замешиваем 7-10 мин.\n3. В тёплом месте 1-1.5 ч (до ×2).\n4. Соус: томатная паста + чеснок + масло + орегано.\n5. Раскатываем 30 см, на пергамент. Соус, моцарелла, начинка.\n6. 250°C (максимум), 10-12 мин.\n\n❄️ Заморозка: тесто шарами (3 мес) или собранная пицца (1.5 мес). Из морозилки в духовку 220°C, 15-18 мин."},{"id":"hachapuri","name":"Хачапури по-имеретински","photo":"img/hachapuri.jpg","category":"baking","meal":["breakfast","lunch"],"tags":["выпечка","грузинская"],"time":60,"servings":4,"ingredients":[{"name":"Мука","amount":400,"unit":"г"},{"name":"Кефир","amount":250,"unit":"мл"},{"name":"Яйцо","amount":2,"unit":"шт"},{"name":"Масло сливочное","amount":50,"unit":"г"},{"name":"Сулугуни","amount":300,"unit":"г"},{"name":"Сыр фета","amount":200,"unit":"г"},{"name":"Сода","amount":0.5,"unit":"ч.л."}],"recipe":"1. Кефир + сода (пузырьки!) + яйцо + масло + соль + сахар.\n2. Мука постепенно — мягкое, чуть липкое тесто. Отдыхает 30 мин.\n3. Начинка: сулугуни тёрка + фета руками + яйцо.\n4. Тесто на 3-4 части, круг 20 см, начинка в центр, собираем мешочком.\n5. Переворачиваем, раскатываем в лепёшку 1-1.5 см.\n6. Сухая сковорода, 3-4 мин с каждой стороны.\n7. Сразу смазываем маслом!\n\n❄️ Заморозка: сырые из морозилки на слабом огне под крышкой 5-6 мин/сторону. Срок: 2 мес."},{"id":"francuzskie-tosty","name":"Французские тосты","photo":"img/francuzskie-tosty.jpg","category":"baking","meal":["breakfast"],"tags":["выпечка","быстрое","дети"],"time":15,"servings":4,"ingredients":[{"name":"Хлеб белый (батон)","amount":8,"unit":"ломтиков"},{"name":"Яйцо","amount":3,"unit":"шт"},{"name":"Молоко","amount":150,"unit":"мл"},{"name":"Сливки 20%","amount":50,"unit":"мл"},{"name":"Сахар","amount":30,"unit":"г"},{"name":"Корица","amount":0.5,"unit":"ч.л."},{"name":"Масло сливочное","amount":30,"unit":"г"}],"recipe":"1. Вчерашний хлеб, толщина 2 см.\n2. Яйца + молоко + сливки + сахар + ваниль + корица.\n3. Окунаем на 15-20 сек с каждой стороны.\n4. Сливочное масло на сковороде, средний огонь.\n5. 2-3 мин с каждой стороны до золотистой корочки.\n\nПодаём с сиропом и ягодами.\n\n❄️ Заморозка: обжаренные без топпинга. Из морозилки в тостер или духовку 180°C 8-10 мин. Срок: 2 мес."},{"id":"pankejki","name":"Панкейки","photo":"img/pankejki.jpg","category":"baking","meal":["breakfast"],"tags":["выпечка","быстрое","дети"],"time":20,"servings":12,"ingredients":[{"name":"Мука","amount":200,"unit":"г"},{"name":"Молоко","amount":200,"unit":"мл"},{"name":"Яйцо","amount":1,"unit":"шт"},{"name":"Масло сливочное","amount":30,"unit":"г"},{"name":"Сахар","amount":30,"unit":"г"},{"name":"Разрыхлитель","amount":2,"unit":"ч.л."},{"name":"Сода","amount":0.5,"unit":"ч.л."}],"recipe":"1. Сухие: мука, сахар, ваниль, разрыхлитель, сода, соль. Жидкие: молоко, яйцо, остывшее масло.\n2. Жидкое в сухое — 10-15 движений! Комочки = нормально!\n3. 5 мин отдыха.\n4. Сковорода на среднем-слабом, слегка смазать.\n5. 3 ст.л. теста, ждём пузырьки (1.5-2 мин), переворачиваем — 1 мин.\n6. НЕ прижимать лопаткой!\n\nС сиропом, ягодами, шоколадом.\n\n❄️ Заморозка: на доске → в пакет с пергаментом. В микроволновке 30-40 сек. Срок: 2 мес."}]};
+
+const DAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+const DAYS_FULL = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+
+const MEAL_GROUPS = [
+  { group:'Завтрак', emoji:'🌅', slots:[
+    { key:'breakfast', label:'Завтрак' }
+  ]},
+  { group:'Обед', emoji:'☀️', slots:[
+    { key:'lunch-soup',  label:'Суп',      suggestCat:'soup' },
+    { key:'lunch-main',  label:'Основное', suggestCat:'protein' },
+    { key:'lunch-side',  label:'Гарнир',   suggestCat:'side' },
+    { key:'lunch-salad', label:'Салат',     suggestCat:'salad' }
+  ]},
+  { group:'Ужин', emoji:'🌙', slots:[
+    { key:'dinner-main', label:'Основное', suggestCat:'protein' },
+    { key:'dinner-side', label:'Гарнир',   suggestCat:'side' }
+  ]},
+  { group:'Перекус', emoji:'🍎', slots:[
+    { key:'snack', label:'Перекус' }
+  ]}
+];
+
+const ALL_SLOTS = MEAL_GROUPS.flatMap(g => g.slots);
+
+let recipes = RECIPE_DATA.recipes;
+let categories = RECIPE_DATA.categories || [];
+let week = {};
+let numDays = parseInt(localStorage.getItem('px-num-days') || '7');
+let activeCell = null;
+let activeCategory = '';
+let activeTag = '';
+let savedMenus = JSON.parse(localStorage.getItem('px-menus2') || '[]');
+let myFridge = JSON.parse(localStorage.getItem('px-fridge') || '[]');
+
+// All unique ingredient names from all recipes
+const ALL_INGREDIENTS = [...new Set(recipes.flatMap(r => r.ingredients.map(i => i.name)))].sort((a,b) => a.localeCompare(b,'ru'));
+
+function init() {
+  const saved = localStorage.getItem('px-current-menu2');
+  if (saved) try { week = JSON.parse(saved); } catch(e) { week = {}; }
+  buildDayPicker();
+  renderFridgeChips();
+  buildGrid(); buildCategoryChips(); buildTagChips(); renderSaved(); updateStats(); updateShopping();
+
+  // Show welcome or working state
+  if (Object.keys(week).length > 0) {
+    dismissWelcome();
+  }
+}
+
+function dismissWelcome() {
+  document.getElementById('welcome').classList.add('hidden');
+  document.getElementById('toolbar').style.display = '';
+  document.getElementById('grid-hint').style.display = '';
+}
+
+function goManual() {
+  dismissWelcome();
+  document.querySelector('.week').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* Pick a recipe from smart modal → add to first matching empty slot */
+function smartPick(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+  dismissWelcome();
+
+  // Find best empty slot for this recipe's category
+  const catSlotMap = {
+    soup: ['lunch-soup'],
+    protein: ['lunch-main','dinner-main'],
+    side: ['lunch-side','dinner-side'],
+    salad: ['lunch-salad'],
+    dessert: ['snack'],
+    sauce: ['snack'],
+    baking: ['breakfast']
+  };
+  const preferredSlots = catSlotMap[r.category] || ALL_SLOTS.map(s => s.key);
+
+  let placed = false;
+  for (const sk of preferredSlots) {
+    for (let d = 0; d < numDays; d++) {
+      const key = `${d}-${sk}`;
+      if (!week[key]) {
+        week[key] = id;
+        placed = true;
+        break;
+      }
+    }
+    if (placed) break;
+  }
+  // Fallback: any empty slot
+  if (!placed) {
+    for (let d = 0; d < numDays; d++) {
+      for (const s of ALL_SLOTS) {
+        const key = `${d}-${s.key}`;
+        if (!week[key]) { week[key] = id; placed = true; break; }
+      }
+      if (placed) break;
+    }
+  }
+
+  if (placed) {
+    saveState(); buildGrid(); updateStats(); updateShopping();
+    // Visual feedback on the card
+    renderFridgeChips();
+  }
+}
+
+/* ===== SMART MENU / FRIDGE ===== */
+function openSmartModal() {
+  document.getElementById('smart-modal').classList.add('open');
+  renderFridgeChips();
+  setTimeout(() => document.getElementById('fridge-input').focus(), 100);
+}
+function closeSmartModal() {
+  document.getElementById('smart-modal').classList.remove('open');
+}
+
+function onFridgeInput() {
+  const val = document.getElementById('fridge-input').value.toLowerCase().trim();
+  const box = document.getElementById('fridge-suggest');
+  if (val.length < 1) { box.style.display = 'none'; return; }
+  const matches = ALL_INGREDIENTS.filter(n => n.toLowerCase().includes(val) && !myFridge.includes(n)).slice(0, 8);
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = matches.map(n => {
+    const idx = n.toLowerCase().indexOf(val);
+    const hl = n.slice(0, idx) + '<b>' + n.slice(idx, idx + val.length) + '</b>' + n.slice(idx + val.length);
+    return `<div class="smart-suggest-item" onclick="addFridgeByName('${esc(n)}')">${hl}</div>`;
+  }).join('');
+}
+
+function addFridgeItem() {
+  const input = document.getElementById('fridge-input');
+  const val = input.value.trim();
+  if (!val) return;
+  // Find closest match
+  const match = ALL_INGREDIENTS.find(n => n.toLowerCase() === val.toLowerCase()) || val;
+  if (!myFridge.includes(match)) {
+    myFridge.push(match);
+    saveFridge();
+  }
+  input.value = '';
+  document.getElementById('fridge-suggest').style.display = 'none';
+  renderFridgeChips();
+}
+
+function addFridgeByName(name) {
+  if (!myFridge.includes(name)) {
+    myFridge.push(name);
+    saveFridge();
+  }
+  document.getElementById('fridge-input').value = '';
+  document.getElementById('fridge-suggest').style.display = 'none';
+  renderFridgeChips();
+}
+
+function removeFridgeItem(name) {
+  myFridge = myFridge.filter(n => n !== name);
+  saveFridge();
+  renderFridgeChips();
+}
+
+function saveFridge() {
+  localStorage.setItem('px-fridge', JSON.stringify(myFridge));
+}
+
+function renderFridgeChips() {
+  const chips = document.getElementById('fridge-chips');
+  const results = document.getElementById('smart-results');
+
+  chips.innerHTML = myFridge.map(n =>
+    `<span class="smart-chip">${n}<span class="x" onclick="removeFridgeItem('${esc(n)}')">&times;</span></span>`
+  ).join('');
+
+  if (myFridge.length) {
+    const scored = recipes.map(r => ({...r, _s: matchScore(r)}))
+      .filter(r => r._s.matched > 0)
+      .sort((a,b) => b._s.pct - a._s.pct || b._s.matched - a._s.matched)
+      .slice(0, 15);
+
+    if (scored.length) {
+      results.innerHTML = `<div class="smart-results-title">Подходящие блюда (нажмите, чтобы добавить в меню)</div>` +
+        scored.map(r => `
+          <div class="smart-recipe" onclick="smartPick('${r.id}')">
+            <img src="${r.photo}" alt="" loading="lazy">
+            <div class="sr-info">
+              <div class="sr-name">${r.name}</div>
+              <div class="sr-meta">${r.time} мин · ${r._s.matched} из ${r._s.total} продуктов есть</div>
+              <div class="sr-bar"><div class="sr-bar-fill" style="width:${Math.round(r._s.pct*100)}%"></div></div>
+            </div>
+            <div class="sr-pct">${Math.round(r._s.pct*100)}%</div>
+          </div>
+        `).join('');
+    } else {
+      results.innerHTML = '<div class="smart-empty">Нет подходящих блюд. Добавьте ещё продукты.</div>';
+    }
+  } else {
+    results.innerHTML = '<div class="smart-empty">Добавьте продукты — мы покажем подходящие блюда</div>';
+  }
+}
+
+/* Match score: how many ingredients of a recipe the user has */
+function matchScore(recipe) {
+  const fridgeLower = myFridge.map(n => n.toLowerCase());
+  let matched = 0;
+  for (const ing of recipe.ingredients) {
+    if (fridgeLower.some(f => ing.name.toLowerCase().includes(f) || f.includes(ing.name.toLowerCase()))) matched++;
+  }
+  return { matched, total: recipe.ingredients.length, pct: recipe.ingredients.length ? matched / recipe.ingredients.length : 0 };
+}
+
+function getTopRecipes(n) {
+  return recipes.map(r => ({...r, score: matchScore(r)})).sort((a,b) => b.score.pct - a.score.pct || b.score.matched - a.score.matched).slice(0, n);
+}
+
+/* Smart fill: fill empty slots with best-matching recipes */
+function smartFill() {
+  if (!myFridge.length) return;
+  dismissWelcome();
+  const scored = recipes.map(r => ({...r, score: matchScore(r)})).sort((a,b) => b.score.pct - a.score.pct || b.score.matched - a.score.matched);
+
+  for (let d = 0; d < numDays; d++) {
+    for (const slot of ALL_SLOTS) {
+      const key = `${d}-${slot.key}`;
+      if (week[key]) continue;
+
+      // Filter by suggested category, then pick best scoring
+      let pool = scored;
+      if (slot.suggestCat) pool = scored.filter(r => r.category === slot.suggestCat);
+      else if (slot.key === 'breakfast') pool = scored.filter(r => r.meal.includes('breakfast') || r.category === 'baking' || r.category === 'dessert');
+      else if (slot.key === 'snack') pool = scored.filter(r => r.meal.includes('snack') || r.category === 'dessert' || r.category === 'sauce');
+      if (!pool.length) pool = scored;
+
+      // Pick from top matches, with some variety (avoid same dish every day)
+      const used = new Set();
+      for (let dd = 0; dd < numDays; dd++) {
+        const existing = week[`${dd}-${slot.key}`];
+        if (existing) used.add(existing);
+      }
+      const pick = pool.find(r => !used.has(r.id)) || pool[0];
+      if (pick) week[key] = pick.id;
+    }
+  }
+  saveState(); buildGrid(); updateStats(); updateShopping();
+}
+
+function buildDayPicker() {
+  const el = document.getElementById('day-picker');
+  el.innerHTML = Array.from({length:7}, (_, i) => {
+    const n = i + 1;
+    return `<button class="day-btn ${n===numDays?'active':''}" onclick="setDays(${n})">${n}</button>`;
+  }).join('');
+}
+
+function setDays(n) {
+  numDays = n;
+  localStorage.setItem('px-num-days', n);
+  buildDayPicker();
+  buildGrid(); updateStats(); updateShopping();
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  const weekEl = document.querySelector('.week');
+  weekEl.style.maxWidth = '980px';
+
+  const GC = {Завтрак:'breakfast',Обед:'lunch',Ужин:'dinner',Перекус:'snack'};
+  const slotGrp = {};
+  for (const mg of MEAL_GROUPS) { const c = GC[mg.group]||''; for (const s of mg.slots) slotGrp[s.key] = c; }
+
+  // Build columns: day-label, then for each group: spacer + slots
+  const isMobile = window.innerWidth < 768;
+  const dayW = isMobile ? '32px' : '56px';
+  const spacerW = isMobile ? '6px' : '14px';
+  const colParts = [dayW];
+  let isFirst = true;
+  for (const mg of MEAL_GROUPS) {
+    if (!isFirst) colParts.push(spacerW);
+    for (let i = 0; i < mg.slots.length; i++) colParts.push('1fr');
+    isFirst = false;
+  }
+  grid.style.gridTemplateColumns = colParts.join(' ');
+
+  let h = '';
+
+  // Row 1: group headers with spacers
+  h += '<div class="grid-corner"></div>';
+  let first = true;
+  for (const mg of MEAL_GROUPS) {
+    const cls = GC[mg.group] || '';
+    if (!first) h += '<div class="group-spacer"></div>';
+    h += `<div class="col-group ${cls}" style="grid-column:span ${mg.slots.length}">${mg.emoji} ${mg.group}</div>`;
+    first = false;
+  }
+
+  // Row 2: slot sub-headers with spacers
+  h += '<div class="grid-corner"></div>';
+  first = true;
+  for (const mg of MEAL_GROUPS) {
+    const cls = GC[mg.group] || '';
+    if (!first) h += '<div class="group-spacer"></div>';
+    for (const slot of mg.slots) {
+      h += `<div class="slot-header cat-${cls}">${slot.label}</div>`;
+    }
+    first = false;
+  }
+
+  // Day rows
+  for (let d = 0; d < numDays; d++) {
+    h += `<div class="day-label">${DAYS[d]}</div>`;
+    first = true;
+    for (const mg of MEAL_GROUPS) {
+      const cls = GC[mg.group] || '';
+      if (!first) h += '<div class="group-spacer"></div>';
+      for (const slot of mg.slots) {
+        const key = `${d}-${slot.key}`;
+        const rid = week[key];
+        const r = rid ? recipes.find(x => x.id === rid) : null;
+        if (r) {
+          h += `<div class="cell filled cell-${cls}" onclick="openModal(${d},'${slot.key}')">
+            <span class="cell-remove" onclick="event.stopPropagation();removeCell('${key}')">&times;</span>
+            <img class="cell-photo" src="${r.photo}" alt="" loading="lazy" onerror="this.style.display='none'">
+            <div class="cell-info"><div class="cell-name">${r.name}</div></div>
+          </div>`;
+        } else {
+          h += `<div class="cell empty-hint cell-${cls}" onclick="openModal(${d},'${slot.key}')"><span class="hint-plus">+</span><span class="hint-text">выбрать</span></div>`;
+        }
+      }
+      first = false;
+    }
+  }
+
+  grid.innerHTML = h;
+  const hintEl = document.getElementById('grid-hint');
+  if (hintEl) hintEl.classList.toggle('hidden', Object.keys(week).length > 0);
+}
+
+function removeCell(key) { delete week[key]; saveState(); buildGrid(); updateStats(); updateShopping(); }
+
+function openModal(day, slotKey) {
+  const slot = ALL_SLOTS.find(s => s.key === slotKey);
+  activeCell = { day, slotKey };
+  const mg = MEAL_GROUPS.find(g => g.slots.some(s => s.key === slotKey));
+  document.getElementById('modal-title').textContent = `${mg.emoji} ${DAYS_FULL[day]} — ${slot.label.toLowerCase()}`;
+  document.getElementById('search-input').value = '';
+  activeTag = '';
+  activeCategory = slot.suggestCat || '';
+  updateCatChips(); updateTagChips(); renderRecipeList();
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('search-input').focus(), 100);
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); activeCell = null; }
+
+function buildCategoryChips() {
+  document.getElementById('modal-cats').innerHTML =
+    `<span class="cat-chip" data-cat="" onclick="setCat('')">Все</span>` +
+    categories.map(c => `<span class="cat-chip" data-cat="${c.key}" onclick="setCat('${c.key}')">${c.emoji} ${c.name}</span>`).join('');
+}
+
+function setCat(c) { activeCategory = c; updateCatChips(); renderRecipeList(); }
+function updateCatChips() { document.querySelectorAll('.cat-chip').forEach(ch => ch.classList.toggle('active', (ch.dataset.cat||'') === activeCategory)); }
+
+function buildTagChips() {
+  const tags = new Set(); recipes.forEach(r => r.tags.forEach(t => tags.add(t)));
+  document.getElementById('modal-filters').innerHTML = [...tags].sort().map(t =>
+    `<span class="filter-chip" data-tag="${t}" onclick="setTag('${t}')">${t}</span>`).join('');
+}
+
+function setTag(t) { activeTag = activeTag === t ? '' : t; updateTagChips(); renderRecipeList(); }
+function updateTagChips() { document.querySelectorAll('.filter-chip').forEach(ch => ch.classList.toggle('active', ch.dataset.tag === activeTag)); }
+
+function renderRecipeList() {
+  const container = document.getElementById('recipe-list');
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  let list = recipes.filter(r => {
+    if (activeCategory && r.category !== activeCategory) return false;
+    if (q && !r.name.toLowerCase().includes(q) && !r.tags.some(t => t.includes(q))) return false;
+    if (activeTag && !r.tags.includes(activeTag)) return false;
+    return true;
+  });
+  if (!list.length) { container.innerHTML = '<div class="recipe-nothing">Ничего не найдено</div>'; return; }
+
+  // Sort by fridge match if user has products
+  const hasFridge = myFridge.length > 0;
+  let scored = list.map(r => ({...r, _score: hasFridge ? matchScore(r) : null}));
+  if (hasFridge) scored.sort((a,b) => b._score.pct - a._score.pct || b._score.matched - a._score.matched);
+
+  container.innerHTML = scored.map(r => {
+    let matchHtml = '';
+    if (r._score && r._score.matched > 0) {
+      const cls = r._score.pct >= 0.6 ? 'high' : r._score.pct >= 0.3 ? 'mid' : 'low';
+      matchHtml = `<span class="recipe-match ${cls}">${r._score.matched}/${r._score.total} есть</span>`;
+    }
+    return `<div class="recipe-card" onclick="pickRecipe('${r.id}')">
+      <img class="recipe-photo" src="${r.photo}" alt="" loading="lazy" onerror="this.style.background='#f0ebe5'">
+      <div class="recipe-info">
+        <div class="recipe-name">${r.name}</div>
+        <div class="recipe-meta"><span>${r.time} мин</span><span>${r.servings} порц.</span>
+          <span style="cursor:pointer;color:var(--terra)" onclick="event.stopPropagation();showDetail('${r.id}')">рецепт</span></div>
+        <div class="recipe-tags">${r.tags.slice(0,3).map(t => `<span class="recipe-tag">${t}</span>`).join('')}</div>
+      </div>
+      ${matchHtml}
+    </div>`;
+  }).join('');
+}
+
+function pickRecipe(id) {
+  if (!activeCell) return;
+  week[`${activeCell.day}-${activeCell.slotKey}`] = id;
+  saveState(); closeModal(); buildGrid(); updateStats(); updateShopping();
+}
+
+function showDetail(id) {
+  const r = recipes.find(x => x.id === id); if (!r) return;
+  document.getElementById('detail-photo').src = r.photo;
+  document.getElementById('detail-title').textContent = r.name;
+  const cat = categories.find(c => c.key === r.category);
+  document.getElementById('detail-meta').innerHTML = `<span>${cat?cat.name:''}</span><span class="green">${r.time} мин</span><span>${r.servings} порций</span>`;
+  document.getElementById('detail-ingredients').innerHTML = r.ingredients.map(i => `<li><span>${fmtNum(i.amount)} ${i.unit}</span> ${i.name}</li>`).join('');
+  document.getElementById('detail-recipe').textContent = r.recipe || '';
+  document.getElementById('detail').classList.add('open');
+}
+function closeDetail() { document.getElementById('detail').classList.remove('open'); }
+
+function updateStats() {
+  const filled = Object.keys(week).filter(k => parseInt(k) < numDays).length, total = numDays * ALL_SLOTS.length;
+  let time = 0, uniq = new Set();
+  visibleEntries().forEach(rid => { const r = recipes.find(x => x.id === rid); if (r) { time += r.time; uniq.add(rid); }});
+  document.getElementById('stats').innerHTML = `<div class="stat">Заполнено: <b>${filled}/${total}</b></div><div class="stat">Блюд: <b>${uniq.size}</b></div><div class="stat">Время: <b>${time} мин</b></div>`;
+}
+
+function visibleEntries() {
+  return Object.entries(week).filter(([k]) => parseInt(k) < numDays).map(([,v]) => v);
+}
+
+function updateRecipeCards() {
+  const section = document.getElementById('recipes-section');
+  const grid = document.getElementById('recipes-grid');
+  const uniqueIds = [...new Set(visibleEntries())];
+  const selected = uniqueIds.map(id => recipes.find(r => r.id === id)).filter(Boolean);
+
+  if (!selected.length) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  grid.innerHTML = selected.map((r, i) => `
+    <div class="rcard">
+      <img class="rcard-photo" src="${r.photo}" alt="${r.name}" loading="lazy" onclick="toggleRcard(${i})">
+      <div class="rcard-body">
+        <div class="rcard-name">${r.name}</div>
+        <div class="rcard-meta">
+          <span>${r.time} мин</span>
+          <span>${r.servings} порций</span>
+          <span>${(categories.find(c=>c.key===r.category)||{}).name||''}</span>
+        </div>
+        <button class="rcard-toggle" onclick="toggleRcard(${i})" id="rcard-btn-${i}">Показать рецепт</button>
+        <div class="rcard-detail" id="rcard-${i}">
+          <h4>Ингредиенты</h4>
+          <ul>${r.ingredients.map(ing => `<li><span>${fmtNum(ing.amount)} ${ing.unit}</span> ${ing.name}</li>`).join('')}</ul>
+          <h4>Приготовление</h4>
+          <div class="rcard-steps">${r.recipe||''}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleRcard(i) {
+  const el = document.getElementById('rcard-' + i);
+  const btn = document.getElementById('rcard-btn-' + i);
+  const isOpen = el.classList.toggle('open');
+  btn.textContent = isOpen ? 'Скрыть рецепт' : 'Показать рецепт';
+}
+
+function updateShopping() {
+  const container = document.getElementById('shopping-content'), map = {};
+  visibleEntries().forEach(rid => {
+    const r = recipes.find(x => x.id === rid); if (!r) return;
+    r.ingredients.forEach(i => {
+      const k = i.name.toLowerCase();
+      if (!map[k]) map[k] = { name: i.name, amounts: {} };
+      if (!map[k].amounts[i.unit]) map[k].amounts[i.unit] = 0;
+      map[k].amounts[i.unit] += i.amount;
+    });
+  });
+  const items = Object.values(map).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  if (!items.length) { container.innerHTML = '<div class="shopping-empty">Добавьте блюда в меню, чтобы увидеть список покупок</div>'; updateRecipeCards(); return; }
+  const chk = JSON.parse(localStorage.getItem('px-shop-chk2') || '{}');
+  container.innerHTML = '<ul class="shopping-list">' + items.map((it, i) => {
+    const amt = Object.entries(it.amounts).map(([u, a]) => `${fmtNum(a)} ${u}`).join(' + ');
+    const c = chk[it.name.toLowerCase()] ? 'checked' : '';
+    return `<li class="shopping-item ${c?'checked':''}"><input type="checkbox" id="sh${i}" ${c} onchange="toggleSh(this,'${esc(it.name.toLowerCase())}')"><label for="sh${i}"><span class="amount">${amt}</span> — ${it.name}</label></li>`;
+  }).join('') + '</ul>';
+  updateRecipeCards();
+}
+
+function fmtNum(n) { return n % 1 === 0 ? n : n.toFixed(1); }
+function esc(s) { return s.replace(/'/g, "\\'"); }
+function toggleSh(cb, k) {
+  const c = JSON.parse(localStorage.getItem('px-shop-chk2') || '{}');
+  if (cb.checked) c[k] = true; else delete c[k];
+  localStorage.setItem('px-shop-chk2', JSON.stringify(c));
+  cb.closest('.shopping-item').classList.toggle('checked', cb.checked);
+}
+
+function randomFill() {
+  for (let d = 0; d < numDays; d++) for (const s of ALL_SLOTS) {
+    const key = `${d}-${s.key}`;
+    if (week[key]) continue;
+    let pool;
+    if (s.suggestCat) pool = recipes.filter(r => r.category === s.suggestCat);
+    else if (s.key === 'breakfast') pool = recipes.filter(r => r.meal.includes('breakfast') || r.category === 'baking' || r.category === 'dessert');
+    else if (s.key === 'snack') pool = recipes.filter(r => r.meal.includes('snack') || r.category === 'dessert' || r.category === 'sauce');
+    else pool = recipes;
+    if (!pool.length) pool = recipes;
+    week[key] = pool[Math.floor(Math.random() * pool.length)].id;
+  }
+  saveState(); buildGrid(); updateStats(); updateShopping();
+}
+
+function clearWeek() { week = {}; localStorage.removeItem('px-shop-chk2'); saveState(); buildGrid(); updateStats(); updateShopping(); showWelcome(); }
+function showWelcome() {
+  document.getElementById('welcome').classList.remove('hidden');
+  document.getElementById('toolbar').style.display = 'none';
+  document.getElementById('grid-hint').style.display = 'none';
+}
+function saveState() { localStorage.setItem('px-current-menu2', JSON.stringify(week)); }
+
+function saveMenu() {
+  const name = prompt('Название меню:', `Меню ${savedMenus.length + 1}`);
+  if (!name) return;
+  savedMenus.push({ name, data: {...week}, date: new Date().toLocaleDateString('ru-RU') });
+  localStorage.setItem('px-menus2', JSON.stringify(savedMenus)); renderSaved();
+}
+function loadMenu(i) { week = {...savedMenus[i].data}; saveState(); localStorage.removeItem('px-shop-chk2'); buildGrid(); updateStats(); updateShopping(); }
+function deleteMenu(i, e) { e.stopPropagation(); if (!confirm(`Удалить «${savedMenus[i].name}»?`)) return; savedMenus.splice(i, 1); localStorage.setItem('px-menus2', JSON.stringify(savedMenus)); renderSaved(); }
+function renderSaved() {
+  const sec = document.getElementById('saved-section'), list = document.getElementById('saved-list');
+  if (!savedMenus.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = savedMenus.map((m, i) => `<div class="saved-chip" onclick="loadMenu(${i})">${m.name} <span style="opacity:.5;font-size:11px">${m.date||''}</span><span class="del" onclick="deleteMenu(${i},event)">&times;</span></div>`).join('');
+}
+
+function printAll() { document.body.classList.remove('print-shopping-only'); window.print(); }
+function printShoppingOnly() { document.body.classList.add('print-shopping-only'); window.print(); document.body.classList.remove('print-shopping-only'); }
+
+init();
+</script>
+</body>
+</html>
