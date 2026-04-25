@@ -857,6 +857,109 @@ footer ul li { margin-bottom: 8px; }
   margin-right: auto;
 }
 
+/* ===== HERO SECONDARY CTA — мелкая ссылка под основной кнопкой ===== */
+.hero-secondary {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--terracotta);
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px dashed currentColor;
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.hero-secondary:hover {
+  color: var(--terracotta-dark);
+  border-bottom-color: var(--terracotta-dark);
+  text-decoration: none;
+}
+
+/* ===== БЛОК БЕСПЛАТНОГО МАРАФОНА ===== */
+.marathon-section {
+  padding: 80px 0;
+  background: var(--cream-dark);
+}
+.marathon-card {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--cream);
+  padding: 56px 56px 48px;
+  border-radius: 14px;
+  border: 1px solid #F5D5C8;
+  box-shadow: 0 12px 36px rgba(45, 42, 38, 0.06);
+  text-align: center;
+}
+.marathon-tag {
+  display: inline-block;
+  background: var(--ochre);
+  color: var(--dark);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.marathon-card h2 {
+  font-size: clamp(28px, 3.5vw, 40px);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.marathon-lead {
+  font-size: 18px;
+  color: var(--grey);
+  max-width: 640px;
+  margin: 0 auto 36px;
+  line-height: 1.55;
+}
+.marathon-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin: 36px 0 40px;
+  padding: 28px 20px;
+  background: var(--cream-dark);
+  border-radius: 10px;
+}
+.marathon-feature {
+  text-align: center;
+  font-size: 14px;
+  color: var(--dark);
+}
+.marathon-feature-icon {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 10px;
+  color: var(--terracotta);
+}
+.marathon-feature-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.marathon-feature-label {
+  font-size: 13px;
+  color: var(--grey);
+  line-height: 1.4;
+}
+.marathon-feature-label strong { color: var(--dark); display: block; margin-bottom: 2px; font-size: 14px; }
+.marathon-note {
+  margin-top: 22px;
+  font-size: 14px;
+  color: var(--grey);
+  font-style: italic;
+}
+@media (max-width: 700px) {
+  .marathon-card { padding: 40px 26px 32px; }
+  .marathon-features { grid-template-columns: repeat(2, 1fr); gap: 18px; padding: 22px 14px; }
+}
+
 /* ===== БОЛЬШОЙ СЧЁТЧИК — УТОПЛЕН В ВИДЕО ===== */
 .hero-counter {
   order: 2;
@@ -1164,6 +1267,7 @@ footer ul li { margin-bottom: 8px; }
         <h1>Здесь готовят по-настоящему</h1>
         <p class="subtitle">Не «вдохновляют», не «дарят атмосферу», не «погружают в мир вкуса». Здесь — кухня. И на ней получается. Каждый раз.</p>
         <a href="#join" class="btn btn-large">Войти в Клуб</a>
+        <br><a href="#marathon" class="hero-secondary">или сначала бесплатный марафон →</a>
       </div>
       <div class="hero-video">
         <video autoplay muted playsinline>
@@ -1493,6 +1597,47 @@ footer ul li { margin-bottom: 8px; }
   </div>
 </section>
 
+<!-- ============ БЕСПЛАТНЫЙ МАРАФОН ============ -->
+<section class="marathon-section" id="marathon">
+  <div class="container">
+    <div class="marathon-card">
+      <div class="marathon-tag">Сначала бесплатно</div>
+      <h2>Не готовы платить? Проверьте сами</h2>
+      <p class="marathon-lead">У нас есть бесплатный марафон <strong>«Заготовки ужинов на 2 недели»</strong>. Три дня практики с шефом, без подписки, без оплаты, без кредитки. Просто попробуйте — вдруг это ваше.</p>
+
+      <div class="marathon-features">
+        <div class="marathon-feature">
+          <div class="marathon-feature-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/></svg>
+          </div>
+          <div class="marathon-feature-label"><strong>3 дня</strong>практики</div>
+        </div>
+        <div class="marathon-feature">
+          <div class="marathon-feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 7h18l-2 13H5z"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+          </div>
+          <div class="marathon-feature-label"><strong>20 ужинов</strong>в морозилке</div>
+        </div>
+        <div class="marathon-feature">
+          <div class="marathon-feature-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/></svg>
+          </div>
+          <div class="marathon-feature-label"><strong>Один шеф</strong>ведёт лично</div>
+        </div>
+        <div class="marathon-feature">
+          <div class="marathon-feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="marathon-feature-label"><strong>Чат</strong>с шефом и кураторами</div>
+        </div>
+      </div>
+
+      <a href="#" class="btn btn-large">Записаться на бесплатный марафон</a>
+      <p class="marathon-note">После марафона — если зайдёт — можно вступить в Клуб с бонусом.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ============ ОБЕЩАНИЯ ============ -->
 <section class="alt">
   <div class="container">
@@ -1628,7 +1773,7 @@ footer ul li { margin-bottom: 8px; }
     <h2>Если вы дочитали — значит, что-то откликнулось</h2>
     <p>Войти в Клуб можно прямо сейчас. Подписка идёт от даты оплаты — никаких «успейте до» и «осталось два дня».</p>
     <a href="#join" class="btn btn-large">Войти в Клуб</a>
-    <span class="alt-link">Хочу сначала на бесплатный марафон → <a href="#">подробности</a></span>
+    <span class="alt-link">Хочу сначала на бесплатный марафон → <a href="#marathon">подробности</a></span>
   </div>
 </section>
 
